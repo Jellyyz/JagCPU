@@ -3,10 +3,25 @@ import rv32i_types::*;
 module datapath(
     input logic clk, rst 
     
+    input rv32i_word 	data_mem_rdata, 
+    input rv32i_word 	instr_mem_rdata, 
 
 ); 
 
-// control signals from the control block 
+logic [6:0] opcode; 
+logic [2:0] funct3; 
+logic [6:0] funct7; 
+
+// opcode of any instruction 
+assign opcode = instr_mem_rdata[6:0]; 
+
+// funct3 of any instruction 
+assign funct3 = instr_mem_rdata[2:0]; 
+
+// funct7 of any instruction 
+assign funct7 = instr_mem_rdata[6:0]; 
+
+// control signals from the control block ?
 
 logic load_pc, pcmux_out, pc_out, pcmux_sel; 
 

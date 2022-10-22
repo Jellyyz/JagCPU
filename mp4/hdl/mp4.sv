@@ -19,9 +19,13 @@ import rv32i_types::*;
     output rv32i_word 	data_mem_wdata
 
     datapath d0(
-        .clk(clk), .rst(rst)
+        .clk(clk), .rst(rst),
 
+        // instruction data mem_rdata 
+        .instr_mem_rdata(instr_mem_rdata), 
 
+        // data mem_rdata 
+        .data_mem_rdata(data_mem_rdata)
     ); 
 
 	
