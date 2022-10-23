@@ -50,7 +50,6 @@ alu alu (
 
 always_comb begin : CONTROL_WORD
 
-
     // opcode of any instruction 
     opcode = instr_mem_rdata[6:0]; 
 
@@ -60,6 +59,7 @@ always_comb begin : CONTROL_WORD
     // funct7 of any instruction 
     funct7 = instr_mem_rdata[6:0]; 
 
+    // alu_op calculation 
     unique case(funct3)
         sll, axor, aor, aand:begin
             alu_op = funct3; 
@@ -93,16 +93,33 @@ always_comb begin : CONTROL_WORD
 
     endcase 
 
-
+    // aluMUX sel 
 end 
 always_comb begin : MUXES
 
-unique case(pcmux_sel) 
-    pcmux::pc_plus4: pcmux_out = pc_out + 4;
-    pcmux::alu_out: pcmux_out = alu_out; 
-    pcmux::alu_mod2: pcmux_out = alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
-    
-endcase  
+    unique case(pcmux_sel) 
+        pcmux::pc_plus4: pcmux_out = pc_out + 4;
+        pcmux::alu_out: pcmux_out = alu_out; 
+        pcmux::alu_mod2: pcmux_out = alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
+        default: $display("hit pcmux error");
+    endcase  
+
+    unique case (alumux1_sel)
+        // alumux1
+        alumux::rs1_out: alumux1_out = rs1_out; 
+        alumux::pc_out: alumux1_out = pc_out; 
+        default: $display("hit alumux1 error");
+    endcase 
+    unique case (alumux2_sel)    
+        //alumux2 
+        alumux::i_imm: alumux2_out = i_imm; 
+        alumux::u_imm: alumux2_out = u_imm; 
+        alumux::b_imm: alumux2_out = b_imm; 
+        alumux::s_imm: alumux2_out = s_imm; 
+        alumux::j_imm: alumux2_out = j_imm; 
+        alumux::rs2_out: alumux2_out = rs2_out;
+        default: $display("hit alumux2 error");
+    endcase 
 
 
 endmodule 
