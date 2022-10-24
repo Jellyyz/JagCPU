@@ -81,7 +81,7 @@ typedef struct packed {
     alumux::alumux1_sel_t alumux1_sel;
     alumux::alumux2_sel_t alumux2_sel;
     regfilemux::regfilemux_sel_t regfilemux_sel;
-    cmpmux::cmpmux_sel_t cmpmux;
+    cmpmux::cmpmux_sel_t cmpmux_sel;
 
     alu_ops aluop;
     branch_funct3_t cmpop;
