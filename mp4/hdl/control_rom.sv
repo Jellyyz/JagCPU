@@ -93,10 +93,68 @@ begin
             endcase
         end
         op_store: begin
+            ctrl.alumux1_sel = alumux::rs1_out;
+            ctrl.alumux2_sel = alumux::s_imm;
+            ctrl.aluop = alu_add;
+            ctrl.mem_write = 1'b1;
+
+            //WORK IN PROGRESS
+            // What are we writing?
+            // To where are we writing? Output of ALU?
         end
         op_imm: begin
+            ctrl.alumux1_sel = alumux::rs1_out;
+            ctrl.alumux2_sel = alumux::i_imm;
+            ctrl.load_regfile = 1'b1;
+            unique case (arith_funct3)
+                sr: begin
+                    ctrl.regfilemux_sel = regfilemux::alu_out;
+                    unique case (funct7[5])
+                        1'b0: ctrl.alu_op = alu_srl;
+                        1'b1: ctrl.alu_op = alu_sra;
+                    endcase
+                slt: begin
+                    ctrl.cmpmux_sel = cmpmux::i_imm;
+                    ctrl.cmpop = blt;
+                    ctrol.regfilemux_sel = regfilemux::br_en;
+                end
+                sltu: begin
+                    ctrl.cmpmux_sel = cmpmux:: i_imm;
+                    ctrl.cmpop = bltu;
+                    ctrl.regfilemux_sel = regfilemux::br_en;
+                end
+                default: begin
+                    ctrl.aluop = alu_ops'(funct3);
+                    ctrl.regfilemux_sel = regfilemux::alu_out;
+                end
+            endcase
         end
         op_reg: begin
+            ctrl.alumux1_sel = alumux::rs1_out;
+            ctrl.alumux2_sel = alumux::rs2_out;
+            ctrl.load_regfile = 1'b1;
+            unique case (arith_funct3)
+                sr: begin
+                    ctrl.regfilemux_sel = regfilemux::alu_out;
+                    unique case (funct7[5])
+                        1'b0: ctrl.aluop = alu_srl;
+                        1'b1: ctrl.aluop = alu_sra;
+                    endcase
+                end
+                slt: begin
+                    ctrl.cmpmux_sel = cmpmux::rs2_out;
+                    ctrl.cmpop = blt;
+                    ctrl.regfilemux_sel = regfilemux::br_en;
+                end
+                sltu: begin
+                    ctrl.cmpmux_sel = cmpmux::rs2_out;
+                    ctrl.cmpop = bltu;
+                    ctrl.regfilemux_sel = regfilemux::br_en;
+                end
+                default: begin
+                    ctrl.aluop = alu_ops'(funct3);
+                    ctrl.regfilemux_sel = regfilemux::alu_out;
+                end
         end
         default: ;
     endcase
