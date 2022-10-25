@@ -75,7 +75,7 @@ begin
             ctrl.cmpop = branch_funct3;
             ctrl.cmpmux_sel = cmpmux::rs2_out;
             ctrl.alumux1_sel = alumux::pc_out;
-            ctrl.alumux2_sel = a;umux::b_imm;
+            ctrl.alumux2_sel = alumux::b_imm;
             ctr.aluop = alu_add;
         end
         op_load: begin
