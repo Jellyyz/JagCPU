@@ -1,7 +1,7 @@
 import rv32i_types::*;
 
 module datapath(
-    input logic clk, rst 
+    input logic clk, rst, 
     
 	//Remove after CP1
     input 					instr_mem_resp,
@@ -42,7 +42,7 @@ IF IF(
     .clk(clk), .rst(rst), 
     .instr_mem_rdata(instr_mem_rdata), 
     .ctrl(), 
-    .EX_MEM_alu_out(EX_MEM_alu_out)
+    .EX_MEM_alu_out(EX_MEM_alu_out),
     // output 
     .IF_pc_out(IF_pc_out), 
     .IF_ir_out(IF_ir_out)
@@ -72,7 +72,7 @@ rv32i_word ID_instr_o, ID_pc_out_o;
 
 rv32i_word ID_rs1_out_o, ID_rs2_out_o; 
 rv32i_word ID_i_imm_o, ID_s_imm_o, ID_b_imm_o, ID_u_imm_o, ID_j_imm_o;
-logic [4:0] ID_rd_o, 
+logic [4:0] ID_rd_o;
 logic ID_br_en_o; 
 ID ID(
 // @TODO: 

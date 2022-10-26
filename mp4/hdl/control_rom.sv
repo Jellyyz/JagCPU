@@ -1,6 +1,6 @@
-import rv32i_types::*;
 
 module control_rom
+import rv32i_types::*;
 (
     input rv32i_opcode opcode,
     input logic [2:0] funct3,
@@ -32,11 +32,11 @@ function void set_defaults();
 
     ctrl.pcmux_sel = pcmux::pc_plus4;
     ctrl.alumux1_sel = alumux::rs1_out;
-    ctrl.alumux2_sel = alumux::imm;
+    ctrl.alumux2_sel = alumux::i_imm;
     ctrl.regfilemux_sel = regfilemux::alu_out;
-    ctrl.cmpmux_sel = rs2_out; 
+    ctrl.cmpmux_sel = cmpmux::rs2_out; 
 
-    ctrl.marmux_sel = pc_out; 
+    ctrl.marmux_sel = marmux::pc_out; 
     ctrl.aluop = alu_add;
     ctrl.cmpop = beq;
 endfunction
@@ -99,10 +99,6 @@ begin
             ctrl.alumux2_sel = alumux::s_imm;
             ctrl.aluop = alu_add;
             ctrl.mem_write = 1'b1;
-
-            //WORK IN PROGRESS
-            // What are we writing?
-            // To where are we writing? Output of ALU?
         end
         op_imm: begin
             ctrl.alumux1_sel = alumux::rs1_out;
@@ -115,6 +111,7 @@ begin
                         1'b0: ctrl.alu_op = alu_srl;
                         1'b1: ctrl.alu_op = alu_sra;
                     endcase
+                end
                 slt: begin
                     ctrl.cmpmux_sel = cmpmux::i_imm;
                     ctrl.cmpop = blt;
@@ -157,6 +154,7 @@ begin
                     ctrl.aluop = alu_ops'(funct3);
                     ctrl.regfilemux_sel = regfilemux::alu_out;
                 end
+            endcase
         end
         default: ;
     endcase
