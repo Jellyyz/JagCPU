@@ -1,5 +1,6 @@
+module datapath 
 import rv32i_types::*;
-module datapath #(parameter width = 32) (
+#(parameter width = 32) (
     input logic clk, rst, 
     
 	//Remove after CP1

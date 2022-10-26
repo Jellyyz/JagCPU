@@ -6,7 +6,7 @@ import rv32i_types::*;
     input logic rst, 
     input logic instr_mem_rdata_i, 
     input rv32i_control_word ctrl_word_i, 
-    input pcmux__pcmux_sel_t pcmux_sel_i,
+    input pcmux::pcmux_sel_t pcmux_sel_i,
     input rv32i_word EX_MEM_alu_out_i, 
 
     output rv32i_word IF_pc_out_o, 
