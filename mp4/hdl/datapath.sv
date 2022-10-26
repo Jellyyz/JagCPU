@@ -11,115 +11,177 @@ module datapath(
 logic [6:0] opcode; 
 logic [2:0] funct3; 
 logic [6:0] funct7; 
-alu_ops aluop;
 
-// control signals from the control block ?
+// ~~~~~~~~~~~~~~~~~~~~~ PIPELINE GLUE LOGIC TYPES DECLARATION ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-logic load_pc, pcmux_out, pc_out, pcmux_sel; 
-logic alu_op; 
+// we should try to follow a convention. I propose we do STAGE_COMBBLOCKNAME_INPUT/OUTPUT 
+// @TODO: 
+// maybe make a struct for the imm's as well? 
 
-pc_register pc_register(
-    // inputs 
-    .clk (clk), .rst (rst),
-    .load(load_pc), .in(pcmux_out), 
-    //ouputs 
-    .out(pc_out) 
-
-); 
-
-register MAR(
+rv32i_word IF_pc_out; 
+rv32i_word IF_ID_pc_out; 
+rv32i_word wb_output; 
 
 
-); 
 
 
-register MDR(
 
+// ~~~~~~~~~~~~~~~~~~~~~ ALL THE MODULES FOR THE MAIN PIPELINE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-); 
+// contains the PC register and PC incrementation 
+// @TODO: 
+// load signal for PC : load_pc 
+// pc mux is not implemented yet?? this is called : pc_mux_out btw in this module 
+// need to think about how to parse control words through every stage 
+// 
 
-alu alu (
-    // inputs 
-    .aluop(aluop),
-    .a(alumux1_out), .b(alumux2_out), 
-    // outputs 
-    .f(alu_out)
+IF IF(
+    // input 
+    .clk(clk), .rst(rst), 
+    .instr_mem_rdata(instr_mem_rdata), 
+    .ctrl(ctrl), 
     
+    // output 
+    .IF_pc_out(IF_pc_out)
+); 
+// contains the PC register and IR register
+// @TODO: 
+// unsure where IR comes from 
+// also unsure how to load regs 
+
+IF_ID IF_ID(
+    // input 
+    .clk(clk), .rst(rst), 
+    .IF_ID_pc_in(IF_pc_out),
+    .IF_ID_pc_ld(), 
+
+    .IF_ID_ir_in(),
+    .IF_ID_ir_ld(), 
+
+    // output  
+    .IF_ID_pc_out(IF_ID_pc_out)
+    .IF_ID_ir_out(),
+
+
+); 
+
+ID ID(
+// @TODO: 
+// unsure where IR comes from 
+// we need a transparency regfile 
+// we need to figure out where rs1, rs2, imm, etc comes from 
+    // inputs
+    .clk(), .rst(), 
+    .ID_pc_in(),
+    .ID_imm_in(), 
+    .ID_rs1_in(), .ID_rs2_in(), 
+    .ID_IR_in(), 
+    
+    .ID_wb_in(wb_output), 
+
+
+    // outputs 
+    .ID_pc_out(), 
+    .ID_imm_out(), 
+    .ID_rs1_out(), .ID_rs2_out(), 
+    .ID_IR_out() 
+
 );
 
 
-always_comb begin : CONTROL_WORD
+ID_EX ID_EX(
+    // inputs 
+    .ID_EX_pc_in(), 
 
+    // outputs 
+    .ID_EX_pc_out() 
+
+
+); 
+
+EX EX(
+// i think this one is the easiest once we have the other crap done. 
+    // inputs 
+    .EX_pc_in(),     
+
+    .EX_wb_in(wb_output), 
+
+    // outputs 
+    .EX_pc_out() 
+
+); 
+
+
+EX_MEM EX_MEM(
+    // inputs 
+    .EX_MEM_pc_in(), 
+
+    // outputs 
+    .EX_MEM_pc_out() 
+
+
+); 
+
+
+MEM MEM(
+// @TODO: 
+// unsure where IR comes from 
+// how to interact with memory?? so much signals? 
+    // inputs 
+    .MEM_pc_in(), 
+
+    // outputs 
+    .MEM_pc_out() 
+
+); 
+
+MEM_WB MEM_WB(
+    // inputs 
+    .MEM_WB_pc_in(), 
+    
+    // outputs 
+    .MEM_WB_pc_out() 
+); 
+
+
+WB WB(
+    // inputs 
+    .WB_pc_in(), 
+    .WB_imm_in(), 
+    .WB_mem_rdata_in(), 
+    .WB_pc_out_4_in(), 
+    .WB_alu_out_in(),
+    .WB_br_en_in(),
+     
+
+    // outputs 
+    .WB_pc_out() 
+    .WB_output(wb_output)
+
+); 
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+always_comb begin : CONTROL_WORD
     // opcode of any instruction 
     opcode = instr_mem_rdata[6:0]; 
-
     // funct3 of any instruction 
     funct3 = instr_mem_rdata[2:0]; 
-
     // funct7 of any instruction 
     funct7 = instr_mem_rdata[6:0]; 
-
-    // alu_op calculation 
-    unique case(funct3)
-        sll, axor, aor, aand:begin
-            alu_op = funct3; 
-        end 
-
-        slt:begin 
-            alu_op = blt;
-        end 
-
-        sltu:begin 
-            alu_op = bltu; 
-        end 
-
-        sr:begin 
-            if(funct7 == 7'h0)begin 
-                alu_op = alu_srl;
-            end 
-            else begin 
-                alu_op = alu_sra; 
-            end 
-        end 
-        
-        add:begin 
-            if(funct7 == 7'h0)begin 
-                alu_op = alu_add; 
-            end 
-            else begin 
-                alu_op = alu_sub; 
-            end 
-        end     
-
-    endcase 
-
-    // aluMUX sel 
 end 
-always_comb begin : MUXES
 
-    unique case(pcmux_sel) 
-        pcmux::pc_plus4: pcmux_out = pc_out + 4;
-        pcmux::alu_out: pcmux_out = alu_out; 
-        pcmux::alu_mod2: pcmux_out = alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
-        default: $display("hit pcmux error");
-    endcase  
-
-    unique case (alumux1_sel)
-        // alumux1
-        alumux::rs1_out: alumux1_out = rs1_out; 
-        alumux::pc_out: alumux1_out = pc_out; 
-        default: $display("hit alumux1 error");
-    endcase 
-    unique case (alumux2_sel)    
-        //alumux2 
-        alumux::i_imm: alumux2_out = i_imm; 
-        alumux::u_imm: alumux2_out = u_imm; 
-        alumux::b_imm: alumux2_out = b_imm; 
-        alumux::s_imm: alumux2_out = s_imm; 
-        alumux::j_imm: alumux2_out = j_imm; 
-        alumux::rs2_out: alumux2_out = rs2_out;
-        default: $display("hit alumux2 error");
-    endcase 
-
+// master_ctrl word to be used for every sel/ld/control signal. 
+rv32i_control_word ctrl; 
+control_rom(
+    // inputs 
+    .opcode(opcode), 
+    .funct3(funct3), .funct7(funct7), 
+    
+    // outputs 
+    .ctrl(ctrl) 
+);  
 
 endmodule 

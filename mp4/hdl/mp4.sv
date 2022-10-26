@@ -20,12 +20,20 @@ import rv32i_types::*;
 
     datapath d0(
         .clk(clk), .rst(rst),
-
-        // instruction data mem_rdata 
+        // inputs 
         .instr_mem_rdata(instr_mem_rdata), 
-
-        // data mem_rdata 
-        .data_mem_rdata(data_mem_rdata)
+        .instr_mem_resp(instr_mem_resp),
+        .data_mem_rdata(data_mem_rdata), 
+        .data_mem_resp(data_mem_resp), 
+        // outputs 
+        .instr_read(instr_read), 
+        .instr_mem_address(instr_mem_address), 
+        .data_read(data_read), 
+        .data_write(data_write), 
+        .data_mbe(data_mbe), 
+        .data_mem_address(data_mem_address),
+        .data_mem_wdata(data_mem_wdata) 
+        
     ); 
 
 	
