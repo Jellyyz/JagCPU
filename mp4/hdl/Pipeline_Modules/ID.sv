@@ -99,7 +99,7 @@ regfile regfile (
     .in     (ID_wr_data_i), 
     .src_a  (rs1),   
     .src_b  (rs2),   
-    .dest   (rd_wr_i),   
+    .dest   (ID_rd_wr_i),   
 
     .reg_a  (rs1_out),
     .reg_b  (rs2_out)
