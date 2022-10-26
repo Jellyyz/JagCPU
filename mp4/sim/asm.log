@@ -1,0 +1,11 @@
+
+/tmp/tmp.CVwocttHzz/add.s.obj:     file format elf32-littleriscv
+
+
+Disassembly of section .text:
+
+00010060 <_start>:
+   10060:	00228293          	addi	x5,x5,2
+0000000 8293 0022                              
+0000004
+Assembled ./testcode/add.s and wrote memory contents to /home/ghuang23/MP4/mp4/sim/memory.lst

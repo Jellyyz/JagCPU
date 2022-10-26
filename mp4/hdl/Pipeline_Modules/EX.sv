@@ -3,9 +3,6 @@ module EX
 import rv32i_types::*;
 #(parameter width = 32) 
 (
-    input logic clk, 
-    input logic rst, 
-
     input rv32i_word EX_pc_out_i, 
     input rv32i_word EX_instr_i, 
     input rv32i_word EX_rs1_out_i,
@@ -28,7 +25,7 @@ import rv32i_types::*;
     output rv32i_word EX_b_imm_o,
     output rv32i_word EX_u_imm_o,
     output rv32i_word EX_j_imm_o,
-    output rv32i_reg EX_rs2_out_o,
+    output rv32i_word EX_rs2_out_o,
     output rv32i_control_word EX_ctrl_word_o,
     output logic [4:0] EX_rd_o,
     
@@ -63,12 +60,12 @@ always_comb begin : set_output
 end
 
 always_comb begin : ALU_MUX
-    unique case (EX_ctrl_i.alumux1_sel)
+    unique case (EX_ctrl_word_i.alumux1_sel)
         alumux::rs1_out : alumux1_out = EX_rs1_out_i; 
         alumux::pc_out : alumux1_out = EX_pc_out_i; 
         default: $display("hit alumux1 error");
     endcase 
-    unique case (EX_ctrl_i.alumux2_sel)
+    unique case (EX_ctrl_word_i.alumux2_sel)
         alumux::i_imm : alumux2_out = EX_i_imm_i; 
         alumux::u_imm : alumux2_out = EX_u_imm_i; 
         alumux::b_imm : alumux2_out = EX_b_imm_i; 
@@ -80,7 +77,7 @@ always_comb begin : ALU_MUX
 end 
 
 alu alu (
-    .aluop(EX_ctrl_i.aluop),
+    .aluop(EX_ctrl_word_i.aluop),
     .a(alumux1_out),
     .b(alumux2_out), 
 

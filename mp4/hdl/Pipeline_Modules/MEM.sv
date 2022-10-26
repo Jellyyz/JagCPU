@@ -3,8 +3,6 @@ module MEM
 import rv32i_types::*;
 #(parameter width = 32) 
 (
-    input clk,
-    input rst,
 
     input logic [width-1:0] MEM_pc_out_i, 
     input logic [width-1:0] MEM_pc_plus4_i, 

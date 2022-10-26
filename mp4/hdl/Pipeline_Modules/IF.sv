@@ -1,15 +1,16 @@
+
 module IF
 import rv32i_types::*;
-(
+    (
  
-    input logic clk, 
-    input logic rst, 
-    input logic instr_mem_rdata_i, 
-    input rv32i_control_word ctrl_word_i, 
-    input pcmux::pcmux_sel_t pcmux_sel_i,
-    input rv32i_word EX_MEM_alu_out_i, 
+    input logic clk,
+    input logic rst,
+    input rv32i_word IF_instr_mem_rdata_i,
+    input rv32i_control_word IF_ctrl_word_i,
+    input pcmux::pcmux_sel_t IF_pcmux_sel_i,
+    input rv32i_word IF_alu_out_i,
 
-    output rv32i_word IF_pc_out_o, 
+    output rv32i_word IF_pc_out_o,
     output rv32i_word IF_instr_out_o // undriven, for cp1 comes from magic memory
 ); 
 
@@ -19,18 +20,15 @@ rv32i_word pcmux_out;
 // assign pcmux_sel = pcmux_sel_i;
 
 always_comb begin : pc_mux
-    unique case (pcmux_sel_i)
+    unique case (IF_pcmux_sel_i)
         pcmux::pc_plus4 : pcmux_out = IF_pc_out_o + 4; 
-        pcmux::alu_out  : pcmux_out = EX_MEM_alu_out_i; 
-
+        pcmux::alu_mod2 : pcmux_out = IF_alu_out_i & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
+        pcmux::alu_out  : pcmux_out = IF_alu_out_i; 
         default:begin 
             $display("error no pcmux found"); 
             $finish; 
         end 
-
     endcase 
-
-
 end 
 
 

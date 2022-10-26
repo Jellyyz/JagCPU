@@ -3,15 +3,15 @@ module MEM_WB
 import rv32i_types::*;
 #(parameter width = 32)
 (
-    input clk,
-    input rst,
-    input load_i,
+    input logic clk,
+    input logic rst,
+    input logic load_i,
 
-    input MEM_WB_mem_read_i,
-    input MEM_WB_mem_write_i,
-    input MEM_WB_br_en_i,
-    input logic MEM_WB_pcmux_sel_i,
-    input logic MEM_WB_alu_out_i,
+    input logic MEM_WB_mem_read_i,
+    input logic MEM_WB_mem_write_i,
+    input logic MEM_WB_br_en_i,
+    input pcmux::pcmux_sel_t MEM_WB_pcmux_sel_i,
+    input logic [width-1:0] MEM_WB_alu_out_i,
     input logic [4:0] MEM_WB_rd_i,
     input rv32i_control_word MEM_WB_ctrl_word_i,
     input logic [width-1:0] MEM_WB_pc_out_i,
@@ -26,11 +26,11 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_WB_data_mem_wdata_i, // magic
     input logic [width-1:0] MEM_WB_data_mem_rdata_i, // magic
 
-    output MEM_WB_mem_read_o,
-    output MEM_WB_mem_write_o,
-    output MEM_WB_br_en_o,
-    output logic MEM_WB_pcmux_sel_o,
-    output logic MEM_WB_alu_out_o,
+    output logic MEM_WB_mem_read_o,
+    output logic MEM_WB_mem_write_o,
+    output logic MEM_WB_br_en_o,
+    output pcmux::pcmux_sel_t MEM_WB_pcmux_sel_o,
+    output logic [width-1:0] MEM_WB_alu_out_o,
     output logic [4:0] MEM_WB_rd_o,
     output rv32i_control_word MEM_WB_ctrl_word_o,
     output logic [width-1:0] MEM_WB_pc_out_o,
@@ -49,8 +49,8 @@ import rv32i_types::*;
 logic MEM_WB_mem_read;
 logic MEM_WB_mem_write;
 logic MEM_WB_br_en;
-logic MEM_WB_pcmux_sel;
-logic MEM_WB_alu_out;
+pcmux::pcmux_sel_t MEM_WB_pcmux_sel;
+logic [width-1:0] MEM_WB_alu_out;
 logic [4:0] MEM_WB_rd;
 rv32i_control_word MEM_WB_ctrl_word;
 logic [width-1:0] MEM_WB_pc_out;
@@ -70,7 +70,7 @@ always_ff @(posedge clk) begin
         MEM_WB_mem_write <= '0;
         MEM_WB_mem_read <= '0;
         MEM_WB_br_en <= '0;
-        MEM_WB_pcmux_sel <= '0;
+        MEM_WB_pcmux_sel <= {2'b00};
         MEM_WB_alu_out <= '0;
         MEM_WB_rd <= '0;
         MEM_WB_ctrl_word <= '0;
@@ -94,7 +94,7 @@ always_ff @(posedge clk) begin
         MEM_WB_rd <= MEM_WB_rd_i;
         MEM_WB_ctrl_word <= MEM_WB_ctrl_word_i;
         MEM_WB_pc_out <= MEM_WB_pc_out_i;
-        MEM_WB_pc_plus4 <= MEM_WB_pc_plus4_o;
+        MEM_WB_pc_plus4 <= MEM_WB_pc_plus4_i;
         MEM_WB_instr <= MEM_WB_instr_i;
         MEM_WB_i_imm <= MEM_WB_i_imm_i;
         MEM_WB_s_imm <= MEM_WB_s_imm_i;

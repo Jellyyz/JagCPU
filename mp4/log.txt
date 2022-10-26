@@ -1,5 +1,5 @@
 mkdir -p sim
-cd sim && vcs /home/ghuang23/MP4/mp4/pkg/rv32i_mux_types.sv /home/ghuang23/MP4/mp4/pkg/rv32i_types.sv /home/ghuang23/MP4/mp4/hdl/register.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX_MEM.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM_WB.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF_ID.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID_EX.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv /home/ghuang23/MP4/mp4/hdl/pc_reg.sv /home/ghuang23/MP4/mp4/hdl/cmp.sv /home/ghuang23/MP4/mp4/hdl/mem_wb.sv /home/ghuang23/MP4/mp4/hdl/mem.sv /home/ghuang23/MP4/mp4/hdl/mp4.sv /home/ghuang23/MP4/mp4/hdl/regfile.sv /home/ghuang23/MP4/mp4/hdl/cache.sv /home/ghuang23/MP4/mp4/hdl/ir.sv /home/ghuang23/MP4/mp4/hdl/control_rom.sv /home/ghuang23/MP4/mp4/hdl/datapath.sv /home/ghuang23/MP4/mp4/hdl/wb.sv /home/ghuang23/MP4/mp4/hdl/alu.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX_MEM.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM_WB.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF_ID.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID_EX.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv /home/ghuang23/MP4/mp4/hvl/rvfimon.v /home/ghuang23/MP4/mp4/hvl/tb_itf.sv /home/ghuang23/MP4/mp4/hvl/shadow_memory.sv /home/ghuang23/MP4/mp4/hvl/param_memory.sv /home/ghuang23/MP4/mp4/hvl/rvfi_itf.sv /home/ghuang23/MP4/mp4/hvl/top.sv /home/ghuang23/MP4/mp4/hvl/source_tb.sv /home/ghuang23/MP4/mp4/hvl/magic_dual_port.sv  -full64 -lca -sverilog +lint=all,noNS -timescale=1ns/10ps -debug_acc+all -kdb -fsdb -msg_config=../warn.config -l compile.log +incdir+../pkg +incdir+../hvl -top mp4_tb 
+cd sim && vcs /home/ghuang23/MP4/mp4/pkg/rv32i_mux_types.sv /home/ghuang23/MP4/mp4/pkg/rv32i_types.sv /home/ghuang23/MP4/mp4/hdl/register.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX_MEM.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM_WB.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF_ID.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID_EX.sv /home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv /home/ghuang23/MP4/mp4/hdl/pc_reg.sv /home/ghuang23/MP4/mp4/hdl/cmp.sv /home/ghuang23/MP4/mp4/hdl/mem_wb.sv /home/ghuang23/MP4/mp4/hdl/mem.sv /home/ghuang23/MP4/mp4/hdl/mp4.sv /home/ghuang23/MP4/mp4/hdl/regfile.sv /home/ghuang23/MP4/mp4/hdl/cache.sv /home/ghuang23/MP4/mp4/hdl/ir.sv /home/ghuang23/MP4/mp4/hdl/control_rom.sv /home/ghuang23/MP4/mp4/hdl/datapath.sv /home/ghuang23/MP4/mp4/hdl/alu.sv /home/ghuang23/MP4/mp4/hvl/rvfimon.v /home/ghuang23/MP4/mp4/hvl/tb_itf.sv /home/ghuang23/MP4/mp4/hvl/shadow_memory.sv /home/ghuang23/MP4/mp4/hvl/param_memory.sv /home/ghuang23/MP4/mp4/hvl/rvfi_itf.sv /home/ghuang23/MP4/mp4/hvl/top.sv /home/ghuang23/MP4/mp4/hvl/source_tb.sv /home/ghuang23/MP4/mp4/hvl/magic_dual_port.sv  -full64 -lca -sverilog +lint=all,noNS -timescale=1ns/10ps -debug_acc+all -kdb -fsdb -msg_config=../warn.config -l compile.log +incdir+../pkg +incdir+../hvl -top mp4_tb  
 
 Warning-[LNX_OS_VERUN] Unsupported Linux version
   Linux version 'AlmaLinux release 8.6 (Sky Tiger)' is not supported on 
@@ -13,7 +13,7 @@ Warning-[LINX_KRNL] Unsupported Linux kernel
   Supported versions are 2.4* or 2.6*.
 
                          Chronologic VCS (TM)
-      Version R-2020.12-SP1-1_Full64 -- Wed Oct 26 03:29:13 2022
+      Version R-2020.12-SP1-1_Full64 -- Wed Oct 26 12:41:37 2022
 
                     Copyright (c) 1991 - 2021 Synopsys, Inc.
    This software and the associated documentation are proprietary to Synopsys,
@@ -31,166 +31,14 @@ Parsing design file '/home/ghuang23/MP4/mp4/pkg/rv32i_mux_types.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/pkg/rv32i_types.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/register.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX_MEM.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX_MEM.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
-
-Lint-[IWU] Implicit wire is used
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID.sv, 102
-  No type is specified for wire 'rd_wr_i'. Default wire type is being applied 
-  according to the IEEE spec.
-  See the Verilog LRM(1364-2005), section 4.5.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/EX.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM_WB.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM_WB.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM_WB.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/MEM.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF_ID.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF_ID.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/IF_ID.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID_EX.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID_EX.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/ID_EX.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv'
-
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
-
-
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
-
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/pc_reg.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/cmp.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/mem_wb.sv'
@@ -200,52 +48,109 @@ Parsing design file '/home/ghuang23/MP4/mp4/hdl/regfile.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/cache.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/ir.sv'
 Parsing design file '/home/ghuang23/MP4/mp4/hdl/control_rom.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hdl/datapath.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hdl/alu.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/rvfimon.v'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/tb_itf.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/shadow_memory.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/param_memory.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/rvfi_itf.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/top.sv'
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/source_tb.sv'
+Parsing included file '../hvl/tb_itf.sv'.
+Back to file '/home/ghuang23/MP4/mp4/hvl/source_tb.sv'.
+Parsing design file '/home/ghuang23/MP4/mp4/hvl/magic_dual_port.sv'
+Top Level Modules:
+       mp4_tb
+TimeScale is 1 ns / 1 ps
 
-Lint-[SV-PIU] Package import statement in $unit scope.
-/home/ghuang23/MP4/mp4/hdl/control_rom.sv, 1
-$unit
-  There is an import statement in $unit scope.
-  Although this is legal as per the SystemVerilog LRM, it means that package 
-  content will be shared without explicit import of the package.
-  Package: rv32i_types::*
+Lint-[UI] Unused input
+/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 23
+  Following is an unused input.
+  Source info: WB_pc_plus4_i
 
 
-Note-[SV-LCM-PPWI] Package previously wildcard imported
-/home/ghuang23/MP4/mp4/hdl/control_rom.sv, 1
-$unit
-  Package 'rv32i_types' already wildcard imported. 
-  Ignoring rv32i_types::*
-  See the SystemVerilog LRM(1800-2005), section 19.2.1.
+Lint-[UI] Unused input
+/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 24
+  Following is an unused input.
+  Source info: WB_instr_i
 
 
-Error-[MFNF] Member not found
-/home/ghuang23/MP4/mp4/hdl/control_rom.sv, 35
-"alumux"
-  Could not find member 'imm' in package 'alumux', at 
-  "/home/ghuang23/MP4/mp4/pkg/rv32i_mux_types.sv", 23.
+Lint-[UI] Unused input
+/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 31
+  Following is an unused input.
+  Source info: WB_data_mem_wdata_i
+
+
+Lint-[ONGS] Output never gets set
+/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 42
+"WB_pc_plus4_o"
+  Output port 'WB_pc_plus4_o' has never been assigned to any value.
   
 
 
-Error-[IND] Identifier not declared
-/home/ghuang23/MP4/mp4/hdl/control_rom.sv, 37
-  Identifier 'rs2_out' has not been declared yet. If this error is not 
-  expected, please check if you have set `default_nettype to none.
+Lint-[UI] Unused input
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 7
+  Following is an unused input.
+  Source info: instr_mem_resp
+
+
+Lint-[UI] Unused input
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 9
+  Following is an unused input.
+  Source info: data_mem_resp
+
+
+Lint-[ONGS] Output never gets set
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 11
+"instr_read"
+  Output port 'instr_read' has never been assigned to any value.
   
 
 
-Error-[IND] Identifier not declared
-/home/ghuang23/MP4/mp4/hdl/control_rom.sv, 39
-  Identifier 'pc_out' has not been declared yet. If this error is not 
-  expected, please check if you have set `default_nettype to none.
+Lint-[ONGS] Output never gets set
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 13
+"data_read"
+  Output port 'data_read' has never been assigned to any value.
   
 
 
-Error-[SE] Syntax error
-  Following verilog source has syntax error :
-  "/home/ghuang23/MP4/mp4/hdl/control_rom.sv", 128: token is 'default'
-                  default: begin
-                         ^
+Lint-[ONGS] Output never gets set
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 14
+"data_write"
+  Output port 'data_write' has never been assigned to any value.
+  
 
-1 warning
-4 errors
-CPU time: .190 seconds to compile
+
+Lint-[ONGS] Output never gets set
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 15
+"data_mbe"
+  Output port 'data_mbe' has never been assigned to any value.
+  
+
+Notice: Ports coerced to inout, use -notice for details
+Starting vcs inline pass...
+
+11 modules and 0 UDP read.
+recompiling package vcs_paramclassrepository
+recompiling package pcmux
+recompiling package marmux
+recompiling package cmpmux
+recompiling package alumux
+recompiling package regfilemux
+recompiling package rv32i_types
+recompiling module mp4
+recompiling module tb_itf
+recompiling module rvfi_itf
+recompiling module mp4_tb
+All of 11 modules done
+make[1]: Entering directory '/home/ghuang23/MP4/mp4/sim/csrc'
+make[1]: Leaving directory '/home/ghuang23/MP4/mp4/sim/csrc'
+make[1]: Entering directory '/home/ghuang23/MP4/mp4/sim/csrc'
+rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
+if [ -x ../simv ]; then chmod a-x ../simv; fi
+g++  -o ../simv      -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir -Wl,-rpath=/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib -L/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib  -Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _1134242_archive_1.so  SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o           -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_tls.o   -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive        _vcs_pli_stub_.o   /software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_save_restore_new.o /software/Synopsys-2021_x86_64/verdi/R-2020.12-SP1-1/share/PLI/VCS/LINUX64/pli.a -ldl  -lc -lm -lpthread -ldl 
+../simv up to date
+make[1]: Leaving directory '/home/ghuang23/MP4/mp4/sim/csrc'
+CPU time: .963 seconds to compile + .382 seconds to elab + .315 seconds to link
+Verdi KDB elaboration done and the database successfully generated: 0 error(s), 0 warning(s)

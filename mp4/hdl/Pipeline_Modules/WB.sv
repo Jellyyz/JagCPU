@@ -15,8 +15,8 @@ import rv32i_types::*;
     input WB_mem_read_i,
     input WB_mem_write_i,
     input WB_br_en_i,
-    input logic WB_pcmux_sel_i,
-    input logic WB_alu_out_i,
+    input pcmux::pcmux_sel_t WB_pcmux_sel_i,
+    input logic [width-1:0] WB_alu_out_i,
     input logic [4:0] WB_rd_i,
     input rv32i_control_word WB_ctrl_word_i,
     input logic [width-1:0] WB_pc_out_i,
@@ -33,11 +33,36 @@ import rv32i_types::*;
 
     output logic WB_load_regfile_o,
     output logic [4:0] WB_rd_o,
-    output logic [width-1:0] WB_regfilemux_out_o
+    output logic [width-1:0] WB_regfilemux_out_o, 
+
+
+    // temporary outputs for verdi 
+    output logic WB_mem_read_o,
+    output logic WB_mem_write_o,
+    output logic [width - 1:0] WB_pc_plus4_o,
+    output logic [width - 1:0] WB_instr_o,
+    output logic [width - 1:0] WB_i_imm_o,
+    output logic [width - 1:0] WB_s_imm_o,
+    output logic [width - 1:0] WB_b_imm_o,
+    output logic [width - 1:0] WB_j_imm_o
+
 ); 
+always_comb begin: VCSstfu
+ 
+WB_mem_read_o = WB_mem_read_i;
+WB_mem_write_o = WB_mem_write_i; 
+WB_instr_o = WB_i_imm_i;
+WB_i_imm_o = WB_i_imm_i;
+WB_s_imm_o = WB_s_imm_i;
+WB_b_imm_o = WB_b_imm_i;
+WB_j_imm_o = WB_j_imm_i;
+
+
+end 
+
 
 regfilemux::regfilemux_sel_t regfilemux_sel;
-logic regfilemux_out; 
+logic [width-1:0] regfilemux_out; 
 
 always_comb begin : ctrl_decode
     regfilemux_sel = WB_ctrl_word_i.regfilemux_sel;

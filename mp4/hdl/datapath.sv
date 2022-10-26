@@ -87,7 +87,7 @@ logic EX_br_en;
 rv32i_word EX_MEM_pc_out, EX_MEM_pc_plus4; 
 rv32i_word EX_MEM_instr;
 rv32i_word EX_MEM_i_imm, EX_MEM_s_imm, EX_MEM_b_imm, EX_MEM_u_imm, EX_MEM_j_imm;
-rv32i_reg EX_MEM_rs2_out;
+rv32i_word EX_MEM_rs2_out;
 rv32i_control_word EX_MEM_ctrl_word;
 logic [4:0] EX_MEM_rd;
 rv32i_word  EX_MEM_alu_out;
@@ -123,8 +123,8 @@ rv32i_word MEM_data_mem_rdata;
 logic MEM_WB_mem_read;
 logic MEM_WB_mem_write;
 logic MEM_WB_br_en;
-logic MEM_WB_pcmux_sel;
-logic MEM_WB_alu_out;
+pcmux::pcmux_sel_t MEM_WB_pcmux_sel;
+logic [width-1:0] MEM_WB_alu_out;
 logic [4:0] MEM_WB_rd;
 rv32i_control_word MEM_WB_ctrl_word;
 logic [width-1:0] MEM_WB_pc_out;
@@ -154,30 +154,30 @@ IF IF(
     // input 
     .clk(clk),
     .rst(rst), 
-    .instr_mem_rdata_i(instr_mem_rdata), 
-    .ctrl_word_i(), 
-    .pcmux_sel_i(MEM_pcmux_sel),
-    .EX_MEM_alu_out(EX_MEM_alu_out),
+    .IF_instr_mem_rdata_i(instr_mem_rdata), 
+    .IF_ctrl_word_i(), 
+    .IF_pcmux_sel_i(MEM_pcmux_sel),
+    .IF_alu_out_i(EX_MEM_alu_out),
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
     .IF_instr_out_o(IF_instr_out) // needs to come from magic memory
-); 
+);
 
 // contains the PC register and IR register
 // @TODO: 
 // unsure where IR comes from 
 // also unsure how to load regs 
 // rv32i_word IF_ID_pc_out;
-// rv32i_word IF_ID_instr; 
+// rv32i_word IF_ID_instr;
 
 IF_ID IF_ID(
     // input 
     .clk(clk), 
     .rst(rst), 
-
     .flush_i(1'b0), 
     .load_i(1'b1), 
+
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(IF_instr_out), 
 
@@ -268,7 +268,6 @@ ID_EX ID_EX(
 EX EX(
 // i think this one is the easiest once we have the other crap done. 
     // inputs 
-    .clk(clk), .rst(rst), 
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out), .EX_rs2_out_i(ID_EX_rs2_out), 
     .EX_rd_i(ID_EX_rd), .EX_instr_i(ID_EX_instr), 
@@ -279,10 +278,10 @@ EX EX(
     .EX_j_imm_i(ID_EX_j_imm),
 
     // outputs 
-    .EX_pc_out(EX_pc_out), .EX_pc_plus4_o(EX_pc_plus4), 
+    .EX_pc_out_o(EX_pc_out), .EX_pc_plus4_o(EX_pc_plus4), 
     .EX_instr_o(EX_instr), 
-    .EX_i_imm_out(EX_i_imm), .EX_u_imm_out(EX_u_imm), 
-    .EX_b_imm_out(EX_b_imm), .EX_s_imm_out(EX_s_imm), .EX_j_imm_out(EX_j_imm),
+    .EX_i_imm_o(EX_i_imm), .EX_u_imm_o(EX_u_imm), 
+    .EX_b_imm_o(EX_b_imm), .EX_s_imm_o(EX_s_imm), .EX_j_imm_o(EX_j_imm),
 
     .EX_rs2_out_o(EX_rs2_out), 
     .EX_ctrl_word_o(EX_ctrl_word), 
@@ -307,7 +306,8 @@ EX EX(
 // logic EX_MEM_br_en;
 EX_MEM EX_MEM(
     // inputs 
-    .clk(clk), .rst(rst), 
+    .clk(clk), 
+    .rst(rst), 
     .load_i(1'b1),
     
     .EX_MEM_pc_out_i(EX_pc_out), .EX_MEM_pc_plus4_i(EX_pc_plus4), 
@@ -379,7 +379,7 @@ MEM MEM(
     .MEM_rd_o(MEM_rd),
     .MEM_ctrl_word_o(MEM_ctrl_word),
 
-    .MEM_mem_read_o(data_read), .MEM_mem_write_o(data_write),
+    .MEM_mem_read_o(MEM_mem_read), .MEM_mem_write_o(MEM_mem_write),
     
     .MEM_br_en_o(MEM_br_en),
     .MEM_pc_out_o(MEM_pc_out), 
@@ -421,28 +421,28 @@ MEM_WB MEM_WB(
     .load_i(1'b1), 
 
     // @ TODO FIX MEM_READ_O
-    .MEM_WB_mem_read_i(MEM_mem_read),
-    .MEM_WB_mem_write_i(MEM_mem_write),
-    .MEM_WB_br_en_i(MEM_br_en),
-    .MEM_WB_pcmux_sel_i(MEM_pcmux_sel),
-    .MEM_WB_alu_out_i(MEM_alu_out),
-    .MEM_WB_rd_i(MEM_rd),
-    .MEM_WB_ctrl_word_i(MEM_ctrl_word),
-    .MEM_WB_pc_out_i(MEM_pc_out),
-    .MEM_WB_pc_plus4_i(MEM_pc_plus4),
-    .MEM_WB_instr_i(MEM_instr),
-    .MEM_WB_i_imm_i(MEM_i_imm),
-    .MEM_WB_s_imm_i(MEM_s_imm),
-    .MEM_WB_b_imm_i(MEM_b_imm),
-    .MEM_WB_u_imm_i(MEM_u_imm),
-    .MEM_WB_j_imm_i(MEM_j_imm),
-    .MEM_WB_data_mem_address_i(MEM_data_mem_address),
-    .MEM_WB_data_mem_wdata_i(MEM_data_mem_wdata),
-    .MEM_WB_data_mem_rdata_i(data_mem_rdata), // must be updated after cp1 to be output of MEM stage
+    .MEM_WB_mem_read_i          (MEM_mem_read),
+    .MEM_WB_mem_write_i         (MEM_mem_write),
+    .MEM_WB_br_en_i             (MEM_br_en),
+    .MEM_WB_pcmux_sel_i         (MEM_pcmux_sel),
+    .MEM_WB_alu_out_i           (MEM_alu_out),
+    .MEM_WB_rd_i                (MEM_rd),
+    .MEM_WB_ctrl_word_i         (MEM_ctrl_word),
+    .MEM_WB_pc_out_i            (MEM_pc_out),
+    .MEM_WB_pc_plus4_i          (MEM_pc_plus4),
+    .MEM_WB_instr_i             (MEM_instr),
+    .MEM_WB_i_imm_i             (MEM_i_imm),
+    .MEM_WB_s_imm_i             (MEM_s_imm),
+    .MEM_WB_b_imm_i             (MEM_b_imm),
+    .MEM_WB_u_imm_i             (MEM_u_imm),
+    .MEM_WB_j_imm_i             (MEM_j_imm),
+    .MEM_WB_data_mem_address_i  (data_mem_address),
+    .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
+    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // must be updated after cp1 to be output of MEM stage
 
     // outputs 
-    .MEM_WB_mem_read_o(data_read), 
-    .MEM_WB_mem_write_o(data_write),
+    .MEM_WB_mem_read_o(MEM_WB_mem_read),  
+    .MEM_WB_mem_write_o(MEM_WB_mem_write),
     .MEM_WB_br_en_o(MEM_WB_br_en), 
     .MEM_WB_pcmux_sel_o(MEM_WB_pcmux_sel),
     .MEM_WB_alu_out_o(MEM_WB_alu_out),
@@ -456,8 +456,8 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_o(MEM_WB_b_imm),
     .MEM_WB_u_imm_o(MEM_WB_u_imm),
     .MEM_WB_j_imm_o(MEM_WB_j_imm),
-    .MEM_WB_data_mem_address_o(data_mem_address), // magic
-    .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
+    // .MEM_WB_data_mem_address_o(data_mem_address), // magic
+    // .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
     .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata) // magic
 ); 
 
@@ -466,8 +466,9 @@ MEM_WB MEM_WB(
 // logic [4:0] WB_rd;
 // logic [width-1:0] WB_regfilemux_out;
 WB WB (
-    .WB_mem_read_i          (data_read),
-    .WB_mem_write_i         (data_write),
+    // inputs 
+    .WB_mem_read_i          (MEM_WB_mem_write),
+    .WB_mem_write_i         (MEM_WB_mem_write),
     .WB_br_en_i             (MEM_WB_br_en),
     .WB_pcmux_sel_i         (MEM_WB_pcmux_sel),
     .WB_alu_out_i           (MEM_WB_alu_out),
@@ -485,6 +486,7 @@ WB WB (
     .WB_data_mem_wdata_i    (data_mem_wdata), 
     .WB_data_mem_rdata_i    (MEM_WB_data_mem_rdata),
 
+    // outputs 
     .WB_load_regfile_o      (WB_load_regfile),
     .WB_rd_o                (WB_rd),
     .WB_regfilemux_out_o    (WB_regfilemux_out)
@@ -507,13 +509,13 @@ end
 
 
 
-always_comb begin : MUXES
+// always_comb begin : MUXES
 
-    unique case(MEM_pcmux_sel) 
-        pcmux::pc_plus4 : pcmux_out = IF_pc_out + 4;
-        pcmux::alu_out : pcmux_out = EX_alu_out; 
-        pcmux::alu_mod2 : pcmux_out = EX_alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
-        default: $display("hit pcmux error");
-    endcase  
-end
+//     unique case(MEM_pcmux_sel) 
+//         pcmux::pc_plus4 : pcmux_out = IF_pc_out + 4;
+//         pcmux::alu_out : pcmux_out = EX_alu_out; 
+//         pcmux::alu_mod2 : pcmux_out = EX_alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
+//         default: $display("hit pcmux error");
+//     endcase  
+// end
 endmodule 

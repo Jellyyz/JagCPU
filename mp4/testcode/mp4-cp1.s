@@ -1,4 +1,4 @@
-#  mp4-cp1.s version 4.0
+
 .align 4
 .section .text
 .globl _start

@@ -76,7 +76,7 @@ begin
             ctrl.cmpmux_sel = cmpmux::rs2_out;
             ctrl.alumux1_sel = alumux::pc_out;
             ctrl.alumux2_sel = alumux::b_imm;
-            ctr.aluop = alu_add;
+            ctrl.aluop = alu_add;
         end
         op_load: begin
             ctrl.marmux_sel = marmux::alu_out; // @TODO
@@ -108,14 +108,14 @@ begin
                 sr: begin
                     ctrl.regfilemux_sel = regfilemux::alu_out;
                     unique case (funct7[5])
-                        1'b0: ctrl.alu_op = alu_srl;
-                        1'b1: ctrl.alu_op = alu_sra;
+                        1'b0: ctrl.aluop = alu_srl;
+                        1'b1: ctrl.aluop = alu_sra;
                     endcase
                 end
                 slt: begin
                     ctrl.cmpmux_sel = cmpmux::i_imm;
                     ctrl.cmpop = blt;
-                    ctrol.regfilemux_sel = regfilemux::br_en;
+                    ctrl.regfilemux_sel = regfilemux::br_en;
                 end
                 sltu: begin
                     ctrl.cmpmux_sel = cmpmux:: i_imm;
