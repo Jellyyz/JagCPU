@@ -4,17 +4,19 @@ import rv32i_types::*;
     input logic clk, rst, 
     
 	//Remove after CP1
-    input 					instr_mem_resp,
     input rv32i_word 	instr_mem_rdata,
-	input 					data_mem_resp,
     input rv32i_word 	data_mem_rdata, 
-    output logic 			instr_read,
+    output rv32i_word 	data_mem_address,
+    output rv32i_word 	data_mem_wdata,
+
+    // undriven or unused 
 	output rv32i_word 	instr_mem_address,
+    input 					instr_mem_resp,
+	input 					data_mem_resp,
+    output logic 			instr_read,
     output logic 			data_read,
     output logic 			data_write,
-    output logic [3:0] 	data_mbe,
-    output rv32i_word 	data_mem_address,
-    output rv32i_word 	data_mem_wdata
+    output logic [3:0] 	data_mbe
 
 ); 
 
@@ -51,7 +53,7 @@ rv32i_word IF_ID_instr;
 /****************************************/
 rv32i_control_word ID_ctrl_word; 
 rv32i_word ID_instr;
-rv32i_word ID_pc_out; 
+rv32i_word ID_pc_out;  
 rv32i_word ID_rs1_out;
 rv32i_word ID_rs2_out; 
 rv32i_word ID_i_imm, ID_s_imm, ID_b_imm, ID_u_imm, ID_j_imm;
@@ -146,6 +148,13 @@ logic WB_load_regfile;
 logic [4:0] WB_rd;
 logic [width-1:0] WB_regfilemux_out;
 
+always_comb begin : MEM_PORTS
+
+    instr_read = 1; 
+    instr_mem_address = IF_pc_out; 
+
+end 
+
 /****************************************/
 /* Begin instantiation ******************/
 /****************************************/
@@ -161,7 +170,7 @@ IF IF(
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
-    .IF_instr_out_o(IF_instr_out) // needs to come from magic memory
+    .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp1
 );
 
 // contains the PC register and IR register
@@ -179,7 +188,7 @@ IF_ID IF_ID(
     .load_i(1'b1), 
 
     .IF_ID_pc_out_i(IF_pc_out), 
-    .IF_ID_instr_i(IF_instr_out), 
+    .IF_ID_instr_i(instr_mem_rdata), 
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
@@ -271,8 +280,8 @@ EX EX(
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out), .EX_rs2_out_i(ID_EX_rs2_out), 
     .EX_rd_i(ID_EX_rd), .EX_instr_i(ID_EX_instr), 
-    .EX_br_en_i(ID_EX_br_en), 
-
+    .EX_br_en_i(ID_EX_br_en),   
+    .EX_ctrl_word_i(ID_EX_ctrl_word),
     .EX_i_imm_i(ID_EX_i_imm), .EX_u_imm_i(ID_EX_u_imm), 
     .EX_b_imm_i(ID_EX_b_imm), .EX_s_imm_i(ID_EX_s_imm),
     .EX_j_imm_i(ID_EX_j_imm),
