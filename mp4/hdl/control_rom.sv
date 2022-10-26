@@ -39,6 +39,8 @@ function void set_defaults();
     ctrl.marmux_sel = marmux::pc_out; 
     ctrl.aluop = alu_add;
     ctrl.cmpop = beq;
+
+    ctrl.mem_byte_en = 4'b1111;
 endfunction
 
 
@@ -86,11 +88,11 @@ begin
             ctrl.load_regfile = 1'b1;
             ctrl.mem_read = 1'b1;
             unique case (load_funct3)
-                lb:  ctrl.regfilemux_sel = regfilemux::lb;
-                lbu: ctrl.regfilemux_sel = regfilemux::lbu;
-                lh:  ctrl.regfilemux_sel = regfilemux::lh;
-                lhu: ctrl.regfilemux_sel = regfilemux::lhu;
-                lw:  ctrl.regfilemux_sel = regfilemux::lw;
+                lb  :  ctrl.regfilemux_sel = regfilemux::lb;
+                lbu : ctrl.regfilemux_sel = regfilemux::lbu;
+                lh  :  ctrl.regfilemux_sel = regfilemux::lh;
+                lhu : ctrl.regfilemux_sel = regfilemux::lhu;
+                lw  :  ctrl.regfilemux_sel = regfilemux::lw;
             endcase
         end
         op_store: begin
@@ -99,6 +101,12 @@ begin
             ctrl.alumux2_sel = alumux::s_imm;
             ctrl.aluop = alu_add;
             ctrl.mem_write = 1'b1;
+            unique case (store_funct3)
+                sb : ctrl.mem_byte_en = 4'b0001;// << mem_addr_byte_sel[1:0];
+                sh : ctrl.mem_byte_en = 4'b0011;// << mem_addr_byte_sel[1:0];
+                sw : ctrl.mem_byte_en = 4'b1111;// << mem_addr_byte_sel[1:0];
+                default : ;
+            endcase
         end
         op_imm: begin
             ctrl.alumux1_sel = alumux::rs1_out;

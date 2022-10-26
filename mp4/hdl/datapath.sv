@@ -119,6 +119,8 @@ rv32i_word MEM_data_mem_address;
 rv32i_word MEM_data_mem_wdata;
 rv32i_word MEM_data_mem_rdata;
 
+// [3:0] MEM_mem_byte_en;
+
 /****************************************/
 /* Declarations for MEM/WB **************/
 /****************************************/
@@ -150,7 +152,7 @@ logic [width-1:0] WB_regfilemux_out;
 
 always_comb begin : MEM_PORTS
 
-    instr_read = 1; 
+    instr_read = 1'b1; 
     instr_mem_address = IF_pc_out; 
 
 end 
@@ -244,20 +246,33 @@ ID_EX ID_EX(
     .clk(clk), .rst(rst),
     .load_i(1'b1), 
 
-    .ID_EX_ctrl_word_i(ID_ctrl_word), .ID_EX_instr_i(ID_instr), .ID_EX_pc_out_i(ID_pc_out),
-    .ID_EX_rs1_out_i(ID_rs1_out), .ID_EX_rs2_out_i(ID_rs2_out), 
+    .ID_EX_ctrl_word_i(ID_ctrl_word), 
+    .ID_EX_instr_i(ID_instr), 
+    .ID_EX_pc_out_i(ID_pc_out),
+    .ID_EX_rs1_out_i(ID_rs1_out), 
+    .ID_EX_rs2_out_i(ID_rs2_out), 
 
-    .ID_EX_i_imm_i(ID_i_imm), .ID_EX_s_imm_i(ID_s_imm), .ID_EX_b_imm_i(ID_b_imm), 
-    .ID_EX_u_imm_i(ID_u_imm), .ID_EX_j_imm_i(ID_j_imm), 
-    .ID_EX_rd_i(ID_rd), 
-    .ID_EX_br_en_i(ID_br_en), 
+    .ID_EX_i_imm_i(ID_i_imm),
+    .ID_EX_s_imm_i(ID_s_imm),
+    .ID_EX_b_imm_i(ID_b_imm),
+    .ID_EX_u_imm_i(ID_u_imm),
+    .ID_EX_j_imm_i(ID_j_imm),
+
+    .ID_EX_rd_i(ID_rd),
+    .ID_EX_br_en_i(ID_br_en),
 
     // outputs 
-    .ID_EX_ctrl_word_o(ID_EX_ctrl_word), .ID_EX_instr_o(ID_EX_instr), 
-    .ID_EX_pc_out_o(ID_EX_pc_out), .ID_EX_rs1_out_o(ID_EX_rs1_out), .ID_EX_rs2_out_o(ID_EX_rs2_out), 
+    .ID_EX_ctrl_word_o(ID_EX_ctrl_word),
+    .ID_EX_instr_o(ID_EX_instr),
+    .ID_EX_pc_out_o(ID_EX_pc_out),
+    .ID_EX_rs1_out_o(ID_EX_rs1_out),
+    .ID_EX_rs2_out_o(ID_EX_rs2_out),
 
-    .ID_EX_i_imm_o(ID_EX_i_imm), .ID_EX_s_imm_o(ID_EX_s_imm), .ID_EX_b_imm_o(ID_EX_b_imm), 
-    .ID_EX_u_imm_o(ID_EX_u_imm), .ID_EX_j_imm_o(ID_EX_j_imm), 
+    .ID_EX_i_imm_o(ID_EX_i_imm),
+    .ID_EX_s_imm_o(ID_EX_s_imm),
+    .ID_EX_b_imm_o(ID_EX_b_imm),
+    .ID_EX_u_imm_o(ID_EX_u_imm),
+    .ID_EX_j_imm_o(ID_EX_j_imm), 
 
     .ID_EX_rd_o(ID_EX_rd), .ID_EX_br_en_o(ID_EX_br_en)
 
@@ -287,10 +302,14 @@ EX EX(
     .EX_j_imm_i(ID_EX_j_imm),
 
     // outputs 
-    .EX_pc_out_o(EX_pc_out), .EX_pc_plus4_o(EX_pc_plus4), 
+    .EX_pc_out_o(EX_pc_out),
+    .EX_pc_plus4_o(EX_pc_plus4), 
     .EX_instr_o(EX_instr), 
-    .EX_i_imm_o(EX_i_imm), .EX_u_imm_o(EX_u_imm), 
-    .EX_b_imm_o(EX_b_imm), .EX_s_imm_o(EX_s_imm), .EX_j_imm_o(EX_j_imm),
+    .EX_i_imm_o(EX_i_imm),
+    .EX_u_imm_o(EX_u_imm), 
+    .EX_b_imm_o(EX_b_imm),
+    .EX_s_imm_o(EX_s_imm),
+    .EX_j_imm_o(EX_j_imm),
 
     .EX_rs2_out_o(EX_rs2_out), 
     .EX_ctrl_word_o(EX_ctrl_word), 
@@ -319,10 +338,13 @@ EX_MEM EX_MEM(
     .rst(rst), 
     .load_i(1'b1),
     
-    .EX_MEM_pc_out_i(EX_pc_out), .EX_MEM_pc_plus4_i(EX_pc_plus4), 
+    .EX_MEM_pc_out_i(EX_pc_out),
+    .EX_MEM_pc_plus4_i(EX_pc_plus4), 
     .EX_MEM_instr_i(EX_instr),
-    .EX_MEM_i_imm_i(EX_i_imm), .EX_MEM_s_imm_i(EX_s_imm),
-    .EX_MEM_b_imm_i(EX_b_imm), .EX_MEM_u_imm_i(EX_u_imm),
+    .EX_MEM_i_imm_i(EX_i_imm),
+    .EX_MEM_s_imm_i(EX_s_imm),
+    .EX_MEM_b_imm_i(EX_b_imm),
+    .EX_MEM_u_imm_i(EX_u_imm),
     .EX_MEM_j_imm_i(EX_j_imm),
     .EX_MEM_rs2_out_i(EX_rs2_out),
     .EX_MEM_ctrl_word_i(EX_ctrl_word),
@@ -331,19 +353,22 @@ EX_MEM EX_MEM(
     .EX_MEM_br_en_i(EX_br_en),
 
     // outputs
-    .EX_MEM_pc_out_o(EX_MEM_pc_out), .EX_MEM_pc_plus4_o(EX_MEM_pc_plus4), 
+    .EX_MEM_pc_out_o(EX_MEM_pc_out),
+    .EX_MEM_pc_plus4_o(EX_MEM_pc_plus4), 
     .EX_MEM_instr_o(EX_MEM_instr),
-    .EX_MEM_i_imm_o(EX_MEM_i_imm), .EX_MEM_s_imm_o(EX_MEM_s_imm),
-    .EX_MEM_b_imm_o(EX_MEM_b_imm), .EX_MEM_u_imm_o(EX_MEM_u_imm),
+    .EX_MEM_i_imm_o(EX_MEM_i_imm),
+    .EX_MEM_s_imm_o(EX_MEM_s_imm),
+    .EX_MEM_b_imm_o(EX_MEM_b_imm),
+    .EX_MEM_u_imm_o(EX_MEM_u_imm),
     .EX_MEM_j_imm_o(EX_MEM_j_imm),
     .EX_MEM_rs2_out_o(EX_MEM_rs2_out),
     .EX_MEM_ctrl_word_o(EX_MEM_ctrl_word), 
     .EX_MEM_rd_o(EX_MEM_rd),
     .EX_MEM_alu_out_o(EX_MEM_alu_out),
     .EX_MEM_br_en_o(EX_MEM_br_en)
-
-
 ); 
+
+
 // logic MEM_pcmux_sel;
 // logic MEM_alu_out;
 // rv32i_control_word MEM_ctrl_word;
@@ -388,7 +413,8 @@ MEM MEM(
     .MEM_rd_o(MEM_rd),
     .MEM_ctrl_word_o(MEM_ctrl_word),
 
-    .MEM_mem_read_o(MEM_mem_read), .MEM_mem_write_o(MEM_mem_write),
+    .MEM_mem_read_o(data_read), 
+    .MEM_mem_write_o(data_write),
     
     .MEM_br_en_o(MEM_br_en),
     .MEM_pc_out_o(MEM_pc_out), 
@@ -402,8 +428,9 @@ MEM MEM(
 
     .MEM_i_imm_o(MEM_i_imm), .MEM_s_imm_o(MEM_s_imm),
     .MEM_b_imm_o(MEM_b_imm), .MEM_u_imm_o(MEM_u_imm),
-    .MEM_j_imm_o(MEM_j_imm)
+    .MEM_j_imm_o(MEM_j_imm),
 
+    .MEM_mem_byte_en_o(data_mbe)
 ); 
 
 // logic MEM_WB_mem_read;
@@ -430,8 +457,8 @@ MEM_WB MEM_WB(
     .load_i(1'b1), 
 
     // @ TODO FIX MEM_READ_O
-    .MEM_WB_mem_read_i          (MEM_mem_read),
-    .MEM_WB_mem_write_i         (MEM_mem_write),
+    // .MEM_WB_mem_read_i          (MEM_mem_read),
+    // .MEM_WB_mem_write_i         (MEM_mem_write),
     .MEM_WB_br_en_i             (MEM_br_en),
     .MEM_WB_pcmux_sel_i         (MEM_pcmux_sel),
     .MEM_WB_alu_out_i           (MEM_alu_out),
@@ -445,14 +472,14 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_i             (MEM_b_imm),
     .MEM_WB_u_imm_i             (MEM_u_imm),
     .MEM_WB_j_imm_i             (MEM_j_imm),
-    .MEM_WB_data_mem_address_i  (data_mem_address),
-    .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
+    // .MEM_WB_data_mem_address_i  (data_mem_address),
+    // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
     .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // must be updated after cp1 to be output of MEM stage
 
-    // outputs 
-    .MEM_WB_mem_read_o(MEM_WB_mem_read),  
-    .MEM_WB_mem_write_o(MEM_WB_mem_write),
-    .MEM_WB_br_en_o(MEM_WB_br_en), 
+    // outputs
+    // .MEM_WB_mem_read_o(MEM_WB_mem_read),
+    // .MEM_WB_mem_write_o(MEM_WB_mem_write),
+    .MEM_WB_br_en_o(MEM_WB_br_en),
     .MEM_WB_pcmux_sel_o(MEM_WB_pcmux_sel),
     .MEM_WB_alu_out_o(MEM_WB_alu_out),
     .MEM_WB_rd_o(MEM_WB_rd),
@@ -476,8 +503,8 @@ MEM_WB MEM_WB(
 // logic [width-1:0] WB_regfilemux_out;
 WB WB (
     // inputs 
-    .WB_mem_read_i          (MEM_WB_mem_write),
-    .WB_mem_write_i         (MEM_WB_mem_write),
+    // .WB_mem_read_i          (MEM_WB_mem_write),
+    // .WB_mem_write_i         (MEM_WB_mem_write),
     .WB_br_en_i             (MEM_WB_br_en),
     .WB_pcmux_sel_i         (MEM_WB_pcmux_sel),
     .WB_alu_out_i           (MEM_WB_alu_out),
@@ -491,8 +518,8 @@ WB WB (
     .WB_b_imm_i             (MEM_WB_b_imm),
     .WB_u_imm_i             (MEM_WB_u_imm),
     .WB_j_imm_i             (MEM_WB_j_imm),
-    .WB_data_mem_address_i  (data_mem_address), 
-    .WB_data_mem_wdata_i    (data_mem_wdata), 
+    // .WB_data_mem_address_i  (data_mem_address), 
+    // .WB_data_mem_wdata_i    (data_mem_wdata), 
     .WB_data_mem_rdata_i    (MEM_WB_data_mem_rdata),
 
     // outputs 

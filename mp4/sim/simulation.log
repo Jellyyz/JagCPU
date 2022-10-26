@@ -1,7 +1,7 @@
 Command: /home/ghuang23/MP4/mp4/sim/./simv -l simulation.log
 Chronologic VCS simulator copyright 1991-2020
 Contains Synopsys proprietary information.
-Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Oct 26 12:41 2022
+Compiler version R-2020.12-SP1-1_Full64; Runtime version R-2020.12-SP1-1_Full64;  Oct 26 16:39 2022
 *Verdi* Loading libsscore_vcs202012.so
 FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/2021
 (C) 1996 - 2021 by Synopsys, Inc.
@@ -10,10 +10,12 @@ FSDB Dumper for VCS, Release Verdi_R-2020.12-SP1-1, Linux x86_64/64bit, 04/20/20
 *Verdi* : Enable +all dumping.
 *Verdi* : End of traversing.
 Compilation Successful
-Interrupt at time 33605945000
+Interrupt at time 1122645000
 
+ucli% finiah
+ invalid command name "finiah"
 ucli% finish
             V C S   S i m u l a t i o n   R e p o r t 
-Time: 33605945000 ps
-CPU Time:     34.460 seconds;       Data structure size:   0.0Mb
-Wed Oct 26 12:42:13 2022
+Time: 1122645000 ps
+CPU Time:      4.060 seconds;       Data structure size:   0.0Mb
+Wed Oct 26 16:39:14 2022

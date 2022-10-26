@@ -27,7 +27,7 @@ Command: vcs /home/ghuang23/MP4/mp4/pkg/rv32i_mux_types.sv /home/ghuang23/MP4/mp
 -msg_config=../warn.config -l compile.log +incdir+../pkg +incdir+../hvl -top mp4_tb \
 
                          Chronologic VCS (TM)
-      Version R-2020.12-SP1-1_Full64 -- Wed Oct 26 12:41:37 2022
+      Version R-2020.12-SP1-1_Full64 -- Wed Oct 26 16:38:58 2022
 
                     Copyright (c) 1991 - 2021 Synopsys, Inc.
    This software and the associated documentation are proprietary to Synopsys,
@@ -79,68 +79,15 @@ Top Level Modules:
 TimeScale is 1 ns / 1 ps
 
 Lint-[UI] Unused input
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 23
-  Following is an unused input.
-  Source info: WB_pc_plus4_i
-
-
-Lint-[UI] Unused input
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 24
-  Following is an unused input.
-  Source info: WB_instr_i
-
-
-Lint-[UI] Unused input
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 31
-  Following is an unused input.
-  Source info: WB_data_mem_wdata_i
-
-
-Lint-[ONGS] Output never gets set
-/home/ghuang23/MP4/mp4/hdl/Pipeline_Modules/WB.sv, 42
-"WB_pc_plus4_o"
-  Output port 'WB_pc_plus4_o' has never been assigned to any value.
-  
-
-
-Lint-[UI] Unused input
-/home/ghuang23/MP4/mp4/hdl/datapath.sv, 7
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 14
   Following is an unused input.
   Source info: instr_mem_resp
 
 
 Lint-[UI] Unused input
-/home/ghuang23/MP4/mp4/hdl/datapath.sv, 9
+/home/ghuang23/MP4/mp4/hdl/datapath.sv, 15
   Following is an unused input.
   Source info: data_mem_resp
-
-
-Lint-[ONGS] Output never gets set
-/home/ghuang23/MP4/mp4/hdl/datapath.sv, 11
-"instr_read"
-  Output port 'instr_read' has never been assigned to any value.
-  
-
-
-Lint-[ONGS] Output never gets set
-/home/ghuang23/MP4/mp4/hdl/datapath.sv, 13
-"data_read"
-  Output port 'data_read' has never been assigned to any value.
-  
-
-
-Lint-[ONGS] Output never gets set
-/home/ghuang23/MP4/mp4/hdl/datapath.sv, 14
-"data_write"
-  Output port 'data_write' has never been assigned to any value.
-  
-
-
-Lint-[ONGS] Output never gets set
-/home/ghuang23/MP4/mp4/hdl/datapath.sv, 15
-"data_mbe"
-  Output port 'data_mbe' has never been assigned to any value.
-  
 
 Notice: Ports coerced to inout, use -notice for details
 Starting vcs inline pass...
@@ -163,7 +110,7 @@ rm -f _cuarc*.so _csrc*.so pre_vcsobj_*.so share_vcsobj_*.so
 if [ -x ../simv ]; then chmod a-x ../simv; fi
 g++  -o ../simv      -rdynamic  -Wl,-rpath='$ORIGIN'/simv.daidir -Wl,-rpath=./simv.daidir \
 -Wl,-rpath=/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib -L/software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib \
--Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _1134242_archive_1.so \
+-Wl,-rpath-link=./  /usr/lib64/libnuma.so.1   objs/amcQw_d.o   _2921154_archive_1.so \
 SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm_0_0.o \
 -lvirsim -lerrorinf -lsnpsmalloc -lvfs    -lvcsnew -lsimprofile -luclinative /software/Synopsys-2021_x86_64/vcs/R-2020.12-SP1-1/linux64/lib/vcs_tls.o \
 -Wl,-whole-archive  -lvcsucli    -Wl,-no-whole-archive        _vcs_pli_stub_.o   \
@@ -172,4 +119,4 @@ SIM_l.o      rmapats_mop.o rmapats.o rmar.o rmar_nd.o  rmar_llvm_0_1.o rmar_llvm
 -ldl  -lc -lm -lpthread -ldl 
 ../simv up to date
 make[1]: Leaving directory '/home/ghuang23/MP4/mp4/sim/csrc'
-CPU time: .963 seconds to compile + .382 seconds to elab + .315 seconds to link
+CPU time: 1.063 seconds to compile + .368 seconds to elab + .333 seconds to link

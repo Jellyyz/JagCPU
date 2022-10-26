@@ -77,6 +77,8 @@ typedef struct packed {
     logic [2:0] funct3;
     logic [6:0] funct7;
 
+    logic [3:0] mem_byte_en;
+
     pcmux::pcmux_sel_t pcmux_sel;
     alumux::alumux1_sel_t alumux1_sel;
     alumux::alumux2_sel_t alumux2_sel;
@@ -86,6 +88,7 @@ typedef struct packed {
 
     alu_ops aluop;
     branch_funct3_t cmpop;
+    
 } rv32i_control_word;
 
 
