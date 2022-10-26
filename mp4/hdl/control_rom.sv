@@ -34,8 +34,7 @@ function void set_defaults();
     ctrl.alumux1_sel = alumux::rs1_out;
     ctrl.alumux2_sel = alumux::imm;
     ctrl.regfilemux_sel = regfilemux::alu_out;
-    //Idk yet
-    //ctrl.cmpmux_sel = 
+    ctrl.cmpmux_sel = rs2_out; 
 
     ctrl.aluop = alu_add;
     ctrl.cmpop = beq;
