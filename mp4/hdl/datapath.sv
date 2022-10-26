@@ -1,6 +1,7 @@
-import rv32i_types::*;
 
-module datapath(
+module datapath
+import rv32i_types::*;
+(
     input logic clk, rst, 
     
 	//Remove after CP1
@@ -391,5 +392,5 @@ always_comb begin : MUXES
         pcmux::alu_mod2 : pcmux_out = alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
         default: $display("hit pcmux error");
     endcase  
-
+end
 endmodule 

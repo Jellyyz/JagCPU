@@ -1,8 +1,8 @@
-import rv32i_types::*;
 
-module MEM #(
-    parameter width = 32
-) (
+module MEM 
+import rv32i_types::*;
+#(parameter width = 32) 
+(
     input clk,
     input rst,
 

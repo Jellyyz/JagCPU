@@ -1,8 +1,8 @@
-import rv32i_types::*;
 
-module IF_ID #(
-        parameter width = 32
-    ) (
+module IF_ID 
+import rv32i_types::*;
+#(parameter width = 32) 
+(
         input clk,
         input rst,
         input logic flush_i,

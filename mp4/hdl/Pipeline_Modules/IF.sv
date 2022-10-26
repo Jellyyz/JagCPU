@@ -1,5 +1,6 @@
+module IF
 import rv32i_types::*;
-module IF(
+(
  
     input logic clk, rst, 
     input logic instr_mem_rdata, 

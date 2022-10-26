@@ -1,6 +1,8 @@
-import rv32i_types::*;
 
-module WB #(parameter width = 32) (
+module WB 
+import rv32i_types::*;
+#(parameter width = 32) 
+(
 
     // input rv32i_word WB_imm_in(), 
     // input rv32i_word WB_mem_rdata_in(), 

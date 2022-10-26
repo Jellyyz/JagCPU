@@ -1,6 +1,8 @@
-import rv32i_types::*;
 
-module EX #(parameter width = 32) (
+module EX 
+import rv32i_types::*;
+#(parameter width = 32) 
+(
     input logic clk, 
     input logic rst, 
 
