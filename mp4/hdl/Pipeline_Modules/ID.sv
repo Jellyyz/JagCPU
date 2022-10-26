@@ -1,6 +1,6 @@
 import rv32i_types::*;
 
-module id #(
+module ID #(
     parameter width = 32
 ) (
     input clk,
@@ -14,22 +14,22 @@ module id #(
 
     
     // all outputs out to ID/EX reg
-    output rv32i_control_word IDEX_ctrl_word_o,
-    output logic [width-1:0] IDEX_instr_o,
-    output logic[width-1:0] IDEX_pc_out_o, 
+    output rv32i_control_word ID_ctrl_word_o,
+    output logic [width-1:0] ID_instr_o,
+    output logic[width-1:0] ID_pc_out_o, 
 
-    output logic[width-1:0] IDEX_rs1_out_o,
-    output logic[width-1:0] IDEX_rs2_out_o,
+    output logic[width-1:0] ID_rs1_out_o,
+    output logic[width-1:0] ID_rs2_out_o,
 
-    output logic[width-1:0] IDEX_i_imm_o,
-    output logic[width-1:0] IDEX_s_imm_o,
-    output logic[width-1:0] IDEX_b_imm_o,
-    output logic[width-1:0] IDEX_u_imm_o,
-    output logic[width-1:0] IDEX_j_imm_o,
+    output logic[width-1:0] ID_i_imm_o,
+    output logic[width-1:0] ID_s_imm_o,
+    output logic[width-1:0] ID_b_imm_o,
+    output logic[width-1:0] ID_u_imm_o,
+    output logic[width-1:0] ID_j_imm_o,
 
-    output logic[4:0] IDEX_rd_o,
+    output logic[4:0] ID_rd_o,
 
-    output logic IDEX_br_en_o
+    output logic ID_br_en_o
 );
 
 rv32i_opcode opcode;
@@ -41,11 +41,11 @@ logic [4:0] rs1, rs2, rd;
 logic [width-1:0] rs1_out, rs2_out;
 
 rv32i_control_word ctrl_word;
-branch_funct3 cmpop;
+branch_funct3_t cmpop;
 cmpmux::cmpmux_sel_t cmpmux_sel;
 
 logic br_en;
-
+logic [31:0] cmp_mux_out; 
 always_comb begin : instr_decode
     opcode = rv32i_opcode'(ID_instr_i[6:0]);
     funct3 = ID_instr_i[14:12];
@@ -64,7 +64,7 @@ end
 
 always_comb begin : ctrl_decode
     cmpop = ctrl_word.cmpop;
-    cmpmux_sel = ctrl_word.cmpmux_sel
+    cmpmux_sel = ctrl_word.cmpmux_sel;
 end
 
 always_comb begin : muxes
@@ -96,7 +96,7 @@ regfile regfile (
     .clk    (clk),
     .rst    (rst),
     .load   (ID_load_regfile_i),
-    .in     (wr_data_i), 
+    .in     (ID_wr_data_i), 
     .src_a  (rs1),   
     .src_b  (rs2),   
     .dest   (rd_wr_i),   
@@ -106,22 +106,18 @@ regfile regfile (
 );
 
 always_comb begin : set_output
-    IDEX_ctrl_word_o = ctrl_word;
-
-    IDEX_instr_o = ID_instr_i;
-    IDEX_pc_out_o = ID_pc_out_i;
-
-    IDEX_rs1_out_o = rs1_out;
-    IDEX_rs2_out_o = rs2_out;
-
-    IDEX_i_imm_o = i_imm;
-    IDEX_s_imm_o = s_imm;
-    IDEX_b_imm_o = b_imm;
-    IDEX_u_imm_o = u_imm;
-    IDEX_j_imm_o = j_imm;
-
-    IDEX_rd_o = rd;
-    IDEX_br_en_o = br_en;
+    ID_ctrl_word_o = ctrl_word;
+    ID_instr_o = ID_instr_i;
+    ID_pc_out_o = ID_pc_out_i;
+    ID_rs1_out_o = rs1_out;
+    ID_rs2_out_o = rs2_out;
+    ID_i_imm_o = i_imm;
+    ID_s_imm_o = s_imm;
+    ID_b_imm_o = b_imm;
+    ID_u_imm_o = u_imm;
+    ID_j_imm_o = j_imm;
+    ID_rd_o = rd;
+    ID_br_en_o = br_en;
 end
 
-endmodule : id
+endmodule : ID

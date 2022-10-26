@@ -36,6 +36,7 @@ function void set_defaults();
     ctrl.regfilemux_sel = regfilemux::alu_out;
     ctrl.cmpmux_sel = rs2_out; 
 
+    ctrl.marmux_sel = pc_out; 
     ctrl.aluop = alu_add;
     ctrl.cmpop = beq;
 endfunction
@@ -58,7 +59,7 @@ begin
         end
         op_jal: begin
             ctrl.alumux1_sel = alumux::pc_out;
-            ctrl.alumux2_sel = aliumux::j_imm;
+            ctrl.alumux2_sel = alumux::j_imm;
             ctrl.aluop = alu_add;
             ctrl.load_regfile = 1'b1;
             ctrl.regfilemux_sel = regfilemux::pc_plus4;
@@ -78,6 +79,7 @@ begin
             ctr.aluop = alu_add;
         end
         op_load: begin
+            ctrl.marmux_sel = marmux::alu_out; // @TODO
             ctrl.alumux1_sel = alumux::rs1_out;
             ctrl.alumux2_sel = alumux::i_imm;
             ctrl.aluop = alu_add;
@@ -92,6 +94,7 @@ begin
             endcase
         end
         op_store: begin
+            ctrl.marmux_sel = marmux::alu_out; // @TODO
             ctrl.alumux1_sel = alumux::rs1_out;
             ctrl.alumux2_sel = alumux::s_imm;
             ctrl.aluop = alu_add;

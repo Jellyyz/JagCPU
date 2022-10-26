@@ -18,6 +18,20 @@ import rv32i_types::*;
     output rv32i_word 	data_mem_address,
     output rv32i_word 	data_mem_wdata
 
+	
+	// For CP2
+	/* 
+    input pmem_resp,
+    input [63:0] pmem_rdata,
+
+	To physical memory
+    output logic pmem_read,
+    output logic pmem_write,
+    output rv32i_word pmem_address,
+    output [63:0] pmem_wdata
+	*/
+);
+
     datapath d0(
         .clk(clk), .rst(rst),
         // inputs 
@@ -35,19 +49,5 @@ import rv32i_types::*;
         .data_mem_wdata(data_mem_wdata) 
         
     ); 
-
-	
-	// For CP2
-	/* 
-    input pmem_resp,
-    input [63:0] pmem_rdata,
-
-	To physical memory
-    output logic pmem_read,
-    output logic pmem_write,
-    output rv32i_word pmem_address,
-    output [63:0] pmem_wdata
-	*/
-);
 
 endmodule : mp4

@@ -3,8 +3,9 @@ SHELL = /bin/bash -o pipefail
 #Collect All Source Files
 PKG_SRCS := $(shell find $(PWD)/pkg -name '*.sv')
 HDL_SRCS := $(shell find $(PWD)/hdl -name '*.sv')
+HDL_PIPELINE_SRCS := $(shell find $(PWD)/hdl/Pipeline_Modules -name '*.sv')
 HVL_SRCS := $(shell find $(PWD)/hvl -name '*.sv' -o -name '*.v')
-SRCS := $(PKG_SRCS) $(HDL_SRCS) $(HVL_SRCS)
+SRCS := $(PKG_SRCS) $(HDL_SRCS) $(HDL_PIPELINE_SRCS) $(HVL_SRCS) 
 
 SYNTH_TCL := $(CURDIR)/synthesis.tcl
 
