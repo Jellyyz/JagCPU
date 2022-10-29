@@ -3,20 +3,33 @@ import rv32i_types::*;
 #(parameter width = 32) (
     input logic clk, rst, 
     
-	//Remove after CP1
-    input rv32i_word 	instr_mem_rdata,
-    input rv32i_word 	data_mem_rdata, 
-    output rv32i_word 	data_mem_address,
-    output rv32i_word 	data_mem_wdata,
 
-    // undriven or unused 
-	output rv32i_word 	instr_mem_address,
-    input 					instr_mem_resp,
-	input 					data_mem_resp,
-    output logic 			instr_read,
-    output logic 			data_read,
-    output logic 			data_write,
-    output logic [3:0] 	data_mbe
+    
+	
+	// For CP2
+    input pmem_resp,
+    input [63:0] pmem_rdata,
+
+	// To physical memory
+    output logic pmem_read,
+    output logic pmem_write,
+    output rv32i_word pmem_address,
+    output [63:0] pmem_wdata
+
+	// //Remove after CP1
+    // input rv32i_word 	instr_mem_rdata,
+    // input rv32i_word 	data_mem_rdata, 
+    // output rv32i_word 	data_mem_address,
+    // output rv32i_word 	data_mem_wdata,
+
+    // // undriven or unused 
+	// output rv32i_word 	instr_mem_address,
+    // input 					instr_mem_resp,
+	// input 					data_mem_resp,
+    // output logic 			instr_read,
+    // output logic 			data_read,
+    // output logic 			data_write,
+    // output logic [3:0] 	data_mbe
 
 ); 
 
