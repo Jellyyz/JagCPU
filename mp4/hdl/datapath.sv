@@ -70,7 +70,7 @@ rv32i_word ID_pc_out;
 rv32i_word ID_rs1_out;
 rv32i_word ID_rs2_out; 
 rv32i_word ID_i_imm, ID_s_imm, ID_b_imm, ID_u_imm, ID_j_imm;
-logic [4:0] ID_rd;
+logic [4:0] ID_rs1, ID_rs2, ID_rd;
 logic ID_br_en;
 
 /****************************************/
@@ -80,7 +80,7 @@ rv32i_control_word ID_EX_ctrl_word;
 rv32i_word ID_EX_instr;
 rv32i_word ID_EX_pc_out, ID_EX_rs1_out, ID_EX_rs2_out; 
 rv32i_word ID_EX_i_imm, ID_EX_s_imm, ID_EX_b_imm, ID_EX_u_imm, ID_EX_j_imm; 
-logic [4:0] ID_EX_rd;
+logic [4:0] ID_EX_rs1, ID_EX_rs2, ID_EX_rd;
 logic ID_EX_br_en; 
 
 /****************************************/
@@ -131,6 +131,7 @@ logic [width-1:0] MEM_j_imm;
 rv32i_word MEM_data_mem_address;
 rv32i_word MEM_data_mem_wdata;
 rv32i_word MEM_data_mem_rdata;
+logic MEM_load_regfile;
 
 // [3:0] MEM_mem_byte_en;
 
@@ -163,6 +164,16 @@ logic WB_load_regfile;
 logic [4:0] WB_rd;
 logic [width-1:0] WB_regfilemux_out;
 
+/****************************************/
+/* Declarations for forwarding unit *****/
+/****************************************/
+forwardingmux::forwardingmux_sel_t forwardA;
+forwardingmux::forwardingmux_sel_t forwardB;
+
+/****************************************/
+/* Begin instantiation ******************/
+/****************************************/
+
 always_comb begin : MEM_PORTS
 
     instr_read = 1'b1; 
@@ -170,9 +181,7 @@ always_comb begin : MEM_PORTS
 
 end 
 
-/****************************************/
-/* Begin instantiation ******************/
-/****************************************/
+
 
 IF IF(
     // input 
@@ -241,6 +250,8 @@ ID ID(
     .ID_i_imm_o(ID_i_imm), .ID_s_imm_o(ID_s_imm), .ID_b_imm_o(ID_b_imm), 
     .ID_u_imm_o(ID_u_imm), .ID_j_imm_o(ID_j_imm), 
     
+    .ID_rs1_o(ID_rs1),
+    .ID_rs2_o(ID_rs2),
     .ID_rd_o(ID_rd), 
     .ID_br_en_o(ID_br_en) 
 
@@ -271,6 +282,8 @@ ID_EX ID_EX(
     .ID_EX_u_imm_i(ID_u_imm),
     .ID_EX_j_imm_i(ID_j_imm),
 
+    .ID_EX_rs1_i(ID_rs1),
+    .ID_EX_rs2_i(ID_rs2),
     .ID_EX_rd_i(ID_rd),
     .ID_EX_br_en_i(ID_br_en),
 
@@ -287,7 +300,10 @@ ID_EX ID_EX(
     .ID_EX_u_imm_o(ID_EX_u_imm),
     .ID_EX_j_imm_o(ID_EX_j_imm), 
 
-    .ID_EX_rd_o(ID_EX_rd), .ID_EX_br_en_o(ID_EX_br_en)
+    .ID_EX_rs1_o(ID_EX_rs1),
+    .ID_EX_rs2_o(ID_EX_rs2),
+    .ID_EX_rd_o(ID_EX_rd),
+    .ID_EX_br_en_o(ID_EX_br_en)
 
 ); 
 
@@ -306,13 +322,18 @@ EX EX(
 // i think this one is the easiest once we have the other crap done. 
     // inputs 
     .EX_pc_out_i(ID_EX_pc_out),     
-    .EX_rs1_out_i(ID_EX_rs1_out), .EX_rs2_out_i(ID_EX_rs2_out), 
-    .EX_rd_i(ID_EX_rd), .EX_instr_i(ID_EX_instr), 
+    .EX_rs1_out_i(ID_EX_rs1_out),
+    .EX_rs2_out_i(ID_EX_rs2_out), 
+    .EX_rs1_i()
+    .EX_rd_i(ID_EX_rd),
+    .EX_instr_i(ID_EX_instr), 
     .EX_br_en_i(ID_EX_br_en),   
     .EX_ctrl_word_i(ID_EX_ctrl_word),
     .EX_i_imm_i(ID_EX_i_imm), .EX_u_imm_i(ID_EX_u_imm), 
     .EX_b_imm_i(ID_EX_b_imm), .EX_s_imm_i(ID_EX_s_imm),
     .EX_j_imm_i(ID_EX_j_imm),
+    .EX_forwardA_i(forwardA),
+    .EX_forwardB_i(forwardB),
 
     // outputs 
     .EX_pc_out_o(EX_pc_out),
@@ -443,7 +464,9 @@ MEM MEM(
     .MEM_b_imm_o(MEM_b_imm), .MEM_u_imm_o(MEM_u_imm),
     .MEM_j_imm_o(MEM_j_imm),
 
-    .MEM_mem_byte_en_o(data_mbe)
+    .MEM_mem_byte_en_o(data_mbe),
+
+    .MEM_load_regfile_o(MEM_load_regfile)
 ); 
 
 // logic MEM_WB_mem_read;
@@ -541,6 +564,18 @@ WB WB (
     .WB_regfilemux_out_o    (WB_regfilemux_out)
 );
 
+forwarder forwarding(
+    .ID_EX_rs1_i        (ID_EX_rs1),
+    .ID_EX_rs2_i        (ID_EX_rs2),
+    .EX_MEM_rd_i        (EX_MEM_rd),
+    .MEM_WB_rd_i        (MEM_WB_rd),
+    .MEM_load_regfile_i (MEM_load_regfile),
+    .WB_load_regfile_i  (WB_load_regfile),
+
+    .forwardA_o         (forwardA),
+    .forwardB_o         (forwardB)
+);
+
 
 
 always_comb begin : CONTROL_WORD
@@ -555,6 +590,8 @@ always_comb begin : CONTROL_WORD
     funct7 = instr_mem_rdata[6:0]; 
 
 end 
+
+
 
 
 

@@ -27,6 +27,8 @@ import rv32i_types::*;
     output logic[width-1:0] ID_u_imm_o,
     output logic[width-1:0] ID_j_imm_o,
 
+    output logic[4:0] ID_rs1_o,
+    output logic[4:0] ID_rs2_o,
     output logic[4:0] ID_rd_o,
 
     output logic ID_br_en_o
@@ -116,6 +118,8 @@ always_comb begin : set_output
     ID_b_imm_o = b_imm;
     ID_u_imm_o = u_imm;
     ID_j_imm_o = j_imm;
+    ID_rs1_o = rs1;
+    ID_rs2_o = rs2;
     ID_rd_o = rd;
     ID_br_en_o = br_en;
 end
