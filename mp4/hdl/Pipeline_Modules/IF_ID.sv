@@ -17,7 +17,7 @@ import rv32i_types::*;
     logic [width-1:0] pc_out;
     logic [width-1:0] instr;
 
-    always_ff @(posedge clk) begin
+    always_ff @(posedge clk or posedge rst) begin
         if (rst) begin
             pc_out <= {width{1'b0}};
             instr <= {width{1'b0}};

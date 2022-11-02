@@ -48,12 +48,21 @@ logic [6:0] funct7;
 // load signal for PC : load_pc 
 // pc mux is not implemented yet?? this is called : pc_mux_out btw in this module 
 // need to think about how to parse control words through every stage 
+/****************************************/
+/* Declarations for branch prediction ***/
+/****************************************/
+
+logic branch_p_load_pc; 
+logic branch_flush_con;             // if 1 then we need to flush 
+
 
 /****************************************/
 /* Declarations for IF ******************/
 /****************************************/
 rv32i_word IF_pc_out;
 rv32i_word IF_instr_out; 
+rv32i_word IF_instr_mem_rdata_in; 
+logic IF_load_pc; 
 
 /****************************************/
 /* Declarations for IF/ID ***************/
@@ -95,6 +104,7 @@ rv32i_control_word EX_ctrl_word;
 logic [4:0] EX_rd; 
 rv32i_word  EX_alu_out; 
 logic EX_br_en; 
+logic EX_mem_read;
 
 /****************************************/
 /* Declarations for EX/MEM **************/
@@ -171,45 +181,52 @@ forwardingmux::forwardingmux_sel_t forwardA;
 forwardingmux::forwardingmux_sel_t forwardB;
 
 /****************************************/
+/*Declarations for hazard detection unit*/
+/****************************************/
+controlmux::controlmux_sel_t HD_controlmux_sel;
+logic HD_PC_write;
+logic HD_IF_ID_write;
+
+/****************************************/
 /* Begin instantiation ******************/
 /****************************************/
 
-always_comb begin : MEM_PORTS
+assign IF_load_pc = branch_p_load_pc & HD_PC_write; 
 
-    instr_read = 1'b1; 
+
+always_comb begin : MEM_PORTS
     instr_mem_address = IF_pc_out; 
 
 end 
-
 
 
 IF IF(
     // input 
     .clk(clk),
     .rst(rst), 
-    .IF_instr_mem_rdata_i(instr_mem_rdata), 
+    .IF_instr_mem_rdata_i(IF_instr_mem_rdata_in), 
     .IF_ctrl_word_i(), 
     .IF_pcmux_sel_i(MEM_pcmux_sel),
     .IF_alu_out_i(EX_MEM_alu_out),
+    .IF_load_pc(IF_load_pc), 
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
     .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp1
 );
 
-// contains the PC register and IR register
+
 // @TODO: 
 // unsure where IR comes from 
 // also unsure how to load regs 
 // rv32i_word IF_ID_pc_out;
 // rv32i_word IF_ID_instr;
-
 IF_ID IF_ID(
     // input 
     .clk(clk), 
     .rst(rst), 
-    .flush_i(1'b0), 
-    .load_i(1'b1), 
+    .flush_i(IF_ID_flush_in), 
+    .load_i(HD_IF_ID_write), 
 
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(instr_mem_rdata), 
@@ -219,12 +236,7 @@ IF_ID IF_ID(
     .IF_ID_instr_o(IF_ID_instr)
 ); 
 
-// rv32i_control_word ID_ctrl_word; 
-// rv32i_word ID_instr_o, ID_pc_out; 
-// rv32i_word ID_rs1_out_o, ID_rs2_out; 
-// rv32i_word ID_i_imm_o, ID_s_imm_o, ID_b_imm_o, ID_u_imm_o, ID_j_imm;
-// logic [4:0] ID_rd;
-// logic ID_br_en; 
+
 ID ID(
 // @TODO: 
 // unsure where IR comes from 
@@ -240,6 +252,8 @@ ID ID(
     .ID_load_regfile_i(WB_load_regfile), 
     .ID_rd_wr_i(WB_rd), 
     .ID_wr_data_i(WB_regfilemux_out), 
+
+    .ID_controlmux_sel_i(HD_controlmux_sel)
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -258,13 +272,7 @@ ID ID(
 
 ); 
 
-// rv32i_control_word ID_EX_ctrl_word; 
-// rv32i_word ID_EX_instr;
-// rv32i_word ID_EX_pc_out_o, ID_EX_rs1_out_o, ID_EX_rs2_out; 
-// rv32i_word ID_EX_i_imm_o, ID_EX_s_imm_o, ID_EX_b_imm; 
-// rv32i_word ID_EX_u_imm_o, ID_EX_j_imm; 
-// logic [4:0] ID_EX_rd;
-// logic ID_EX_br_en; 
+
 ID_EX ID_EX(
     // inputs 
     .clk(clk), .rst(rst),
@@ -307,19 +315,8 @@ ID_EX ID_EX(
 
 ); 
 
-    // rv32i_word EX_pc_out;  
-    // rv32i_word EX_pc_plus4; 
-    // rv32i_word EX_instr; 
-    // rv32i_word EX_i_imm_o, EX_s_imm; 
-    // rv32i_word EX_b_imm_o, EX_u_imm; 
-    // rv32i_word EX_j_imm; 
-    // rv32i_word EX_rs2_out; 
-    // rv32i_control_word EX_ctrl_word; 
-    // logic [4:0] EX_rd; 
-    // rv32i_word  EX_alu_out; 
-    // logic EX_br_en; 
+
 EX EX(
-// i think this one is the easiest once we have the other crap done. 
     // inputs 
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out),
@@ -349,23 +346,13 @@ EX EX(
     .EX_ctrl_word_o(EX_ctrl_word), 
     .EX_rd_o(EX_rd), 
     .EX_alu_out_o(EX_alu_out),
-    .EX_br_en_o(EX_br_en) 
+    .EX_br_en_o(EX_br_en),
+
+    .EX_mem_read_o(EX_mem_read)
 
 ); 
 
-// rv32i_word EX_MEM_pc_out; 
-// rv32i_word EX_MEM_pc_plus4; 
-// rv32i_word EX_MEM_instr;
-// rv32i_word EX_MEM_i_imm;
-// rv32i_word EX_MEM_s_imm;
-// rv32i_word EX_MEM_b_imm;
-// rv32i_word EX_MEM_u_imm;
-// rv32i_word EX_MEM_j_imm;
-// rv32i_reg EX_MEM_rs2_out;
-// rv32i_control_word EX_MEM_ctrl_word;
-// logic [4:0] EX_MEM_rd;
-// rv32i_word  EX_MEM_alu_out;
-// logic EX_MEM_br_en;
+
 EX_MEM EX_MEM(
     // inputs 
     .clk(clk), 
@@ -576,6 +563,17 @@ forwarder forwarding(
     .forwardB_o         (forwardB)
 );
 
+hazard_detector hazard_detector(
+    .EX_mem_read_i(EX_mem_read),
+    .EX_rd_i(EX_rd),
+    .ID_rs1_i(ID_rs1),
+    .ID_rs2_i(ID_rs2),
+
+    .HD_controlmux_sel_o(HD_controlmux_sel),
+    .HD_PC_write_o(HD_PC_write),
+    .HD_IF_ID_write_o(HD_IF_ID_write)
+);
+
 
 
 always_comb begin : CONTROL_WORD
@@ -592,7 +590,17 @@ always_comb begin : CONTROL_WORD
 end 
 
 
+always_comb begin: BRANCH_FLUSH
 
+    branch_flush_con = (IF_ID_pc_out != MEM_pc_out); 
+    // if the PC addresses aren't correct & the memory is preparing for a branch then flush
+    IF_ID_flush_in = branch_flush_con ? 1'b1 : 1'b0; 
+    branch_p_load_pc = branch_flush_con ? 1'b0 : 1'b1; 
+    IF_instr_mem_rdata_in = branch_flush_con ? 32'b0000_0000_0000_0000_0000_0000_0001_0011 : instr_mem_rdata;  
+    instr_read = branch_flush_con ? 1'b0; 1'b1; 
+
+
+end 
 
 
 // always_comb begin : MUXES

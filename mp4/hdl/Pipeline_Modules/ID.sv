@@ -12,7 +12,8 @@ import rv32i_types::*;
     input logic [4:0] ID_rd_wr_i,          // from WB stage
     input logic [width-1:0] ID_wr_data_i,  // from WB stage
 
-    
+    input controlmux::controlmux_sel_t ID_controlmux_sel_i,
+
     // all outputs out to ID/EX reg
     output rv32i_control_word ID_ctrl_word_o,
     output logic [width-1:0] ID_instr_o,
@@ -42,7 +43,7 @@ logic [31:0] i_imm, s_imm, b_imm, u_imm, j_imm;
 logic [4:0] rs1, rs2, rd;
 logic [width-1:0] rs1_out, rs2_out;
 
-rv32i_control_word ctrl_word;
+rv32i_control_word ctrl_word, norm_ctrl_word, nop_ctrl_word;
 branch_funct3_t cmpop;
 cmpmux::cmpmux_sel_t cmpmux_sel;
 
@@ -65,8 +66,8 @@ always_comb begin : instr_decode
 end
 
 always_comb begin : ctrl_decode
-    cmpop = ctrl_word.cmpop;
-    cmpmux_sel = ctrl_word.cmpmux_sel;
+    cmpop = norm_ctrl_word.cmpop;
+    cmpmux_sel = norm_ctrl_word.cmpmux_sel;
 end
 
 always_comb begin : muxes
@@ -76,6 +77,30 @@ always_comb begin : muxes
         default :
             cmp_mux_out = rs2_out;
     endcase
+
+    unique case (ID_controlmux_sel_i)
+        controlmux::zero : begin
+            nop_ctrl_word.opcode = rv32i_types::op_imm;
+            nop_ctrl_word.mem_read = 1'b0; // default
+            nop_ctrl_word.mem_write = 1'b0; // default
+            nop_ctrl_word.load_regfile = 1'b0; // default
+            nop_ctrl_word.funct3 = norm_ctrl_word.funct3;
+            nop_ctrl_word.funct7 = norm_ctrl_word.funct7
+            nop_ctrl_word.mem_byte_en = 4'b0000;
+            nop_ctrl_word.pcmux_sel = pcmux::pc_plus4; // default
+            nop_ctrl_word.alumux1_sel = alumux::rs1_out; // default
+            nop_ctrl_word.alumux2_sel = alumux::i_imm; // default
+            nop_ctrl_word.regfilemux_sel = regfilemux::alu_out; // default
+            nop_ctrl_word.cmpmux_sel = cmpmux::rs2_out; // default
+            nop_ctrl_word.marmux_sel = marmux::pc_out; // default
+            nop_ctrl_word.alu_op = rv32i_types::alu_add; // default
+            nop_ctrl_word.cmpop = rv32i_types::beq; // default
+
+            ctrl_word = nop_ctrl_word;
+        end
+        controlmux::ctrl : begin
+            ctrl_word = norm_ctrl_word
+        end
 end
 
 control_rom ctrl_rom (
@@ -83,7 +108,7 @@ control_rom ctrl_rom (
     .funct3 (funct3),
     .funct7 (funct7),
 
-    .ctrl   (ctrl_word)
+    .ctrl   (norm_ctrl_word)
 );
 
 cmp cmp (

@@ -64,7 +64,8 @@ always_comb begin : set_output
     MEM_pc_plus4_o = MEM_pc_plus4_i; 
 
     MEM_alu_out_o = MEM_alu_out_i;
-    MEM_pcmux_sel_o = {1'b0, MEM_br_en_i & (op_br == MEM_ctrl_word_i.opcode)};
+    MEM_pcmux_sel_o = 2'b00; 
+    // MEM_pcmux_sel_o = {1'b0, MEM_br_en_i & (op_br == MEM_ctrl_word_i.opcode)};
 
     MEM_ctrl_word_o = MEM_ctrl_word_i;
 

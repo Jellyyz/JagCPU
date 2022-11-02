@@ -48,6 +48,7 @@ typedef enum bit [3:0] {
     ,lh        = 4'b0111
     ,lhu       = 4'b1000  // unsigned halfword
 } regfilemux_sel_t;
+endpackage 
 
 package forwardingmux;
 typedef enum bit [1:0] {
@@ -55,5 +56,12 @@ typedef enum bit [1:0] {
     ,ex_mem     = 2'b10
     ,mem_wb     = 2'b01
 } forwardingmux_sel_t;
+endpackage
+
+package controlmux;
+typedef enum bit {
+    zero = 1'b0
+    ,ctrl = 1'b1
+} controlmux_sel_t
 endpackage
 
