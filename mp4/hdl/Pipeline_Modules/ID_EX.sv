@@ -18,6 +18,8 @@ import rv32i_types::*;
     input logic[width-1:0] ID_EX_b_imm_i,
     input logic[width-1:0] ID_EX_u_imm_i,
     input logic[width-1:0] ID_EX_j_imm_i,
+    input logic[4:0] ID_EX_rs1_i,
+    input logic[4:0] ID_EX_rs2_i,
     input logic[4:0] ID_EX_rd_i,
     input logic ID_EX_br_en_i,
 
@@ -31,6 +33,8 @@ import rv32i_types::*;
     output logic[width-1:0] ID_EX_b_imm_o,
     output logic[width-1:0] ID_EX_u_imm_o,
     output logic[width-1:0] ID_EX_j_imm_o,
+    output logic[4:0] ID_EX_rs1_o,
+    output logic[4:0] ID_EX_rs2_o,
     output logic[4:0] ID_EX_rd_o,
     output logic ID_EX_br_en_o
 );
@@ -45,6 +49,8 @@ import rv32i_types::*;
     logic [width-1:0] ID_EX_b_imm;
     logic [width-1:0] ID_EX_u_imm;
     logic [width-1:0] ID_EX_j_imm;
+    logic [4:0] ID_EX_rs1;
+    logic [4:0] ID_EX_rs2;
     logic [4:0] ID_EX_rd;
     logic ID_EX_br_en;
 
@@ -61,6 +67,8 @@ always_ff @(posedge clk) begin
         ID_EX_b_imm <= '0;
         ID_EX_u_imm <= '0;
         ID_EX_j_imm <= '0;
+        ID_EX_rs1 <= '0;
+        ID_EX_rs2 <= '0;
         ID_EX_rd <= '0;
         ID_EX_br_en <= '0;
     end else if (load_i) begin
@@ -74,6 +82,8 @@ always_ff @(posedge clk) begin
         ID_EX_b_imm <= ID_EX_b_imm_i;
         ID_EX_u_imm <= ID_EX_u_imm_i;
         ID_EX_j_imm <= ID_EX_j_imm_i;
+        ID_EX_rs1 <= ID_EX_rs1_i;
+        ID_EX_rs2 <= ID_EX_rs2_i;
         ID_EX_rd <= ID_EX_rd_i;
         ID_EX_br_en <= ID_EX_br_en_i;
     end else begin // practically, load is fixed high, so this will never execute
@@ -87,6 +97,8 @@ always_ff @(posedge clk) begin
         ID_EX_b_imm <= ID_EX_b_imm;
         ID_EX_u_imm <= ID_EX_u_imm;
         ID_EX_j_imm <= ID_EX_j_imm;
+        ID_EX_rs1 <= ID_EX_rs1;
+        ID_EX_rs2 <= ID_EX_rs2;
         ID_EX_rd <= ID_EX_rd;
         ID_EX_br_en <= ID_EX_br_en;
     end
@@ -103,6 +115,8 @@ always_comb begin
     ID_EX_b_imm_o = ID_EX_b_imm;
     ID_EX_u_imm_o = ID_EX_u_imm;
     ID_EX_j_imm_o = ID_EX_j_imm;
+    ID_EX_rs1_o = ID_EX_rs1;
+    ID_EX_rs2_o = ID_EX_rs2;
     ID_EX_rd_o = ID_EX_rd;
     ID_EX_br_en_o = ID_EX_br_en;
 end

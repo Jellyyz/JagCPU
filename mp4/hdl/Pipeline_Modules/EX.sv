@@ -16,6 +16,8 @@ import rv32i_types::*;
     input rv32i_word  EX_j_imm_i,
     input logic EX_br_en_i,
     input logic [4:0] EX_rd_i,
+    input logic EX_forwardA_i,
+    input logic EX_forwardB_i,
 
     output rv32i_word EX_pc_out_o, 
     output rv32i_word EX_pc_plus4_o, 
@@ -57,6 +59,22 @@ always_comb begin : set_output
 
     EX_br_en_o = EX_br_en_i;
     EX_rd_o = EX_rd_i;
+end
+
+always_comb begin : Forwarding_MUXES
+    unique case (EX_forwardA_i)
+        forwardingmux::id_ex : ;
+        forwardingmux::ex_mem : ;
+        forwardingmux::mem_wb : ;
+        default : ;
+    endcase
+
+    unique case (EX_forwardB_i)
+        forwardingmux::id_ex : ;
+        forwardingmux::ex_mem : ;
+        forwardingmux::mem_wb : ;
+        default : ;
+    endcase
 end
 
 always_comb begin : ALU_MUX

@@ -40,16 +40,20 @@ import rv32i_types::*;
     output logic [width-1:0] MEM_u_imm_o,
     output logic [width-1:0] MEM_j_imm_o,
 
-    output logic [3:0] MEM_mem_byte_en_o
+    output logic [3:0] MEM_mem_byte_en_o,
+
+    output logic MEM_load_regfile_o
 );
 
 logic [4:0] rs1, rs2, rd;
 logic [width-1:0] rs1_out, rs2_out;
 logic mem_read, mem_write;
+logic load_regfile;
 rv32i_word data_mem_address, data_mem_wdata;
 logic [3:0] mem_byte_en;
 
 always_comb begin : ctrl_decode
+    load_regfile = MEM_ctrl_word_i.load_regfile;
     mem_read = MEM_ctrl_word_i.mem_read;
     mem_write = MEM_ctrl_word_i.mem_write;
     mem_byte_en = MEM_ctrl_word_i.mem_byte_en << data_mem_address[1:0];
@@ -74,6 +78,7 @@ always_comb begin : set_output
     MEM_instr_o = MEM_instr_i;
     MEM_br_en_o = MEM_br_en_i;
 
+    MEM_load_regfile_o = load_regfile;
     MEM_mem_read_o = mem_read;
     MEM_mem_write_o = mem_write;
     MEM_data_mem_address_o = data_mem_address;
