@@ -18,6 +18,8 @@ import rv32i_types::*;
     input logic [4:0] EX_rd_i,
     input logic EX_forwardA_i,
     input logic EX_forwardB_i,
+    input rv32i_word WB_regfilemux_out_i,
+    input rv32i_word EX_MEM_alu_out_i,
 
     output rv32i_word EX_pc_out_o, 
     output rv32i_word EX_pc_plus4_o, 
@@ -35,7 +37,8 @@ import rv32i_types::*;
     output logic EX_br_en_o
 
 ); 
-
+rv32i_word forwardmuxA_out;
+rv32i_word forwardmuxB_out;
 rv32i_word alumux1_out;
 rv32i_word alumux2_out; 
 
@@ -63,23 +66,23 @@ end
 
 always_comb begin : Forwarding_MUXES
     unique case (EX_forwardA_i)
-        forwardingmux::id_ex : ;
-        forwardingmux::ex_mem : ;
-        forwardingmux::mem_wb : ;
+        forwardingmux::id_ex : forwardmuxA_out = EX_rs1_out_i;
+        forwardingmux::ex_mem : forwardmuxA_out = EX_MEM_alu_out_i;
+        forwardingmux::mem_wb : forwardmuxA_out = WB_regfilemux_out_i;
         default : ;
     endcase
 
     unique case (EX_forwardB_i)
-        forwardingmux::id_ex : ;
-        forwardingmux::ex_mem : ;
-        forwardingmux::mem_wb : ;
+        forwardingmux::id_ex : forwardmuxB_out = EX_rs2_out_i;
+        forwardingmux::ex_mem : forwardmuxB_out = EX_MEM_alu_out_i;
+        forwardingmux::mem_wb : forwardmuxB_out = WB_regfilemux_out_i;
         default : ;
     endcase
 end
 
 always_comb begin : ALU_MUX
     unique case (EX_ctrl_word_i.alumux1_sel)
-        alumux::rs1_out : alumux1_out = EX_rs1_out_i; 
+        alumux::rs1_out : alumux1_out = forwardmuxA_out; 
         alumux::pc_out : alumux1_out = EX_pc_out_i; 
         default: $display("hit alumux1 error");
     endcase 
@@ -89,7 +92,7 @@ always_comb begin : ALU_MUX
         alumux::b_imm : alumux2_out = EX_b_imm_i; 
         alumux::s_imm : alumux2_out = EX_s_imm_i; 
         alumux::j_imm : alumux2_out = EX_j_imm_i; 
-        alumux::rs2_out : alumux2_out = EX_rs2_out_i;
+        alumux::rs2_out : alumux2_out = forwardmuxB_out;
         default: $display("hit alumux2 error");
     endcase
 end 
