@@ -32,7 +32,10 @@ import rv32i_types::*;
     output logic[4:0] ID_rs2_o,
     output logic[4:0] ID_rd_o,
 
-    output logic ID_br_en_o
+    output logic ID_br_en_o,
+
+    output  pcmux::pcmux_sel_t ID_pcmux_sel_o, 
+    output logic[width-1:0] ID_br_addr_o
 );
 
 rv32i_opcode opcode;
@@ -48,6 +51,7 @@ branch_funct3_t cmpop;
 cmpmux::cmpmux_sel_t cmpmux_sel;
 
 logic br_en;
+logic[width-1:0] br_addr;
 logic [31:0] cmp_mux_out; 
 always_comb begin : instr_decode
     opcode = rv32i_opcode'(ID_instr_i[6:0]);
@@ -85,7 +89,7 @@ always_comb begin : muxes
             nop_ctrl_word.mem_write = 1'b0; // default
             nop_ctrl_word.load_regfile = 1'b0; // default
             nop_ctrl_word.funct3 = norm_ctrl_word.funct3;
-            nop_ctrl_word.funct7 = norm_ctrl_word.funct7
+            nop_ctrl_word.funct7 = norm_ctrl_word.funct7;
             nop_ctrl_word.mem_byte_en = 4'b0000;
             nop_ctrl_word.pcmux_sel = pcmux::pc_plus4; // default
             nop_ctrl_word.alumux1_sel = alumux::rs1_out; // default
@@ -93,14 +97,15 @@ always_comb begin : muxes
             nop_ctrl_word.regfilemux_sel = regfilemux::alu_out; // default
             nop_ctrl_word.cmpmux_sel = cmpmux::rs2_out; // default
             nop_ctrl_word.marmux_sel = marmux::pc_out; // default
-            nop_ctrl_word.alu_op = rv32i_types::alu_add; // default
+            nop_ctrl_word.aluop = rv32i_types::alu_add; // default
             nop_ctrl_word.cmpop = rv32i_types::beq; // default
 
             ctrl_word = nop_ctrl_word;
         end
         controlmux::ctrl : begin
-            ctrl_word = norm_ctrl_word
+            ctrl_word = norm_ctrl_word;
         end
+    endcase 
 end
 
 control_rom ctrl_rom (
@@ -132,6 +137,12 @@ regfile regfile (
     .reg_b  (rs2_out)
 );
 
+adder ID_adder ( 
+    .a(ID_pc_out_i), .b(b_imm), 
+
+    .f(br_addr)
+);
+
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word;
     ID_instr_o = ID_instr_i;
@@ -147,6 +158,9 @@ always_comb begin : set_output
     ID_rs2_o = rs2;
     ID_rd_o = rd;
     ID_br_en_o = br_en;
+    ID_br_addr_o = br_addr;
+    ID_pcmux_sel_o = pcmux::pc_plus4;
+    // ID_pcmux_sel_o = {1'b0, ID_br_en_i & (op_br == MEM_ctrl_word_i.opcode)};
 end
 
 endmodule : ID

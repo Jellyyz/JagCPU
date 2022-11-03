@@ -18,7 +18,7 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_alu_out_i,
     input logic MEM_br_en_i,
 
-    output pcmux::pcmux_sel_t MEM_pcmux_sel_o,
+    // output pcmux::pcmux_sel_t MEM_pcmux_sel_o,
     output logic [width-1:0] MEM_alu_out_o,
     output logic [4:0] MEM_rd_o,
     output rv32i_control_word MEM_ctrl_word_o,
@@ -64,7 +64,7 @@ always_comb begin : set_output
     MEM_pc_plus4_o = MEM_pc_plus4_i; 
 
     MEM_alu_out_o = MEM_alu_out_i;
-    MEM_pcmux_sel_o = 2'b00; 
+    // MEM_pcmux_sel_o = 2'b00; 
     // MEM_pcmux_sel_o = {1'b0, MEM_br_en_i & (op_br == MEM_ctrl_word_i.opcode)};
 
     MEM_ctrl_word_o = MEM_ctrl_word_i;

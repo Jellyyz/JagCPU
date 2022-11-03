@@ -6,30 +6,30 @@ import rv32i_types::*;
 
     
 	
-	// For CP2
-    input pmem_resp,
-    input [63:0] pmem_rdata,
+	// // For CP2
+    // input pmem_resp,
+    // input [63:0] pmem_rdata,
 
-	// To physical memory
-    output logic pmem_read,
-    output logic pmem_write,
-    output rv32i_word pmem_address,
-    output [63:0] pmem_wdata
+	// // To physical memory
+    // output logic pmem_read,
+    // output logic pmem_write,
+    // output rv32i_word pmem_address,
+    // output [63:0] pmem_wdata
 
-	// //Remove after CP1
-    // input rv32i_word 	instr_mem_rdata,
-    // input rv32i_word 	data_mem_rdata, 
-    // output rv32i_word 	data_mem_address,
-    // output rv32i_word 	data_mem_wdata,
+	//Remove after CP1
+    input rv32i_word 	instr_mem_rdata,
+    input rv32i_word 	data_mem_rdata, 
+    output rv32i_word 	data_mem_address,
+    output rv32i_word 	data_mem_wdata,
 
-    // // undriven or unused 
-	// output rv32i_word 	instr_mem_address,
-    // input 					instr_mem_resp,
-	// input 					data_mem_resp,
-    // output logic 			instr_read,
-    // output logic 			data_read,
-    // output logic 			data_write,
-    // output logic [3:0] 	data_mbe
+    // undriven or unused 
+	output rv32i_word 	instr_mem_address,
+    input 					instr_mem_resp,
+	input 					data_mem_resp,
+    output logic 			instr_read,
+    output logic 			data_read,
+    output logic 			data_write,
+    output logic [3:0] 	data_mbe
 
 ); 
 
@@ -53,7 +53,7 @@ logic [6:0] funct7;
 /****************************************/
 
 logic branch_p_load_pc; 
-logic branch_flush_con;             // if 1 then we need to flush 
+logic branch_flush_en;             // if 1 then we need to flush 
 
 
 /****************************************/
@@ -67,6 +67,7 @@ logic IF_load_pc;
 /****************************************/
 /* Declarations for IF/ID ***************/
 /****************************************/
+logic IF_ID_flush_in; 
 rv32i_word IF_ID_pc_out;
 rv32i_word IF_ID_instr; 
 
@@ -81,6 +82,8 @@ rv32i_word ID_rs2_out;
 rv32i_word ID_i_imm, ID_s_imm, ID_b_imm, ID_u_imm, ID_j_imm;
 logic [4:0] ID_rs1, ID_rs2, ID_rd;
 logic ID_br_en;
+rv32i_word ID_br_addr; 
+pcmux::pcmux_sel_t ID_pcmux_sel; 
 
 /****************************************/
 /* Declarations for ID/EX ***************/
@@ -89,7 +92,7 @@ rv32i_control_word ID_EX_ctrl_word;
 rv32i_word ID_EX_instr;
 rv32i_word ID_EX_pc_out, ID_EX_rs1_out, ID_EX_rs2_out; 
 rv32i_word ID_EX_i_imm, ID_EX_s_imm, ID_EX_b_imm, ID_EX_u_imm, ID_EX_j_imm; 
-logic [4:0] ID_EX_rs1, ID_EX_rs2, ID_EX_rd;
+rv32i_reg ID_EX_rs1, ID_EX_rs2, ID_EX_rd;
 logic ID_EX_br_en; 
 
 /****************************************/
@@ -101,7 +104,7 @@ rv32i_word EX_instr;
 rv32i_word EX_i_imm, EX_s_imm, EX_b_imm, EX_u_imm, EX_j_imm; 
 rv32i_word EX_rs2_out; 
 rv32i_control_word EX_ctrl_word; 
-logic [4:0] EX_rd; 
+rv32i_reg EX_rd; 
 rv32i_word  EX_alu_out; 
 logic EX_br_en; 
 logic EX_mem_read;
@@ -114,7 +117,7 @@ rv32i_word EX_MEM_instr;
 rv32i_word EX_MEM_i_imm, EX_MEM_s_imm, EX_MEM_b_imm, EX_MEM_u_imm, EX_MEM_j_imm;
 rv32i_word EX_MEM_rs2_out;
 rv32i_control_word EX_MEM_ctrl_word;
-logic [4:0] EX_MEM_rd;
+rv32i_reg EX_MEM_rd;
 rv32i_word  EX_MEM_alu_out;
 logic EX_MEM_br_en;
 
@@ -127,7 +130,7 @@ rv32i_control_word MEM_ctrl_word;
 logic MEM_mem_read;
 logic MEM_mem_write;
 logic MEM_br_en;
-logic [4:0] MEM_rd;
+rv32i_reg MEM_rd;
 logic [width-1:0] MEM_pc_out;
 logic [width-1:0] MEM_pc_plus4;
 
@@ -196,7 +199,7 @@ assign IF_load_pc = branch_p_load_pc & HD_PC_write;
 
 always_comb begin : MEM_PORTS
     instr_mem_address = IF_pc_out; 
-
+    instr_read = 1'b1; 
 end 
 
 
@@ -206,7 +209,7 @@ IF IF(
     .rst(rst), 
     .IF_instr_mem_rdata_i(IF_instr_mem_rdata_in), 
     .IF_ctrl_word_i(), 
-    .IF_pcmux_sel_i(MEM_pcmux_sel),
+    .IF_pcmux_sel_i(ID_pcmux_sel),
     .IF_alu_out_i(EX_MEM_alu_out),
     .IF_load_pc(IF_load_pc), 
 
@@ -253,7 +256,7 @@ ID ID(
     .ID_rd_wr_i(WB_rd), 
     .ID_wr_data_i(WB_regfilemux_out), 
 
-    .ID_controlmux_sel_i(HD_controlmux_sel)
+    .ID_controlmux_sel_i(HD_controlmux_sel),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -267,7 +270,9 @@ ID ID(
     .ID_rs1_o(ID_rs1),
     .ID_rs2_o(ID_rs2),
     .ID_rd_o(ID_rd), 
-    .ID_br_en_o(ID_br_en) 
+    .ID_br_en_o(ID_br_en),
+    .ID_br_addr_o(ID_br_addr),
+    .ID_pcmux_sel_o(ID_pcmux_sel) 
 
 
 ); 
@@ -312,6 +317,7 @@ ID_EX ID_EX(
     .ID_EX_rs2_o(ID_EX_rs2),
     .ID_EX_rd_o(ID_EX_rd),
     .ID_EX_br_en_o(ID_EX_br_en)
+    
 
 ); 
 
@@ -321,7 +327,7 @@ EX EX(
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out),
     .EX_rs2_out_i(ID_EX_rs2_out), 
-    .EX_rs1_i()
+    // .EX_rs1_i()
     .EX_rd_i(ID_EX_rd),
     .EX_instr_i(ID_EX_instr), 
     .EX_br_en_i(ID_EX_br_en),   
@@ -429,7 +435,7 @@ MEM MEM(
     .MEM_br_en_i(EX_MEM_br_en),
 
     // outputs 
-    .MEM_pcmux_sel_o(MEM_pcmux_sel),
+    // .MEM_pcmux_sel_o(MEM_pcmux_sel),
     .MEM_alu_out_o(MEM_alu_out),
     .MEM_rd_o(MEM_rd),
     .MEM_ctrl_word_o(MEM_ctrl_word),
@@ -592,13 +598,11 @@ end
 
 always_comb begin: BRANCH_FLUSH
 
-    branch_flush_con = (IF_ID_pc_out != MEM_pc_out); 
+    branch_flush_en = (IF_pc_out != ID_br_addr); 
     // if the PC addresses aren't correct & the memory is preparing for a branch then flush
-    IF_ID_flush_in = branch_flush_con ? 1'b1 : 1'b0; 
-    branch_p_load_pc = branch_flush_con ? 1'b0 : 1'b1; 
-    IF_instr_mem_rdata_in = branch_flush_con ? 32'b0000_0000_0000_0000_0000_0000_0001_0011 : instr_mem_rdata;  
-    instr_read = branch_flush_con ? 1'b0; 1'b1; 
-
+    IF_ID_flush_in = branch_flush_en ? 1'b1 : 1'b0; 
+    branch_p_load_pc = branch_flush_en ? 1'b0 : 1'b1; 
+    IF_instr_mem_rdata_in = branch_flush_en ? 32'b0000_0000_0000_0000_0000_0000_0001_0011 : instr_mem_rdata;  
 
 end 
 
