@@ -62,6 +62,6 @@ package controlmux;
 typedef enum bit {
     zero = 1'b0
     ,ctrl = 1'b1
-} controlmux_sel_t
+} controlmux_sel_t;
 endpackage
 

@@ -1,6 +1,6 @@
 module branch_predictor (
 
-    input clk, rst, 
+    input clk, rst
 
 
     

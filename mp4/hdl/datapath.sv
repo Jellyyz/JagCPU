@@ -253,7 +253,7 @@ ID ID(
     .ID_rd_wr_i(WB_rd), 
     .ID_wr_data_i(WB_regfilemux_out), 
 
-    .ID_controlmux_sel_i(HD_controlmux_sel)
+    .ID_controlmux_sel_i(HD_controlmux_sel),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -321,7 +321,7 @@ EX EX(
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out),
     .EX_rs2_out_i(ID_EX_rs2_out), 
-    .EX_rs1_i()
+    .EX_rs1_i(),
     .EX_rd_i(ID_EX_rd),
     .EX_instr_i(ID_EX_instr), 
     .EX_br_en_i(ID_EX_br_en),   
@@ -597,7 +597,7 @@ always_comb begin: BRANCH_FLUSH
     IF_ID_flush_in = branch_flush_con ? 1'b1 : 1'b0; 
     branch_p_load_pc = branch_flush_con ? 1'b0 : 1'b1; 
     IF_instr_mem_rdata_in = branch_flush_con ? 32'b0000_0000_0000_0000_0000_0000_0001_0011 : instr_mem_rdata;  
-    instr_read = branch_flush_con ? 1'b0; 1'b1; 
+    instr_read = branch_flush_con ? 1'b0 : 1'b1; 
 
 
 end 

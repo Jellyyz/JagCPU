@@ -85,7 +85,7 @@ always_comb begin : muxes
             nop_ctrl_word.mem_write = 1'b0; // default
             nop_ctrl_word.load_regfile = 1'b0; // default
             nop_ctrl_word.funct3 = norm_ctrl_word.funct3;
-            nop_ctrl_word.funct7 = norm_ctrl_word.funct7
+            nop_ctrl_word.funct7 = norm_ctrl_word.funct7;
             nop_ctrl_word.mem_byte_en = 4'b0000;
             nop_ctrl_word.pcmux_sel = pcmux::pc_plus4; // default
             nop_ctrl_word.alumux1_sel = alumux::rs1_out; // default
@@ -99,8 +99,9 @@ always_comb begin : muxes
             ctrl_word = nop_ctrl_word;
         end
         controlmux::ctrl : begin
-            ctrl_word = norm_ctrl_word
+            ctrl_word = norm_ctrl_word;
         end
+    endcase
 end
 
 control_rom ctrl_rom (
