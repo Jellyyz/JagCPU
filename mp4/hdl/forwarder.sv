@@ -1,7 +1,8 @@
-import rv32i_types::*;
-module forwarder #(
-    parameter width = 32
-) (
+
+module forwarder
+import rv32i_types::*; 
+#(parameter width = 32) 
+(
     input rv32i_reg ID_EX_rs1_i,
     input rv32i_reg ID_EX_rs2_i,
     input rv32i_reg EX_MEM_rd_i,

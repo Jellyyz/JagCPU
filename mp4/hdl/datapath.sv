@@ -327,11 +327,7 @@ EX EX(
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out),
     .EX_rs2_out_i(ID_EX_rs2_out), 
-<<<<<<< HEAD
-    // .EX_rs1_i()
-=======
-    .EX_rs1_i(),
->>>>>>> ca1fbbb19775b373c2391eab4640a797140562ee
+    //.EX_rs1_i(),
     .EX_rd_i(ID_EX_rd),
     .EX_instr_i(ID_EX_instr), 
     .EX_br_en_i(ID_EX_br_en),   

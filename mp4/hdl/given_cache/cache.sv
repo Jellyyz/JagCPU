@@ -1,5 +1,5 @@
 module cache (
-  input clk,
+  input clk, rst,
 
   /* Physical memory signals */
   input logic pmem_resp,

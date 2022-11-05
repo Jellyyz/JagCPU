@@ -18,12 +18,12 @@ import rv32i_types::*;
     output logic [255:0] d_mem_rdata,
     output logic d_mem_resp,
 
-    input  logic mem_resp,
-    input  logic [255:0] mem_rdata,
-    output logic mem_read,
-    output logic mem_write,
-    output logic [31:0] mem_address,
-    output logic [255:00] mem_wdata
+    input  logic main_pmem_resp,
+    input  logic [255:0] main_pmem_rdata,
+    output logic main_pmem_read,
+    output logic main_pmem_write,
+    output logic [31:0] main_pmem_address,
+    output logic [255:00] main_pmem_wdata
 );
 
 logic i_request, d_request;
@@ -40,11 +40,11 @@ function void set_defaults();
 
     i_mem_rdata = 256'b0;
     d_mem_rdata = 256'b0;
-    mem_wdata = 256'b0;
+    main_pmem_wdata = 256'b0;
 
-    mem_read = 1'b0;
-    mem_write = 1'b0;
-    mem_address = 32'b0;
+    main_pmem_read = 1'b0;
+    main_pmem_write = 1'b0;
+    main_pmem_address = 32'b0;
 endfunction
 
 
@@ -57,21 +57,21 @@ begin : state_actions
         idle: ;
 
         instruction_access: begin
-            mem_read = i_mem_read;
-            mem_write = i_mem_write;
-            mem_address = i_mem_address;
-            mem_wdata = i_mem_wdata;
-            i_mem_rdata = mem_rdata;
-            i_mem_resp = mem_resp;
+            main_pmem_read = i_mem_read;
+            main_pmem_write = i_mem_write;
+            main_pmem_address = i_mem_address;
+            main_pmem_wdata = i_mem_wdata;
+            i_mem_rdata = main_pmem_rdata;
+            i_mem_resp = main_pmem_resp;
         end
 
         data_access: begin
-            mem_read = d_mem_read;
-            mem_write = d_mem_write;
-            mem_address = d_mem_address;
-            mem_wdata = d_mem_wdata;
-            d_mem_rdata = mem_rdata;
-            d_mem_resp = mem_resp;
+            main_pmem_read = d_mem_read;
+            main_pmem_write = d_mem_write;
+            main_pmem_address = d_mem_address;
+            main_pmem_wdata = d_mem_wdata;
+            d_mem_rdata = main_pmem_rdata;
+            d_mem_resp = main_pmem_resp;
         end
     endcase
 end
@@ -89,14 +89,14 @@ begin : next_state_logic
         end
 
         instruction_access: begin
-            if (mem_resp && d_request) next_states = data_access;
-            else if (mem_resp) next_states = idle;
+            if (main_pmem_resp && d_request) next_states = data_access;
+            else if (main_pmem_resp) next_states = idle;
             else next_states = instruction_access;
         end
 
         data_access: begin
-            if (mem_resp && i_request) next_states = instruction_access;
-            else if (mem_resp) next_states = idle;
+            if (main_pmem_resp && i_request) next_states = instruction_access;
+            else if (main_pmem_resp) next_states = idle;
             else next_states = data_access;
         end
     endcase
