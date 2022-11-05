@@ -34,6 +34,7 @@ logic [255:0]   d_pmem_rdata;
 logic [31:0]    d_pmem_address;
 logic [255:0]   d_pmem_wdata;
 logic           d_pmem_read;
+logic           d_pmem_write;
 
 // Instruction Cache Signals
 logic           i_pmem_resp;
@@ -41,6 +42,15 @@ logic [255:0]   i_pmem_rdata;
 logic [31:0]    i_pmem_address;
 logic [255:0]   i_pmem_wdata;
 logic           i_pmem_read;
+logic           i_pmem_write;
+
+// Memory Signals
+logic           resp_o;
+logic [255:0]   line_o;
+logic           read_i;
+logic           write_i;
+logic [31:0]    address_i;
+logic [255:0]   line_i;
 
 cache data_cache
 (
@@ -107,7 +117,7 @@ arbiter arbiter
     .main_pmem_rdata      (line_o),
     .main_pmem_read       (read_i),
     .main_pmem_write      (write_i),
-    .main_pmem_address    (adress_i),
+    .main_pmem_address    (address_i),
     .main_pmem_wdata      (line_i)
 );
 
