@@ -57,6 +57,11 @@ import rv32i_types::*;
         .data_mem_address(data_mem_address),
         .data_mem_wdata(data_mem_wdata) 
 
+
+        // rv32i monitor ports 
+
+
+
     ); 
 
 endmodule : mp4
