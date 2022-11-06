@@ -26,7 +26,7 @@ end
 /************************ Signals necessary for monitor **********************/
 // This section not required until CP2
 
-assign rvfi.commit = 0; // Set high when a valid instruction is modifying regfile or PC
+assign rvfi.commit = dut.d0.IF_load_pc; // Set high when a valid instruction is modifying regfile or PC
 assign rvfi.halt = 0; // Set high when target PC == Current PC for a branch
 initial rvfi.order = 0;
 always @(posedge itf.clk iff rvfi.commit) rvfi.order <= rvfi.order + 1; // Modify for OoO
@@ -38,7 +38,7 @@ always @(posedge itf.clk iff rvfi.commit) rvfi.order <= rvfi.order + 1; // Modif
 
 // Regfile:
     assign rvfi.rs1_addr = 1'bZ;
-    assign rvfi.rs2_add = 1'bZ;
+    assign rvfi.rs2_addr = 1'bZ;
     assign rvfi.rs1_rdata = 1'bZ;
     assign rvfi.rs2_rdata = 1'bZ;
     assign rvfi.load_regfile = dut.d0.WB_load_regfile;
