@@ -37,13 +37,13 @@ always @(posedge itf.clk iff rvfi.commit) rvfi.order <= rvfi.order + 1; // Modif
     assign rvfi.trap = 1'bZ;
 
 // Regfile:
-    assign rvfi.rs1_addr = 1'bZ;
-    assign rvfi.rs2_addr = 1'bZ;
-    assign rvfi.rs1_rdata = 1'bZ;
-    assign rvfi.rs2_rdata = 1'bZ;
+    assign rvfi.rs1_addr = 1'b1;
+    assign rvfi.rs2_addr = 1'b1;
+    assign rvfi.rs1_rdata = 1'b1;
+    assign rvfi.rs2_rdata = 1'b1;
     assign rvfi.load_regfile = dut.d0.WB_load_regfile;
-    assign rvfi.rd_addr = 1'bZ;
-    assign rvfi.rd_wdata = 1'bZ;
+    assign rvfi.rd_addr = 1'b1;
+    assign rvfi.rd_wdata = 1'b1;
 
 // PC:
     assign rvfi.pc_rdata = 1'bZ;
