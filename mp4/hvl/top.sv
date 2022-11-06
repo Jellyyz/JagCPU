@@ -27,7 +27,7 @@ end
 // This section not required until CP2
 
 assign rvfi.commit = dut.d0.IF_load_pc; // Set high when a valid instruction is modifying regfile or PC
-assign rvfi.halt = 0; // Set high when target PC == Current PC for a branch
+assign rvfi.halt = (rvfi.pc_wdata == rvfi.pc_rdata) && rvfi.commit; // Set high when target PC == Current PC for a branch
 initial rvfi.order = 0;
 always @(posedge itf.clk iff rvfi.commit) rvfi.order <= rvfi.order + 1; // Modify for OoO
 
