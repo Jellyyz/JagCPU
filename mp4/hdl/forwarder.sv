@@ -26,10 +26,10 @@ end
     
 always_comb begin : forwardingA
     data_hazardA = MEM_load_regfile_i 
-                    // & |EX_MEM_rd_i 
+                    & |EX_MEM_rd_i 
                     & (EX_MEM_rd_i == ID_EX_rs1_i);
     mem_hazardA = WB_load_regfile_i 
-                    // & |MEM_WB_rd_i 
+                    & |MEM_WB_rd_i 
                     & (MEM_WB_rd_i == ID_EX_rs1_i) 
                     & ~data_hazardA;
     
@@ -54,10 +54,10 @@ end
 
 always_comb begin : forwardingB
     data_hazardB = MEM_load_regfile_i 
-                    // & |EX_MEM_rd_i 
+                    & |EX_MEM_rd_i 
                     & (EX_MEM_rd_i == ID_EX_rs2_i);
     mem_hazardB = WB_load_regfile_i 
-                    // & |MEM_WB_rd_i 
+                    & |MEM_WB_rd_i 
                     & (MEM_WB_rd_i == ID_EX_rs2_i) 
                     & ~data_hazardB;
     

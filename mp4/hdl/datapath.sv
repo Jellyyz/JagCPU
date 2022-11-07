@@ -333,8 +333,10 @@ EX EX(
     .EX_j_imm_i(ID_EX_j_imm),
     .EX_forwardA_i(forwardA),
     .EX_forwardB_i(forwardB),
-    .EX_from_WB_regfilemux_out_i(EX_MEM_alu_out),
-    .EX_from_MEM_alu_out_i(EX_alu_out),
+    // .EX_forwardA_i(forwardingmux::id_ex),
+    // .EX_forwardB_i(forwardingmux::id_ex),
+    .EX_from_WB_regfilemux_out_i(MEM_WB_alu_out),
+    .EX_from_MEM_alu_out_i(EX_MEM_alu_out),
 
 
     // outputs 
