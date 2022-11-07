@@ -26,38 +26,38 @@ end
 /************************ Signals necessary for monitor **********************/
 // This section not required until CP2
 
-assign rvfi.commit = dut.d0.IF_load_pc; // Set high when a valid instruction is modifying regfile or PC
-assign rvfi.halt = (rvfi.pc_wdata == rvfi.pc_rdata) && rvfi.commit; // Set high when target PC == Current PC for a branch
+assign rvfi.commit = 0; // Set high when a valid instruction is modifying regfile or PC
+assign rvfi.halt = 0; // Set high when target PC == Current PC for a branch
 initial rvfi.order = 0;
 always @(posedge itf.clk iff rvfi.commit) rvfi.order <= rvfi.order + 1; // Modify for OoO
 
+/*
+Instruction and trap:
+    rvfi.inst
+    rvfi.trap
 
-// Instruction and trap:
-    assign rvfi.inst = dut.d0.MEM_WB_pc_out;
-    assign rvfi.trap = 1'bZ;
+Regfile:
+    rvfi.rs1_addr
+    rvfi.rs2_add
+    rvfi.rs1_rdata
+    rvfi.rs2_rdata
+    rvfi.load_regfile
+    rvfi.rd_addr
+    rvfi.rd_wdata
 
-// Regfile:
-    assign rvfi.rs1_addr = 1'b1;
-    assign rvfi.rs2_addr = 1'b1;
-    assign rvfi.rs1_rdata = 1'b1;
-    assign rvfi.rs2_rdata = 1'b1;
-    assign rvfi.load_regfile = dut.d0.WB_load_regfile;
-    assign rvfi.rd_addr = 1'b1;
-    assign rvfi.rd_wdata = 1'b1;
+PC:
+    rvfi.pc_rdata
+    rvfi.pc_wdata
 
-// PC:
-    assign rvfi.pc_rdata = 1'bZ;
-    assign rvfi.pc_wdata = 1'bZ;
+Memory:
+    rvfi.mem_addr
+    rvfi.mem_rmask
+    rvfi.mem_wmask
+    rvfi.mem_rdata
+    rvfi.mem_wdata
 
-// Memory:
-    assign rvfi.mem_addr = 1'bZ; 
-    assign rvfi.mem_rmask = 1'bZ; 
-    assign rvfi.mem_wmask = 1'bZ; 
-    assign rvfi.mem_rdata = 1'bZ; 
-    assign rvfi.mem_wdata = 1'bZ; 
-
-// Please refer to rvfi_itf.sv for more information.
-
+Please refer to rvfi_itf.sv for more information.
+*/
 
 /**************************** End RVFIMON signals ****************************/
 

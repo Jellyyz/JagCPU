@@ -3,11 +3,11 @@
 
 `define MAGIC_MEM 0
 `define PARAM_MEM 1
-`define MEMORY `MAGIC_MEM // change this to PARAM_MEM when using cache
+`define MEMORY `MAGIC_MEM
 
 // Set these to 1 to enable the feature for CP2
 `define USE_SHADOW_MEMORY 0
-`define USE_RVFI_MONITOR 1
+`define USE_RVFI_MONITOR 0
 
 `include "tb_itf.sv"
 
