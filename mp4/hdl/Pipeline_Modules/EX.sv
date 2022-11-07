@@ -18,8 +18,8 @@ import rv32i_types::*;
     input logic [4:0] EX_rd_i,
     input forwardingmux::forwardingmux_sel_t EX_forwardA_i,
     input forwardingmux::forwardingmux_sel_t EX_forwardB_i,
-    input rv32i_word WB_regfilemux_out_i,
-    input rv32i_word EX_MEM_alu_out_i,
+    input rv32i_word EX_from_WB_regfilemux_out_i,
+    input rv32i_word EX_from_MEM_alu_out_i,
 
     output rv32i_word EX_pc_out_o, 
     output rv32i_word EX_pc_plus4_o, 
@@ -71,15 +71,15 @@ end
 always_comb begin : Forwarding_MUXES
     unique case (EX_forwardA_i)
         forwardingmux::id_ex : forwardmuxA_out = EX_rs1_out_i;
-        forwardingmux::ex_mem : forwardmuxA_out = EX_MEM_alu_out_i;
-        forwardingmux::mem_wb : forwardmuxA_out = WB_regfilemux_out_i;
+        forwardingmux::ex_mem : forwardmuxA_out = EX_from_MEM_alu_out_i;
+        forwardingmux::mem_wb : forwardmuxA_out = EX_from_WB_regfilemux_out_i;
         default : ;
     endcase
 
     unique case (EX_forwardB_i)
         forwardingmux::id_ex : forwardmuxB_out = EX_rs2_out_i;
-        forwardingmux::ex_mem : forwardmuxB_out = EX_MEM_alu_out_i;
-        forwardingmux::mem_wb : forwardmuxB_out = WB_regfilemux_out_i;
+        forwardingmux::ex_mem : forwardmuxB_out = EX_from_MEM_alu_out_i;
+        forwardingmux::mem_wb : forwardmuxB_out = EX_from_WB_regfilemux_out_i;
         default : ;
     endcase
 end
