@@ -3,7 +3,7 @@ module MEM
 import rv32i_types::*;
 #(parameter width = 32) 
 (
-
+    input logic [width-1:0] MEM_from_WB_rd_i, 
     input logic [width-1:0] MEM_pc_out_i, 
     input logic [width-1:0] MEM_pc_plus4_i, 
     input logic [width-1:0] MEM_instr_i,
@@ -18,7 +18,8 @@ import rv32i_types::*;
     input logic [4:0] MEM_rd_i,
     input logic [width-1:0] MEM_alu_out_i,
     input logic MEM_br_en_i,
-
+    input logic MEM_forwardC_i, 
+    
     output pcmux::pcmux_sel_t MEM_pcmux_sel_o,
     output logic [width-1:0] MEM_alu_out_o,
     output logic [4:0] MEM_rd_o,
@@ -60,11 +61,13 @@ always_comb begin : ctrl_decode
     mem_byte_en = MEM_ctrl_word_i.mem_byte_en << data_mem_address[1:0];
 end
 
-// always_comb begin : Forwarding_MUXES
-//     unique case (MEM_forwardC_i)
-//         default : ;
-//     endcase
-// end
+always_comb begin : Forwarding_MUXES
+    unique case (MEM_forwardC_i)
+        forwardingmux2::mem : data_mem_wdata = MEM_rs2_out_i;// whatever it originally was
+        forwardingmux2::wb  : data_mem_wdata = MEM_from_WB_rd_i; // whatever got read in by previous instruction 
+        default : ;
+    endcase
+end
 
 always_comb begin : set_output
     MEM_pc_out_o = MEM_pc_out_i;
@@ -94,7 +97,7 @@ always_comb begin : set_output
     MEM_mem_byte_en_o = mem_byte_en;
 end
 
-assign data_mem_wdata = MEM_rs2_out_i;
+//assign data_mem_wdata = MEM_rs2_out_i;
 
 always_comb begin : muxes
     unique case (MEM_ctrl_word_i.marmux_sel) 

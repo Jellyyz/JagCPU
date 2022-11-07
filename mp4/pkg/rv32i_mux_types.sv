@@ -56,7 +56,9 @@ typedef enum bit [1:0] {
     ,ex_mem     = 2'b10 // ALU operand forwarded from prior ALU result
     ,mem_wb     = 2'b01 // ALU operand forwarded from data memory or earlier ALU result
 } forwardingmux1_sel_t;
+endpackage 
 
+package forwardingmux2; 
 typedef enum bit {
     mem         = 1'b0 
     ,wb         = 1'b1

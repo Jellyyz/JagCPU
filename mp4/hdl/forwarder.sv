@@ -5,25 +5,28 @@ import rv32i_types::*;
 (
     input rv32i_reg ID_EX_rs1_i,
     input rv32i_reg ID_EX_rs2_i,
+    input rv32i_reg EX_MEM_rs2_i,
     input rv32i_reg EX_MEM_rd_i,
     input rv32i_reg MEM_WB_rd_i,
     input logic MEM_load_regfile_i,
     input logic WB_load_regfile_i,
 
-    input rv32i_reg MEM_WB_data_mem_rdata
-    input rv32i_reg EX_MEM_rs2_out
+    input rv32i_control_word EX_MEM_ctrl_word_i, MEM_WB_ctrl_word_i, 
 
-    output forwardingmux::forwardingmux_sel_t forwardA_o,
-    output forwardingmux::forwardingmux_sel_t forwardB_o,
-    output forwardingmux::forwardingmux_sel_t forwardC_o
+    input rv32i_reg MEM_WB_data_mem_rdata,
+    input rv32i_reg EX_MEM_rs2_out,
+
+    output forwardingmux::forwardingmux1_sel_t forwardA_o,
+    output forwardingmux::forwardingmux1_sel_t forwardB_o,
+    output forwardingmux2::forwardingmux2_sel_t forwardC_o
 );
 
-forwardingmux::forwardingmux_sel_t forwardA;
-forwardingmux::forwardingmux_sel_t forwardB;
-forwardingmux::forwardingmux_sel_t forwardC;
+forwardingmux::forwardingmux1_sel_t forwardA;
+forwardingmux::forwardingmux1_sel_t forwardB;
+forwardingmux2::forwardingmux2_sel_t forwardC;
 logic data_hazardA, data_hazardB;
 logic mem_hazardA, mem_hazardB;
-
+logic load_hazard; 
 always_comb begin : set_output
     forwardA_o = forwardA;
     forwardB_o = forwardB;
@@ -87,7 +90,18 @@ always_comb begin : forwardingB
 end
 
 always_comb begin : forwardingC // WB -> MEM
-    
+
+    load_hazard = (MEM_WB_rd_i == EX_MEM_rs2_i) 
+                   & (EX_MEM_ctrl_word_i.opcode == op_store) 
+                   & (MEM_WB_ctrl_word_i.opcode == op_load);
+
+     unique case (load_hazard)
+        1'b0            : forwardC = forwardingmux2::mem;
+        1'b1            : forwardC = forwardingmux2::wb;
+        default         : begin 
+            $display("Error on forwardmux_sel C @:", $time); 
+        end 
+     endcase
 end 
 
 endmodule

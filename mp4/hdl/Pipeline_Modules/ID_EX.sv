@@ -24,7 +24,7 @@ import rv32i_types::*;
     input logic ID_EX_br_en_i,
 
     output rv32i_control_word ID_EX_ctrl_word_o,
-    output logic [width-1:0] ID_EX_instr_o,
+    output logic[width-1:0] ID_EX_instr_o,
     output logic[width-1:0] ID_EX_pc_out_o, 
     output logic[width-1:0] ID_EX_rs1_out_o,
     output logic[width-1:0] ID_EX_rs2_out_o,
