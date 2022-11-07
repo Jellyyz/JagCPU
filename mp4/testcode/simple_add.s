@@ -23,16 +23,17 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     nop
     nop
-    add x2, x2, x1 # 3
-    add x2, x2, x3 # 6 = 3 + 3
-    add x2, x2, x4 # 8 = 6 + 2
+    add x2, x2, x1 # 3 = 2 + 1
+    nop
+    nop
+    add x3, x2, x4 # 5 = 3 + 2
     nop
     nop
     nop
     nop
     nop
     nop
-    add x4, x3, x1
+    # add x4, x3, x1
     nop
     nop
     nop

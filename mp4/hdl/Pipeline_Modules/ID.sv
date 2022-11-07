@@ -98,7 +98,7 @@ regfile regfile (
     .clk    (clk),
     .rst    (rst),
     .load   (ID_load_regfile_i),
-    .in     (ID_wr_data_i), 
+    .datain (ID_wr_data_i), 
     .src_a  (rs1),   
     .src_b  (rs2),   
     .dest   (ID_rd_wr_i),   
