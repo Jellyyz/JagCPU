@@ -55,7 +55,12 @@ typedef enum bit [1:0] {
     id_ex       = 2'b00 // ALU operand comes from the register file
     ,ex_mem     = 2'b10 // ALU operand forwarded from prior ALU result
     ,mem_wb     = 2'b01 // ALU operand forwarded from data memory or earlier ALU result
-} forwardingmux_sel_t;
+} forwardingmux1_sel_t;
+
+typedef enum bit {
+    mem         = 1'b0 
+    ,wb         = 1'b1
+} forwardingmux2_sel_t;
 endpackage
 
 package controlmux;

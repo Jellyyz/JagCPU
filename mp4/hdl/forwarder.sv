@@ -10,18 +10,24 @@ import rv32i_types::*;
     input logic MEM_load_regfile_i,
     input logic WB_load_regfile_i,
 
+    input rv32i_reg MEM_WB_data_mem_rdata
+    input rv32i_reg EX_MEM_rs2_out
+
     output forwardingmux::forwardingmux_sel_t forwardA_o,
-    output forwardingmux::forwardingmux_sel_t forwardB_o
+    output forwardingmux::forwardingmux_sel_t forwardB_o,
+    output forwardingmux::forwardingmux_sel_t forwardC_o
 );
 
 forwardingmux::forwardingmux_sel_t forwardA;
 forwardingmux::forwardingmux_sel_t forwardB;
+forwardingmux::forwardingmux_sel_t forwardC;
 logic data_hazardA, data_hazardB;
 logic mem_hazardA, mem_hazardB;
 
 always_comb begin : set_output
     forwardA_o = forwardA;
     forwardB_o = forwardB;
+    forwardC_o = forwardC;
 end
     
 always_comb begin : forwardingA
@@ -78,8 +84,10 @@ always_comb begin : forwardingB
             $display("Error on forwardmux_sel B @:", $time); 
         end
     endcase
-
 end
 
+always_comb begin : forwardingC // WB -> MEM
+    
+end 
 
 endmodule

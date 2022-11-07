@@ -169,6 +169,7 @@ logic [width-1:0] WB_regfilemux_out;
 /****************************************/
 forwardingmux::forwardingmux_sel_t forwardA;
 forwardingmux::forwardingmux_sel_t forwardB;
+forwardingmux::forwardingmux_sel_t forwardC;
 
 /****************************************/
 /* Begin instantiation ******************/
@@ -440,6 +441,9 @@ MEM MEM(
     .MEM_j_imm_i(EX_MEM_j_imm),
 
     .MEM_rs2_out_i(EX_MEM_rs2_out),
+    .MEM_mem_wb_rdata_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
+    .MEM_forwardC_i(forwardC),
+
     .MEM_ctrl_word_i(EX_MEM_ctrl_word),
     .MEM_rd_i(EX_MEM_rd),
     .MEM_alu_out_i(EX_MEM_alu_out),
@@ -514,7 +518,7 @@ MEM_WB MEM_WB(
     .MEM_WB_j_imm_i             (MEM_j_imm),
     // .MEM_WB_data_mem_address_i  (data_mem_address),
     // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
-    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // must be updated after cp1 to be output of MEM stage
+    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
 
     // outputs
     // .MEM_WB_mem_read_o(MEM_WB_mem_read),
@@ -577,7 +581,8 @@ forwarder forwarding(
     .WB_load_regfile_i  (WB_load_regfile),
 
     .forwardA_o         (forwardA),
-    .forwardB_o         (forwardB)
+    .forwardB_o         (forwardB),
+    .forwardC_0         (forwardC)
 );
 
 

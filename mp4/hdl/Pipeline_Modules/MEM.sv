@@ -13,6 +13,7 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_u_imm_i,
     input logic [width-1:0] MEM_j_imm_i,
     input logic [width-1:0] MEM_rs2_out_i,
+    input logic [width-1:0] MEM_mem_wb_rdata_i,
     input rv32i_control_word MEM_ctrl_word_i,
     input logic [4:0] MEM_rd_i,
     input logic [width-1:0] MEM_alu_out_i,
@@ -58,6 +59,12 @@ always_comb begin : ctrl_decode
     mem_write = MEM_ctrl_word_i.mem_write;
     mem_byte_en = MEM_ctrl_word_i.mem_byte_en << data_mem_address[1:0];
 end
+
+// always_comb begin : Forwarding_MUXES
+//     unique case (MEM_forwardC_i)
+//         default : ;
+//     endcase
+// end
 
 always_comb begin : set_output
     MEM_pc_out_o = MEM_pc_out_i;
