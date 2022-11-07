@@ -48,12 +48,20 @@ typedef enum bit [3:0] {
     ,lh        = 4'b0111
     ,lhu       = 4'b1000  // unsigned halfword
 } regfilemux_sel_t;
+endpackage 
 
 package forwardingmux;
 typedef enum bit [1:0] {
-    id_ex       = 2'b00
-    ,ex_mem     = 2'b10
-    ,mem_wb     = 2'b01
+    id_ex       = 2'b00 // ALU operand comes from the register file
+    ,ex_mem     = 2'b10 // ALU operand forwarded from prior ALU result
+    ,mem_wb     = 2'b01 // ALU operand forwarded from data memory or earlier ALU result
 } forwardingmux_sel_t;
+endpackage
+
+package controlmux;
+typedef enum bit {
+    zero = 1'b0
+    ,ctrl = 1'b1 // no stall, execute as normal
+} controlmux_sel_t;
 endpackage
 

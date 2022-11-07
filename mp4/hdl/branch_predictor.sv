@@ -1,16 +1,16 @@
-module branch_predictor (
+// module branch_predictor (
 
-    input clk, rst, 
+//     input clk, rst, 
 
 
     
 
 
 
-); 
+// ); 
 
 
 
 
-endmodule  
+// endmodule  
 

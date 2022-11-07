@@ -6,30 +6,30 @@ import rv32i_types::*;
 
     
 	
-	// For CP2
-    input pmem_resp,
-    input [63:0] pmem_rdata,
+	// // For CP2
+    // input pmem_resp,
+    // input [63:0] pmem_rdata,
 
-	// To physical memory
-    output logic pmem_read,
-    output logic pmem_write,
-    output rv32i_word pmem_address,
-    output [63:0] pmem_wdata
+	// // To physical memory
+    // output logic pmem_read,
+    // output logic pmem_write,
+    // output rv32i_word pmem_address,
+    // output [63:0] pmem_wdata
 
-	// //Remove after CP1
-    // input rv32i_word 	instr_mem_rdata,
-    // input rv32i_word 	data_mem_rdata, 
-    // output rv32i_word 	data_mem_address,
-    // output rv32i_word 	data_mem_wdata,
+	//Remove after CP1
+    input rv32i_word 	instr_mem_rdata,
+    input rv32i_word 	data_mem_rdata, 
+    output rv32i_word 	data_mem_address,
+    output rv32i_word 	data_mem_wdata,
 
-    // // undriven or unused 
-	// output rv32i_word 	instr_mem_address,
-    // input 					instr_mem_resp,
-	// input 					data_mem_resp,
-    // output logic 			instr_read,
-    // output logic 			data_read,
-    // output logic 			data_write,
-    // output logic [3:0] 	data_mbe
+    // undriven or unused 
+	output rv32i_word 	instr_mem_address,
+    input 					instr_mem_resp,
+	input 					data_mem_resp,
+    output logic 			instr_read,
+    output logic 			data_read,
+    output logic 			data_write,
+    output logic [3:0] 	data_mbe
 
 ); 
 
@@ -319,12 +319,11 @@ ID_EX ID_EX(
     // rv32i_word  EX_alu_out; 
     // logic EX_br_en; 
 EX EX(
-// i think this one is the easiest once we have the other crap done. 
     // inputs 
     .EX_pc_out_i(ID_EX_pc_out),     
     .EX_rs1_out_i(ID_EX_rs1_out),
     .EX_rs2_out_i(ID_EX_rs2_out), 
-    .EX_rs1_i()
+    // .EX_rs1_i(),
     .EX_rd_i(ID_EX_rd),
     .EX_instr_i(ID_EX_instr), 
     .EX_br_en_i(ID_EX_br_en),   

@@ -16,8 +16,8 @@ import rv32i_types::*;
     input rv32i_word  EX_j_imm_i,
     input logic EX_br_en_i,
     input logic [4:0] EX_rd_i,
-    input logic EX_forwardA_i,
-    input logic EX_forwardB_i,
+    input forwardingmux::forwardingmux_sel_t EX_forwardA_i,
+    input forwardingmux::forwardingmux_sel_t EX_forwardB_i,
     input rv32i_word WB_regfilemux_out_i,
     input rv32i_word EX_MEM_alu_out_i,
 
@@ -34,7 +34,10 @@ import rv32i_types::*;
     output logic [4:0] EX_rd_o,
     
     output rv32i_word  EX_alu_out_o,
-    output logic EX_br_en_o
+    output logic EX_br_en_o,
+
+    output logic EX_mem_read_o
+
 
 ); 
 rv32i_word forwardmuxA_out;
@@ -49,6 +52,7 @@ rv32i_word alumux2_out;
 always_comb begin : set_output
     EX_instr_o = EX_instr_i;
     EX_ctrl_word_o = EX_ctrl_word_i;
+    EX_mem_read_o = EX_ctrl_word_i.mem_read;
 
     EX_rs2_out_o = EX_rs2_out_i; 
     EX_pc_out_o = EX_pc_out_i;

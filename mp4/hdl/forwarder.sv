@@ -1,7 +1,8 @@
-import rv32i_types::*;
-module forwarder #(
-    parameter width = 32
-) (
+
+module forwarder
+import rv32i_types::*; 
+#(parameter width = 32) 
+(
     input rv32i_reg ID_EX_rs1_i,
     input rv32i_reg ID_EX_rs2_i,
     input rv32i_reg EX_MEM_rd_i,
@@ -24,36 +25,60 @@ always_comb begin : set_output
 end
     
 always_comb begin : forwardingA
-    data_hazardA = MEM_load_regfile_i & |EX_MEM_rd_i 
+    data_hazardA = MEM_load_regfile_i 
+                    // & |EX_MEM_rd_i 
                     & (EX_MEM_rd_i == ID_EX_rs1_i);
-    mem_hazardA = WB_load_regfile_i & |MEM_WB_rd_i 
-                    & (MEM_WB_rd_i == ID_EX_rs1_i) & ~data_hazardA;
+    mem_hazardA = WB_load_regfile_i 
+                    // & |MEM_WB_rd_i 
+                    & (MEM_WB_rd_i == ID_EX_rs1_i) 
+                    & ~data_hazardA;
     
-    if (mem_hazardA) begin
-        forwardA = forwardingmux::mem_wb;
-    end else if (data_hazardA) begin
-        forwardA = forwardingmux::ex_mem;
-    end else begin
-        forwardA = forwardingmux::id_ex;
-    end
+    // if (data_hazardA) begin
+    //     forwardA = forwardingmux::ex_mem;
+    // end else if (mem_hazardA) begin
+    //     forwardA = forwardingmux::mem_wb;
+    // end else begin
+    //     forwardA = forwardingmux::id_ex;
+    // end
+
+    unique case ({mem_hazardA, data_hazardA})
+        2'b10           : forwardA = forwardingmux::mem_wb;
+        2'b01, 2'b11    : forwardA = forwardingmux::ex_mem;
+        2'b00           : forwardA = forwardingmux::id_ex;
+        default         : begin
+            forwardA = forwardingmux::id_ex;
+            $display("Error on forwardmux_sel A @:", $time); 
+        end
+    endcase
 end
 
 always_comb begin : forwardingB
     data_hazardB = MEM_load_regfile_i 
-                    & |EX_MEM_rd_i 
+                    // & |EX_MEM_rd_i 
                     & (EX_MEM_rd_i == ID_EX_rs2_i);
     mem_hazardB = WB_load_regfile_i 
-                    & |MEM_WB_rd_i 
+                    // & |MEM_WB_rd_i 
                     & (MEM_WB_rd_i == ID_EX_rs2_i) 
-                    & ~data_hazardA;
+                    & ~data_hazardB;
     
-    if (mem_hazardB) begin
-        forwardB = forwardingmux::mem_wb;
-    end else if (data_hazardB) begin
-        forwardB = forwardingmux::ex_mem;
-    end else begin
-        forwardB = forwardingmux::id_ex;
-    end
+    // if (data_hazardB) begin
+    //     forwardB = forwardingmux::ex_mem;
+    // end else if (mem_hazardB) begin
+    //     forwardB = forwardingmux::mem_wb;
+    // end else begin
+    //     forwardB = forwardingmux::id_ex;
+    // end
+
+    unique case ({mem_hazardB, data_hazardB})
+        2'b10           : forwardB = forwardingmux::mem_wb;
+        2'b01, 2'b11    : forwardB = forwardingmux::ex_mem;
+        2'b00           : forwardB = forwardingmux::id_ex;
+        default         : begin
+            forwardB = forwardingmux::id_ex;
+            $display("Error on forwardmux_sel B @:", $time); 
+        end
+    endcase
+
 end
 
 
