@@ -367,51 +367,6 @@ EX_MEM EX_MEM(
 ); 
 
 
-MEM_WB MEM_WB(
-    // inputs 
-    .clk(clk), .rst(rst), 
-    .load_i(1'b1), 
-
-    // @ TODO FIX MEM_READ_O
-    // .MEM_WB_mem_read_i          (MEM_mem_read),
-    // .MEM_WB_mem_write_i         (MEM_mem_write),
-    .MEM_WB_br_en_i             (MEM_br_en),
-    .MEM_WB_pcmux_sel_i         (MEM_pcmux_sel),
-    .MEM_WB_alu_out_i           (MEM_alu_out),
-    .MEM_WB_rd_i                (MEM_rd),
-    .MEM_WB_ctrl_word_i         (MEM_ctrl_word),
-    .MEM_WB_pc_out_i            (MEM_pc_out),
-    .MEM_WB_pc_plus4_i          (MEM_pc_plus4),
-    .MEM_WB_instr_i             (MEM_instr),
-    .MEM_WB_i_imm_i             (MEM_i_imm),
-    .MEM_WB_s_imm_i             (MEM_s_imm),
-    .MEM_WB_b_imm_i             (MEM_b_imm),
-    .MEM_WB_u_imm_i             (MEM_u_imm),
-    .MEM_WB_j_imm_i             (MEM_j_imm),
-    // .MEM_WB_data_mem_address_i  (data_mem_address),
-    // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
-    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
-
-    // outputs
-    // .MEM_WB_mem_read_o(MEM_WB_mem_read),
-    // .MEM_WB_mem_write_o(MEM_WB_mem_write),
-    .MEM_WB_br_en_o(MEM_WB_br_en),
-    .MEM_WB_pcmux_sel_o(MEM_WB_pcmux_sel),
-    .MEM_WB_alu_out_o(MEM_WB_alu_out),
-    .MEM_WB_rd_o(MEM_WB_rd),
-    .MEM_WB_ctrl_word_o(MEM_WB_ctrl_word),
-    .MEM_WB_pc_out_o(MEM_WB_pc_out),
-    .MEM_WB_pc_plus4_o(MEM_WB_pc_plus4),
-    .MEM_WB_instr_o(MEM_WB_instr),
-    .MEM_WB_i_imm_o(MEM_WB_i_imm),
-    .MEM_WB_s_imm_o(MEM_WB_s_imm),
-    .MEM_WB_b_imm_o(MEM_WB_b_imm),
-    .MEM_WB_u_imm_o(MEM_WB_u_imm),
-    .MEM_WB_j_imm_o(MEM_WB_j_imm),
-    // .MEM_WB_data_mem_address_o(data_mem_address), // magic
-    // .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
-    .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata) // magic
-); 
 MEM MEM(
     // inputs 
     .MEM_pc_out_i(EX_MEM_pc_out),
@@ -459,6 +414,53 @@ MEM MEM(
     .MEM_mem_byte_en_o(data_mbe),
 
     .MEM_load_regfile_o(MEM_load_regfile)
+); 
+
+
+MEM_WB MEM_WB(
+    // inputs 
+    .clk(clk), .rst(rst), 
+    .load_i(1'b1), 
+
+    // @ TODO FIX MEM_READ_O
+    // .MEM_WB_mem_read_i          (MEM_mem_read),
+    // .MEM_WB_mem_write_i         (MEM_mem_write),
+    .MEM_WB_br_en_i             (MEM_br_en),
+    .MEM_WB_pcmux_sel_i         (MEM_pcmux_sel),
+    .MEM_WB_alu_out_i           (MEM_alu_out),
+    .MEM_WB_rd_i                (MEM_rd),
+    .MEM_WB_ctrl_word_i         (MEM_ctrl_word),
+    .MEM_WB_pc_out_i            (MEM_pc_out),
+    .MEM_WB_pc_plus4_i          (MEM_pc_plus4),
+    .MEM_WB_instr_i             (MEM_instr),
+    .MEM_WB_i_imm_i             (MEM_i_imm),
+    .MEM_WB_s_imm_i             (MEM_s_imm),
+    .MEM_WB_b_imm_i             (MEM_b_imm),
+    .MEM_WB_u_imm_i             (MEM_u_imm),
+    .MEM_WB_j_imm_i             (MEM_j_imm),
+    // .MEM_WB_data_mem_address_i  (data_mem_address),
+    // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
+    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
+
+    // outputs
+    // .MEM_WB_mem_read_o(MEM_WB_mem_read),
+    // .MEM_WB_mem_write_o(MEM_WB_mem_write),
+    .MEM_WB_br_en_o(MEM_WB_br_en),
+    .MEM_WB_pcmux_sel_o(MEM_WB_pcmux_sel),
+    .MEM_WB_alu_out_o(MEM_WB_alu_out),
+    .MEM_WB_rd_o(MEM_WB_rd),
+    .MEM_WB_ctrl_word_o(MEM_WB_ctrl_word),
+    .MEM_WB_pc_out_o(MEM_WB_pc_out),
+    .MEM_WB_pc_plus4_o(MEM_WB_pc_plus4),
+    .MEM_WB_instr_o(MEM_WB_instr),
+    .MEM_WB_i_imm_o(MEM_WB_i_imm),
+    .MEM_WB_s_imm_o(MEM_WB_s_imm),
+    .MEM_WB_b_imm_o(MEM_WB_b_imm),
+    .MEM_WB_u_imm_o(MEM_WB_u_imm),
+    .MEM_WB_j_imm_o(MEM_WB_j_imm),
+    // .MEM_WB_data_mem_address_o(data_mem_address), // magic
+    // .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
+    .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata) // magic
 ); 
 
 
@@ -526,16 +528,4 @@ always_comb begin : CONTROL_WORD
 end 
 
 
-
-
-
-// always_comb begin : MUXES
-
-//     unique case(MEM_pcmux_sel) 
-//         pcmux::pc_plus4 : pcmux_out = IF_pc_out + 4;
-//         pcmux::alu_out : pcmux_out = EX_alu_out; 
-//         pcmux::alu_mod2 : pcmux_out = EX_alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
-//         default: $display("hit pcmux error");
-//     endcase  
-// end
 endmodule 
