@@ -62,6 +62,14 @@ logic [31:0] cmp_mux_out;
 /* Start Hazard stuff *******************/
 /****************************************/
 
+control_rom ctrl_rom (
+    .opcode (opcode),
+    .funct3 (funct3),
+    .funct7 (funct7),
+
+    .ctrl   (ctrl_word)
+);
+
 
 logic load_regfile;
 logic mem_read, mem_write;
@@ -69,32 +77,17 @@ logic [3:0] mem_byte_en;
 
 rv32i_control_word ctrl_word_hd;
 
-always_comb begin : blockName
+always_comb begin : NOP_generator
     ctrl_word_hd = ctrl_word;
-    unique case (ID_HD_controlmux_sel_i)
-        // controlmux::norm : begin
-        //     // load_regfile = ctrl_word.load_regfile;
-        //     // mem_read = ctrl_word.mem_read;
-        //     // mem_write = ctrl_word.mem_write;
-        //     // mem_byte_en = ctrl_word.mem_byte_en;
-        // end
-        controlmux::zero : begin
-            // load_regfile = 1'b0;
-            // mem_read = 1'b0;
-            // mem_write = 1'b0;
-            // mem_byte_en = 1'b0;
-            $display("pls stuff @", $time);
-            ctrl_word_hd.load_regfile = 1'b0;
-            ctrl_word_hd.mem_read = 1'b0;
-            ctrl_word_hd.mem_write = 1'b0;
-            ctrl_word_hd.mem_byte_en = 1'b0;
-        end
-        default : ;
-    endcase 
 
     if (ID_HD_controlmux_sel_i == controlmux::zero) begin
-
+        $display("pls stuff @", $time);
+        ctrl_word_hd.load_regfile = 1'b0;
+        ctrl_word_hd.mem_read = 1'b0;
+        ctrl_word_hd.mem_write = 1'b0;
+        ctrl_word_hd.mem_byte_en = 1'b0;
     end
+
 end
 
 
@@ -135,13 +128,6 @@ always_comb begin : muxes
     endcase
 end
 
-control_rom ctrl_rom (
-    .opcode (opcode),
-    .funct3 (funct3),
-    .funct7 (funct7),
-
-    .ctrl   (ctrl_word)
-);
 
 cmp cmp (
     .cmpop(cmpop),
