@@ -172,6 +172,14 @@ forwardingmux::forwardingmux1_sel_t forwardB;
 forwardingmux2::forwardingmux2_sel_t forwardC;
 
 /****************************************/
+/* Declarations for forwarding unit *****/
+/****************************************/
+controlmux::controlmux_sel_t ID_HD_controlmux_sel;
+logic IF_HD_PC_write;
+logic IF_ID_HD_write;
+
+
+/****************************************/
 /* Begin instantiation ******************/
 /****************************************/
 
@@ -188,8 +196,8 @@ IF IF(
     // input 
     .clk(clk),
     .rst(rst), 
+    .IF_PC_write_i(IF_HD_PC_write),
     .IF_instr_mem_rdata_i(instr_mem_rdata), 
-    .IF_ctrl_word_i(), 
     .IF_pcmux_sel_i(MEM_pcmux_sel),
     .IF_alu_out_i(EX_MEM_alu_out),
 
@@ -203,10 +211,13 @@ IF_ID IF_ID(
     .clk(clk), 
     .rst(rst), 
     .flush_i(1'b0), 
-    .load_i(1'b1), 
+    // .load_i(1'b1), 
+    .load(IF_ID_HD_write_i),
 
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(instr_mem_rdata), 
+
+    .IF_ID_HD_write_i(IF_ID_HD_write),
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
@@ -224,6 +235,8 @@ ID ID(
     .ID_load_regfile_i(WB_load_regfile), 
     .ID_rd_wr_i(WB_rd), 
     .ID_wr_data_i(WB_regfilemux_out), 
+
+    .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -510,6 +523,20 @@ forwarder forwarding(
     .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word)
 
 
+);
+
+logic EX_mem_read;
+assign ID_EX_mem_read = ID_EX_ctrl_word.mem_read;
+
+hazard_detector hazard_detector (
+    .EX_mem_read_i(ID_EX_mem_read),
+    .ID_rs1_i(ID_EX_rs1),
+    .ID_rs2_i(ID_EX_rs2),
+    .EX_rd_i(ID_EX_rd),
+
+    .ID_HD_controlmux_sel_o(),
+    .IF_HD_PC_write_o(),
+    .IF_ID_HD_write_o()
 );
 
 

@@ -12,6 +12,8 @@ import rv32i_types::*;
     input logic [4:0] ID_rd_wr_i,          // from WB stage
     input logic [width-1:0] ID_wr_data_i,  // from WB stage
 
+    controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
+
     
     // all outputs out to ID/EX reg
     output rv32i_control_word ID_ctrl_word_o,
