@@ -68,7 +68,7 @@ endpackage
 package controlmux;
 typedef enum bit {
     zero = 1'b0
-    ,ctrl = 1'b1 // no stall, execute as normal
+    ,norm = 1'b1 // no stall, execute as normal
 } controlmux_sel_t;
 endpackage
 

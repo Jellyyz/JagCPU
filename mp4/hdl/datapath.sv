@@ -314,8 +314,9 @@ EX EX(
     .EX_forwardB_i(forwardB),
     // .EX_forwardA_i(forwardingmux::id_ex),
     // .EX_forwardB_i(forwardingmux::id_ex),
-    .EX_from_WB_regfilemux_out_i(MEM_WB_alu_out),
-    .EX_from_MEM_alu_out_i(EX_MEM_alu_out),
+    // .EX_from_WB_regfilemux_out_i(MEM_WB_alu_out), // from MEM/WB pipe reg output
+    .EX_from_WB_regfilemux_out_i(WB_regfilemux_out), // from WB regfile mux select output
+    .EX_from_MEM_alu_out_i(EX_MEM_alu_out), // from EX/MEM pipe reg output
 
 
     // outputs 
@@ -391,7 +392,7 @@ MEM MEM(
     .MEM_j_imm_i(EX_MEM_j_imm),
 
     .MEM_rs2_out_i(EX_MEM_rs2_out),
-    .MEM_mem_wb_rdata_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
+    // .MEM_mem_wb_rdata_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
     .MEM_forwardC_i(forwardC),
     .MEM_from_WB_rd_i(MEM_WB_data_mem_rdata), 
     .MEM_ctrl_word_i(EX_MEM_ctrl_word),
@@ -511,26 +512,22 @@ forwarder forwarding(
     .WB_load_regfile_i  (WB_load_regfile),
     .EX_MEM_rs2_i       (EX_MEM_rs2),
 
+    .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
+    .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word),
+
+    .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
 
     .forwardA_o         (forwardA),
     .forwardB_o         (forwardB),
-    .forwardC_o         (forwardC),
-
-
-    .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
-    .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word)
-
-
+    .forwardC_o         (forwardC)
 );
 
-logic ID_EX_mem_read;
-assign ID_EX_mem_read = ID_EX_ctrl_word.mem_read;
 
 hazard_detector hazard_detector (
-    .EX_mem_read_i(ID_EX_mem_read),
-    .ID_rs1_i(ID_EX_rs1),
-    .ID_rs2_i(ID_EX_rs2),
-    .EX_rd_i(ID_EX_rd),
+    .EX_mem_read_i(EX_ctrl_word.mem_read),
+    .ID_rs1_i(ID_rs1),
+    .ID_rs2_i(ID_rs2),
+    .EX_rd_i(EX_rd),
 
     .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
     .IF_HD_PC_write_o(IF_HD_PC_write),

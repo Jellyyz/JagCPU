@@ -20,16 +20,16 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     nop
     nop
-    lw x4, ONE
     nop
     nop
-    nop
-    nop
-    nop
-    lw x4, BYTES
-    add x2, x4, x1
-    nop
-    nop
+    lw x4, ONE      # 1
+    lw x4, BYTES    # 04030201
+    add x2, x4, x1  # 04030202 = 04030201 + 1
+    add x3, x2, x1  # 04030203 = 04030202 + 1
+    add x4, x1, x1  # 2 = 1 + 1
+    add x2, x2, x1  # 04030203 = 04030202 + 1`
+    add x3, x2, x4  # 04030205 = 04030203 + 2 
+    add x5, x1, x4 # 3 = 1 + 2
     nop
     nop
     nop

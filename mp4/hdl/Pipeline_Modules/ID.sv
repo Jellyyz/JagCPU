@@ -70,11 +70,6 @@ control_rom ctrl_rom (
     .ctrl   (ctrl_word)
 );
 
-
-logic load_regfile;
-logic mem_read, mem_write;
-logic [3:0] mem_byte_en;
-
 rv32i_control_word ctrl_word_hd;
 
 always_comb begin : NOP_generator
@@ -82,10 +77,26 @@ always_comb begin : NOP_generator
 
     if (ID_HD_controlmux_sel_i == controlmux::zero) begin
         $display("pls stuff @", $time);
+        // ctrl_word_hd.opcode = rv32i_opcode'();
+        ctrl_word_hd.opcode = op_store;
+
+
+        ctrl_word_hd.pcmux_sel = pcmux::pc_plus4;
+
         ctrl_word_hd.load_regfile = 1'b0;
+
+        // ctrl_word_hd.aluop = alu_xor;
+        ctrl_word_hd.alumux1_sel = alumux::rs1_out;
+        ctrl_word_hd.alumux2_sel = alumux::rs2_out;
+        
         ctrl_word_hd.mem_read = 1'b0;
         ctrl_word_hd.mem_write = 1'b0;
         ctrl_word_hd.mem_byte_en = 1'b0;
+
+        ctrl_word_hd.regfilemux_sel = regfilemux::alu_out;
+        
+        
+        
     end
 
 end

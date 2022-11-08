@@ -13,6 +13,8 @@ import rv32i_types::*;
 
     input rv32i_control_word EX_MEM_ctrl_word_i, MEM_WB_ctrl_word_i, 
 
+    input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i,
+
     input rv32i_reg MEM_WB_data_mem_rdata,
     input rv32i_reg EX_MEM_rs2_out,
 
@@ -37,9 +39,11 @@ always_comb begin : forwardingA
     data_hazardA = MEM_load_regfile_i 
                     & |EX_MEM_rd_i 
                     & (EX_MEM_rd_i == ID_EX_rs1_i);
+                    // & (ID_HD_controlmux_sel_i != controlmux::zero);
     mem_hazardA = WB_load_regfile_i 
                     & |MEM_WB_rd_i 
                     & (MEM_WB_rd_i == ID_EX_rs1_i) 
+                    // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardA;
     
     // if (data_hazardA) begin
@@ -65,18 +69,12 @@ always_comb begin : forwardingB
     data_hazardB = MEM_load_regfile_i 
                     & |EX_MEM_rd_i 
                     & (EX_MEM_rd_i == ID_EX_rs2_i);
+                    // & (ID_HD_controlmux_sel_i != controlmux::zero);
     mem_hazardB = WB_load_regfile_i 
                     & |MEM_WB_rd_i 
                     & (MEM_WB_rd_i == ID_EX_rs2_i) 
+                    // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardB;
-    
-    // if (data_hazardB) begin
-    //     forwardB = forwardingmux::ex_mem;
-    // end else if (mem_hazardB) begin
-    //     forwardB = forwardingmux::mem_wb;
-    // end else begin
-    //     forwardB = forwardingmux::id_ex;
-    // end
 
     unique case ({mem_hazardB, data_hazardB})
         2'b10           : forwardB = forwardingmux::mem_wb;

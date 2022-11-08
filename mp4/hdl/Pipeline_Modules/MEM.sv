@@ -13,7 +13,7 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_u_imm_i,
     input logic [width-1:0] MEM_j_imm_i,
     input logic [width-1:0] MEM_rs2_out_i,
-    input logic [width-1:0] MEM_mem_wb_rdata_i,
+    // input logic [width-1:0] MEM_mem_wb_rdata_i,
     input rv32i_control_word MEM_ctrl_word_i,
     input logic [4:0] MEM_rd_i,
     input logic [width-1:0] MEM_alu_out_i,
