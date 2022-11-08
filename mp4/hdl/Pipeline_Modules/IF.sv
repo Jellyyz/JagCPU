@@ -6,9 +6,11 @@ import rv32i_types::*;
     input logic clk,
     input logic rst,
     input rv32i_word IF_instr_mem_rdata_i,
-    input rv32i_control_word IF_ctrl_word_i,
+    // input rv32i_control_word IF_ctrl_word_i,
     input pcmux::pcmux_sel_t IF_pcmux_sel_i,
     input rv32i_word IF_alu_out_i,
+
+    input logic IF_PC_write_i,
 
     output rv32i_word IF_pc_out_o,
     output rv32i_word IF_instr_out_o // undriven, for cp1 comes from magic memory
@@ -37,7 +39,7 @@ pc_register pc_register(
 
     // input of the PC register 
     .clk(clk), .rst(rst), 
-    .load(1'b1), 
+    .load(IF_PC_write_i), 
     .in(pcmux_out), 
  
     // output of the PC register

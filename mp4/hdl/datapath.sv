@@ -172,6 +172,15 @@ forwardingmux::forwardingmux1_sel_t forwardB;
 forwardingmux2::forwardingmux2_sel_t forwardC;
 
 /****************************************/
+/* Declarations for Hazard unit *********/
+/****************************************/
+logic IF_HD_PC_write;
+logic IF_ID_HD_write;
+// controlmux::controlmux_sel_t ID_HD_controlmux_sel;
+logic ID_HD_controlmux_sel;
+
+
+/****************************************/
 /* Begin instantiation ******************/
 /****************************************/
 
@@ -189,9 +198,11 @@ IF IF(
     .clk(clk),
     .rst(rst), 
     .IF_instr_mem_rdata_i(instr_mem_rdata), 
-    .IF_ctrl_word_i(), 
+    // .IF_ctrl_word_i(), 
     .IF_pcmux_sel_i(MEM_pcmux_sel),
     .IF_alu_out_i(EX_MEM_alu_out),
+    .IF_PC_write_i(IF_HD_PC_write),
+    // .IF_PC_write_i(1'b1),
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
@@ -203,10 +214,11 @@ IF_ID IF_ID(
     .clk(clk), 
     .rst(rst), 
     .flush_i(1'b0), 
-    .load_i(1'b1), 
+    .load_i(IF_ID_HD_write), 
+    // .load_i(1'b1), 
 
     .IF_ID_pc_out_i(IF_pc_out), 
-    .IF_ID_instr_i(instr_mem_rdata), 
+    .IF_ID_instr_i(instr_mem_rdata),  // REPLACE WHEN ADD CACHE
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
@@ -224,6 +236,10 @@ ID ID(
     .ID_load_regfile_i(WB_load_regfile), 
     .ID_rd_wr_i(WB_rd), 
     .ID_wr_data_i(WB_regfilemux_out), 
+
+    // hazard
+    .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
+    // .ID_HD_controlmux_sel_i(controlmux::norm),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -367,6 +383,56 @@ EX_MEM EX_MEM(
 ); 
 
 
+MEM MEM(
+    // inputs 
+    .MEM_pc_out_i(EX_MEM_pc_out),
+    .MEM_pc_plus4_i(EX_MEM_pc_plus4), 
+    .MEM_instr_i(EX_MEM_instr),
+    
+    .MEM_i_imm_i(EX_MEM_i_imm),
+    .MEM_s_imm_i(EX_MEM_s_imm),
+    .MEM_b_imm_i(EX_MEM_b_imm),
+    .MEM_u_imm_i(EX_MEM_u_imm),
+    .MEM_j_imm_i(EX_MEM_j_imm),
+
+    .MEM_rs2_out_i(EX_MEM_rs2_out),
+    // .MEM_mem_wb_rdata_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
+    .MEM_forwardC_i(forwardC),
+    .MEM_from_WB_rd_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
+    .MEM_ctrl_word_i(EX_MEM_ctrl_word),
+    .MEM_rd_i(EX_MEM_rd),
+    .MEM_alu_out_i(EX_MEM_alu_out),
+    .MEM_br_en_i(EX_MEM_br_en),
+
+    // outputs 
+    .MEM_pcmux_sel_o(MEM_pcmux_sel),
+    .MEM_alu_out_o(MEM_alu_out),
+    .MEM_rd_o(MEM_rd),
+    .MEM_ctrl_word_o(MEM_ctrl_word),
+
+    .MEM_mem_read_o(data_read), 
+    .MEM_mem_write_o(data_write),
+    
+    .MEM_br_en_o(MEM_br_en),
+    .MEM_pc_out_o(MEM_pc_out), 
+    .MEM_pc_plus4_o(MEM_pc_plus4), 
+
+    .MEM_instr_o(MEM_instr),
+    
+    .MEM_data_mem_address_o(data_mem_address),
+    .MEM_data_mem_wdata_o(data_mem_wdata),
+    //.MEM_data_mem_rdata(),
+
+    .MEM_i_imm_o(MEM_i_imm), .MEM_s_imm_o(MEM_s_imm),
+    .MEM_b_imm_o(MEM_b_imm), .MEM_u_imm_o(MEM_u_imm),
+    .MEM_j_imm_o(MEM_j_imm),
+
+    .MEM_mem_byte_en_o(data_mbe),
+
+    .MEM_load_regfile_o(MEM_load_regfile)
+); 
+
+
 MEM_WB MEM_WB(
     // inputs 
     .clk(clk), .rst(rst), 
@@ -412,54 +478,6 @@ MEM_WB MEM_WB(
     // .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
     .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata) // magic
 ); 
-MEM MEM(
-    // inputs 
-    .MEM_pc_out_i(EX_MEM_pc_out),
-    .MEM_pc_plus4_i(EX_MEM_pc_plus4), 
-    .MEM_instr_i(EX_MEM_instr),
-    
-    .MEM_i_imm_i(EX_MEM_i_imm),
-    .MEM_s_imm_i(EX_MEM_s_imm),
-    .MEM_b_imm_i(EX_MEM_b_imm),
-    .MEM_u_imm_i(EX_MEM_u_imm),
-    .MEM_j_imm_i(EX_MEM_j_imm),
-
-    .MEM_rs2_out_i(EX_MEM_rs2_out),
-    .MEM_mem_wb_rdata_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
-    .MEM_forwardC_i(forwardC),
-    .MEM_from_WB_rd_i(MEM_WB_data_mem_rdata), 
-    .MEM_ctrl_word_i(EX_MEM_ctrl_word),
-    .MEM_rd_i(EX_MEM_rd),
-    .MEM_alu_out_i(EX_MEM_alu_out),
-    .MEM_br_en_i(EX_MEM_br_en),
-
-    // outputs 
-    .MEM_pcmux_sel_o(MEM_pcmux_sel),
-    .MEM_alu_out_o(MEM_alu_out),
-    .MEM_rd_o(MEM_rd),
-    .MEM_ctrl_word_o(MEM_ctrl_word),
-
-    .MEM_mem_read_o(data_read), 
-    .MEM_mem_write_o(data_write),
-    
-    .MEM_br_en_o(MEM_br_en),
-    .MEM_pc_out_o(MEM_pc_out), 
-    .MEM_pc_plus4_o(MEM_pc_plus4), 
-
-    .MEM_instr_o(MEM_instr),
-    
-    .MEM_data_mem_address_o(data_mem_address),
-    .MEM_data_mem_wdata_o(data_mem_wdata),
-    //.MEM_data_mem_rdata(),
-
-    .MEM_i_imm_o(MEM_i_imm), .MEM_s_imm_o(MEM_s_imm),
-    .MEM_b_imm_o(MEM_b_imm), .MEM_u_imm_o(MEM_u_imm),
-    .MEM_j_imm_o(MEM_j_imm),
-
-    .MEM_mem_byte_en_o(data_mbe),
-
-    .MEM_load_regfile_o(MEM_load_regfile)
-); 
 
 
 WB WB (
@@ -498,17 +516,25 @@ forwarder forwarding(
     .WB_load_regfile_i  (WB_load_regfile),
     .EX_MEM_rs2_i       (EX_MEM_rs2),
 
+    .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
+    .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word),
 
     .forwardA_o         (forwardA),
     .forwardB_o         (forwardB),
-    .forwardC_o         (forwardC),
-
-
-    .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
-    .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word)
-
-
+    .forwardC_o         (forwardC)  
 );
+
+hazard_detector hazard_detector (
+    .EX_ctrl_word_i(EX_ctrl_word),
+    .EX_rd_i(EX_rd),
+    .ID_rs1_i(ID_rs1),
+    .ID_rs2_i(ID_rs2),
+
+    .HD_controlmux_sel_o(ID_HD_controlmux_sel),
+    .HD_PC_write_o(IF_HD_PC_write),
+    .HD_IF_ID_write_o(IF_ID_HD_write)
+);
+
 
 
 
@@ -529,13 +555,5 @@ end
 
 
 
-// always_comb begin : MUXES
 
-//     unique case(MEM_pcmux_sel) 
-//         pcmux::pc_plus4 : pcmux_out = IF_pc_out + 4;
-//         pcmux::alu_out : pcmux_out = EX_alu_out; 
-//         pcmux::alu_mod2 : pcmux_out = EX_alu_out & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
-//         default: $display("hit pcmux error");
-//     endcase  
-// end
 endmodule 

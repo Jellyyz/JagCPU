@@ -45,21 +45,18 @@ import rv32i_types::*;
     output logic [width - 1:0] WB_s_imm_o,
     output logic [width - 1:0] WB_b_imm_o,
     output logic [width - 1:0] WB_j_imm_o
-
 ); 
+
 always_comb begin: VCSstfu
- 
-WB_pc_plus4_o = WB_pc_plus4_i;
-WB_instr_o = WB_instr_i;
-// WB_mem_read_o = WB_mem_read_i;
-// WB_mem_write_o = WB_mem_write_i; 
-WB_i_imm_o = WB_i_imm_i;
-WB_s_imm_o = WB_s_imm_i;
-WB_b_imm_o = WB_b_imm_i;
-WB_j_imm_o = WB_j_imm_i;
-
-
-end 
+    WB_pc_plus4_o = WB_pc_plus4_i;
+    WB_instr_o = WB_instr_i;
+    // WB_mem_read_o = WB_mem_read_i;
+    // WB_mem_write_o = WB_mem_write_i; 
+    WB_i_imm_o = WB_i_imm_i;
+    WB_s_imm_o = WB_s_imm_i;
+    WB_b_imm_o = WB_b_imm_i;
+    WB_j_imm_o = WB_j_imm_i;
+end
 
 regfilemux::regfilemux_sel_t regfilemux_sel;
 logic [width-1:0] regfilemux_out; 

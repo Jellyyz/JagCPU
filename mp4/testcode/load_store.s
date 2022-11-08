@@ -20,20 +20,30 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     nop
     nop
-    la x8, BYTES
+    lw x4, ONE
     nop
     nop
     nop
     nop
     nop
-    lw x2, NEGTWO
-    sw x2, 0(x8)
+    add x0, x0, x0 
+    lw x4, BYTES
+    add x2, x4, x1
     nop
     nop
     nop
     nop
     nop
-    lw x3, BYTES    
+    nop    
+    nop    
+    nop    
+    nop    
+    nop    
+    nop
+    nop
+    nop
+    nop
+    nop
 
 .section .rodata
 .balign 256
