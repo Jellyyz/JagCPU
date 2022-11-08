@@ -212,12 +212,10 @@ IF_ID IF_ID(
     .rst(rst), 
     .flush_i(1'b0), 
     // .load_i(1'b1), 
-    .load(IF_ID_HD_write_i),
+    .load_i(IF_ID_HD_write),
 
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(instr_mem_rdata), 
-
-    .IF_ID_HD_write_i(IF_ID_HD_write),
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
@@ -525,7 +523,7 @@ forwarder forwarding(
 
 );
 
-logic EX_mem_read;
+logic ID_EX_mem_read;
 assign ID_EX_mem_read = ID_EX_ctrl_word.mem_read;
 
 hazard_detector hazard_detector (
@@ -534,9 +532,9 @@ hazard_detector hazard_detector (
     .ID_rs2_i(ID_EX_rs2),
     .EX_rd_i(ID_EX_rd),
 
-    .ID_HD_controlmux_sel_o(),
-    .IF_HD_PC_write_o(),
-    .IF_ID_HD_write_o()
+    .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
+    .IF_HD_PC_write_o(IF_HD_PC_write),
+    .IF_ID_HD_write_o(IF_ID_HD_write)
 );
 
 

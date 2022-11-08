@@ -12,7 +12,7 @@ import rv32i_types::*;
     input logic [4:0] ID_rd_wr_i,          // from WB stage
     input logic [width-1:0] ID_wr_data_i,  // from WB stage
 
-    controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
+    input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
 
     
     // all outputs out to ID/EX reg
@@ -34,6 +34,12 @@ import rv32i_types::*;
     output logic[4:0] ID_rd_o,
 
     output logic ID_br_en_o
+
+    // specific wires for control
+    // output logic ID_load_regfile_o;
+    // output logic ID_mem_read_o;
+    // output logic ID_mem_write_o;
+    // output logic [3:0] ID_mem_byte_en_o;
 );
 
 rv32i_opcode opcode;
@@ -50,6 +56,55 @@ cmpmux::cmpmux_sel_t cmpmux_sel;
 
 logic br_en;
 logic [31:0] cmp_mux_out; 
+
+
+/****************************************/
+/* Start Hazard stuff *******************/
+/****************************************/
+
+
+logic load_regfile;
+logic mem_read, mem_write;
+logic [3:0] mem_byte_en;
+
+rv32i_control_word ctrl_word_hd;
+
+always_comb begin : blockName
+    ctrl_word_hd = ctrl_word;
+    unique case (ID_HD_controlmux_sel_i)
+        // controlmux::norm : begin
+        //     // load_regfile = ctrl_word.load_regfile;
+        //     // mem_read = ctrl_word.mem_read;
+        //     // mem_write = ctrl_word.mem_write;
+        //     // mem_byte_en = ctrl_word.mem_byte_en;
+        // end
+        controlmux::zero : begin
+            // load_regfile = 1'b0;
+            // mem_read = 1'b0;
+            // mem_write = 1'b0;
+            // mem_byte_en = 1'b0;
+
+            ctrl_word_hd.load_regfile = 1'b0;
+            ctrl_word_hd.mem_read = 1'b0;
+            ctrl_word_hd.mem_write = 1'b0;
+            ctrl_word_hd.mem_byte_en = 1'b0;
+        end
+        default : ;
+    endcase 
+
+    if (ID_HD_controlmux_sel_i == controlmux::zero) begin
+
+    end
+end
+
+
+
+/****************************************/
+/* End Hazard stuff **********************/
+/****************************************/
+
+
+
 always_comb begin : instr_decode
     opcode = rv32i_opcode'(ID_instr_i[6:0]);
     funct3 = ID_instr_i[14:12];
@@ -110,7 +165,7 @@ regfile regfile (
 );
 
 always_comb begin : set_output
-    ID_ctrl_word_o = ctrl_word;
+    ID_ctrl_word_o = ctrl_word_hd;
     ID_instr_o = ID_instr_i;
     ID_pc_out_o = ID_pc_out_i;
     ID_rs1_out_o = rs1_out;
@@ -124,6 +179,12 @@ always_comb begin : set_output
     ID_rs2_o = rs2;
     ID_rd_o = rd;
     ID_br_en_o = br_en;
+
+    // // hazard signals
+    // ID_load_regfile_o = load_regfile;
+    // ID_mem_read_o = mem_read;
+    // ID_mem_write_o = mem_write;
+    // ID_mem_byte_en_o = mem_byte_en;
 end
 
 endmodule : ID

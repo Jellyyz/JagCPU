@@ -8,9 +8,9 @@ import rv32i_types::*;
     input rv32i_reg ID_rs1_i,
     input rv32i_reg ID_rs2_i,
 
-    output controlmux::controlmux_sel_t HD_controlmux_sel_o,
-    output logic HD_PC_write_o,
-    output logic HD_IF_ID_write_o
+    output controlmux::controlmux_sel_t ID_HD_controlmux_sel_o,
+    output logic IF_HD_PC_write_o,
+    output logic IF_ID_HD_write_o
 );
 
 logic stall;
@@ -19,13 +19,13 @@ always_comb begin : hazard_detection
     stall = EX_mem_read_i & ((EX_rd_i == ID_rs1_i) | (EX_rd_i == ID_rs2_i)); // & |EX_rd_i;
 
     if (stall) begin
-        HD_controlmux_sel_o = 1'b0;
-        HD_PC_write_o = 1'b0;
-        HD_IF_ID_write_o = 1'b0;
+        ID_HD_controlmux_sel_o = 1'b0;
+        IF_HD_PC_write_o = 1'b0;
+        IF_ID_HD_write_o = 1'b0;
     end else begin
-        HD_controlmux_sel_o = 1'b1;
-        HD_PC_write_o = 1'b1;
-        HD_IF_ID_write_o = 1'b1;
+        ID_HD_controlmux_sel_o = 1'b1;
+        IF_HD_PC_write_o = 1'b1;
+        IF_ID_HD_write_o = 1'b1;
     end
 end
     
