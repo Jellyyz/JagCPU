@@ -83,7 +83,7 @@ always_comb begin : blockName
             // mem_read = 1'b0;
             // mem_write = 1'b0;
             // mem_byte_en = 1'b0;
-
+            $display("pls stuff @", $time);
             ctrl_word_hd.load_regfile = 1'b0;
             ctrl_word_hd.mem_read = 1'b0;
             ctrl_word_hd.mem_write = 1'b0;
