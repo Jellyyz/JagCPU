@@ -33,7 +33,10 @@ import rv32i_types::*;
     output logic[4:0] ID_rs2_o,
     output logic[4:0] ID_rd_o,
 
-    output logic ID_br_en_o
+    output logic ID_br_en_o,
+
+    output logic [width-1:0] ID_branch_pc_o,
+    output pcmux::pcmux_sel_t ID_pcmux_sel_o
 
     // specific wires for control
     // output logic ID_load_regfile_o;
@@ -53,6 +56,8 @@ logic [width-1:0] rs1_out, rs2_out;
 rv32i_control_word ctrl_word;
 branch_funct3_t cmpop;
 cmpmux::cmpmux_sel_t cmpmux_sel;
+pcmux::pcmux_sel_t pcmux_sel;
+logic [width-1:0] branch_pc;
 
 logic br_en;
 logic [31:0] cmp_mux_out; 
@@ -161,10 +166,25 @@ regfile regfile (
     .reg_b  (rs2_out)
 );
 
+branch_resolver branch_resolver (
+    .opcode_i(opcode),
+    .i_imm_i(i_imm), .b_imm_i(b_imm), .j_imm_i(j_imm),
+    .rs1_out_i(rs1_out), .rs2_out_i(rs2_out),
+    .br_en_i(br_en),
+    .pc_addr_cur_i(ID_pc_out_i),
+
+    .addr_o(branch_pc),
+    .pcmux_sel_o(pcmux_sel)
+);
+
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
     ID_instr_o = ID_instr_i;
     ID_pc_out_o = ID_pc_out_i;
+
+    ID_branch_pc_o = branch_pc;
+    ID_pcmux_sel_o = pcmux_sel;
+
     ID_rs1_out_o = rs1_out;
     ID_rs2_out_o = rs2_out;
     ID_i_imm_o = i_imm;

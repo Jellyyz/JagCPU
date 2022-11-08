@@ -72,6 +72,8 @@ rv32i_word ID_rs2_out;
 rv32i_word ID_i_imm, ID_s_imm, ID_b_imm, ID_u_imm, ID_j_imm;
 logic [4:0] ID_rs1, ID_rs2, ID_rd;
 logic ID_br_en;
+logic [width-1:0] ID_branch_pc;
+pcmux::pcmux_sel_t ID_pcmux_sel;
 
 /****************************************/
 /* Declarations for ID/EX ***************/
@@ -198,8 +200,10 @@ IF IF(
     .rst(rst), 
     .IF_PC_write_i(IF_HD_PC_write),
     .IF_instr_mem_rdata_i(instr_mem_rdata), 
-    .IF_pcmux_sel_i(MEM_pcmux_sel),
-    .IF_alu_out_i(EX_MEM_alu_out),
+    // .IF_pcmux_sel_i(MEM_pcmux_sel), // branch resolution in mem
+    // .IF_alu_out_i(EX_MEM_alu_out), // branch resolution in mem
+    .IF_pcmux_sel_i(ID_pcmux_sel), // branch resolution in decode
+    .IF_alu_out_i(ID_branch_pc), // branch resolution in decode
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
@@ -248,7 +252,12 @@ ID ID(
     .ID_rs1_o(ID_rs1),
     .ID_rs2_o(ID_rs2),
     .ID_rd_o(ID_rd), 
-    .ID_br_en_o(ID_br_en) 
+    .ID_br_en_o(ID_br_en),
+
+    .ID_branch_pc_o(ID_branch_pc), // sent to IF
+    .ID_pcmux_sel_o(ID_pcmux_sel) // sent to IF
+
+
 
 
 ); 
