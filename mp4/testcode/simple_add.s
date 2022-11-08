@@ -15,31 +15,19 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     lw x2, %pcrel_lo(pcrel_TWO)(x11)
     lw x1, %pcrel_lo(pcrel_ONE)(x12)
-    nop
-    nop
-    nop
-    add x3, x2, x1 # 3 = 2 + 1
-    add x4, x1, x1 # 2 = 1 + 1
-    nop
-    nop
-    nop
-    add x2, x2, x1 # 3 = 2 + 1
-    nop
-    nop
-    add x3, x2, x4 # 5 = 3 + 2
+    # addi x1, x1, 1
     nop
     nop
     nop
     nop
     nop
-    nop
-    # add x4, x3, x1
-    nop
+    # addi x2, x2, 2
     nop
     nop
     nop
     nop
-    # addi x6, x6, 1
+    nop
+    # add x3, x2, x1 # 3 = 2 + 1
     nop
     nop
     nop

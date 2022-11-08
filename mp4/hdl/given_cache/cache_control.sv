@@ -83,7 +83,7 @@ always_comb begin : next_state_logic
 
 	case(state)
     check_hit: begin
-      if ((mem_read || mem_write) && !hit) begin
+      if ((mem_read || mem_write)) begin
         if (dirty_out) begin
           if (pmem_resp)
             next_state = read_mem;

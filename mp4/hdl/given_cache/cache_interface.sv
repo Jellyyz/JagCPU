@@ -21,8 +21,8 @@ import rv32i_types::*;
     output  logic           d_mem_resp,
 
     output  logic [31:0]    pmem_address,
-    input   logic [255:0]   pmem_rdata,
-    output  logic [255:0]   pmem_wdata,
+    input   logic [63:0]   pmem_rdata,
+    output  logic [63:0]   pmem_wdata,
     output  logic           pmem_read,
     output  logic           pmem_write,
     input   logic           pmem_resp  

@@ -3,35 +3,20 @@ import rv32i_types::*;
 #(parameter width = 32) (
     input logic clk, rst, 
     
+    input logic [31:0] i_mem_rdata, d_mem_rdata,
+    input logic i_mem_resp, d_mem_resp,
 
-    
-	
-	// // For CP2
-    // input pmem_resp,
-    // input [63:0] pmem_rdata,
-
-	// // To physical memory
-    // output logic pmem_read,
-    // output logic pmem_write,
-    // output rv32i_word pmem_address,
-    // output [63:0] pmem_wdata
-
-	//Remove after CP1
-    input rv32i_word 	instr_mem_rdata,
-    input rv32i_word 	data_mem_rdata, 
-    output rv32i_word 	data_mem_address,
-    output rv32i_word 	data_mem_wdata,
-
-    // undriven or unused 
-	output rv32i_word 	instr_mem_address,
-    input 					instr_mem_resp,
-	input 					data_mem_resp,
-    output logic 			instr_read,
-    output logic 			data_read,
-    output logic 			data_write,
-    output logic [3:0] 	data_mbe
+    output logic [31:0] i_mem_address, d_mem_address,
+    output logic i_mem_read, d_mem_read,
+    output logic i_mem_write, d_mem_write,
+    output logic [31:0] i_mem_wdata, d_mem_wdata,
+    output logic [3:0] i_mbe, d_mbe
 
 ); 
+
+assign i_mem_write = 1'b0;
+assign i_mem_wdata = 32'b0;
+assign i_mbe = 4'b1111;
 
 // master_ctrl word to be used for every sel/ld/control signal. 
 rv32i_control_word ctrl; 
@@ -185,8 +170,8 @@ logic IF_ID_HD_write;
 
 always_comb begin : MEM_PORTS
 
-    instr_read = 1'b1; 
-    instr_mem_address = IF_pc_out; 
+    i_mem_read = 1'b1; 
+    i_mem_address = IF_pc_out; 
 
 end 
 
@@ -197,7 +182,7 @@ IF IF(
     .clk(clk),
     .rst(rst), 
     .IF_PC_write_i(IF_HD_PC_write),
-    .IF_instr_mem_rdata_i(instr_mem_rdata), 
+    .IF_instr_mem_rdata_i(i_mem_rdata), 
     .IF_pcmux_sel_i(MEM_pcmux_sel),
     .IF_alu_out_i(EX_MEM_alu_out),
 
@@ -215,7 +200,7 @@ IF_ID IF_ID(
     .load_i(IF_ID_HD_write),
 
     .IF_ID_pc_out_i(IF_pc_out), 
-    .IF_ID_instr_i(instr_mem_rdata), 
+    .IF_ID_instr_i(i_mem_rdata), 
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
@@ -406,8 +391,8 @@ MEM MEM(
     .MEM_rd_o(MEM_rd),
     .MEM_ctrl_word_o(MEM_ctrl_word),
 
-    .MEM_mem_read_o(data_read), 
-    .MEM_mem_write_o(data_write),
+    .MEM_mem_read_o(d_mem_read), 
+    .MEM_mem_write_o(d_mem_write),
     
     .MEM_br_en_o(MEM_br_en),
     .MEM_pc_out_o(MEM_pc_out), 
@@ -415,15 +400,15 @@ MEM MEM(
 
     .MEM_instr_o(MEM_instr),
     
-    .MEM_data_mem_address_o(data_mem_address),
-    .MEM_data_mem_wdata_o(data_mem_wdata),
+    .MEM_data_mem_address_o(d_mem_address),
+    .MEM_data_mem_wdata_o(d_mem_wdata),
     //.MEM_data_mem_rdata(),
 
     .MEM_i_imm_o(MEM_i_imm), .MEM_s_imm_o(MEM_s_imm),
     .MEM_b_imm_o(MEM_b_imm), .MEM_u_imm_o(MEM_u_imm),
     .MEM_j_imm_o(MEM_j_imm),
 
-    .MEM_mem_byte_en_o(data_mbe),
+    .MEM_mem_byte_en_o(d_mbe),
 
     .MEM_load_regfile_o(MEM_load_regfile)
 ); 
@@ -452,7 +437,7 @@ MEM_WB MEM_WB(
     .MEM_WB_j_imm_i             (MEM_j_imm),
     // .MEM_WB_data_mem_address_i  (data_mem_address),
     // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
-    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
+    .MEM_WB_data_mem_rdata_i    (d_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
 
     // outputs
     // .MEM_WB_mem_read_o(MEM_WB_mem_read),
@@ -528,6 +513,11 @@ hazard_detector hazard_detector (
     .ID_rs1_i(ID_rs1),
     .ID_rs2_i(ID_rs2),
     .EX_rd_i(EX_rd),
+    .i_mem_resp(i_mem_resp),
+    .i_mem_read(i_mem_read),
+    .d_mem_resp(d_mem_resp),
+    .d_mem_read(d_mem_read),
+    .d_mem_write(d_mem_write),
 
     .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
     .IF_HD_PC_write_o(IF_HD_PC_write),
@@ -539,13 +529,13 @@ hazard_detector hazard_detector (
 always_comb begin : CONTROL_WORD
 
     // opcode of any instruction 
-    opcode = instr_mem_rdata[6:0]; 
+    opcode = i_mem_rdata[6:0]; 
 
     // funct3 of any instruction 
-    funct3 = instr_mem_rdata[2:0]; 
+    funct3 = i_mem_rdata[2:0]; 
 
     // funct7 of any instruction 
-    funct7 = instr_mem_rdata[6:0]; 
+    funct7 = i_mem_rdata[6:0]; 
 
 end 
 
