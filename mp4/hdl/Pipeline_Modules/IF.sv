@@ -11,13 +11,22 @@ import rv32i_types::*;
     input rv32i_word IF_alu_out_i,
 
     output rv32i_word IF_pc_out_o,
-    output rv32i_word IF_instr_out_o // undriven, for cp1 comes from magic memory
+    output rv32i_word IF_instr_out_o, // undriven, for cp1 comes from magic memory
+
+    output logic IF_br_pred_o
 ); 
 
 
 rv32i_word pcmux_out;
 // pcmux::pcmux_sel_t pcmux_sel;
 // assign pcmux_sel = pcmux_sel_i;
+logic br_pred;
+
+assign br_pred = 1'b0;
+always_comb begin : setOutput
+    IF_br_pred_o = br_pred;
+end
+
 
 always_comb begin : pc_mux
     unique case (IF_pcmux_sel_i)

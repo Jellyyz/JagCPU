@@ -1,0 +1,31 @@
+
+
+IF	ID	EX	MEM	WB	
+
+lh 
+
+add     lh      
+
+bne     add     lh 
+
+        bne     add      lh 
+
+	bne     stall    add     lh          resolved branch 
+
+                bne      stall   add 
+
+		         bne     stall 
+			          
+				 bne
+
+
+
+
+
+bne     rs1, rs2, offset 
+
+	x3   x2   
+
+	add  lh 
+
+	mem  wb 

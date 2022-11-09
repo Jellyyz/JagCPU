@@ -18,6 +18,7 @@ import rv32i_types::*;
     input rv32i_word EX_MEM_b_imm_i,
     input rv32i_word EX_MEM_u_imm_i,
     input rv32i_word EX_MEM_j_imm_i,
+    input rv32i_word EX_MEM_rs1_out_i,
     input rv32i_word EX_MEM_rs2_out_i,
     input rv32i_control_word EX_MEM_ctrl_word_i,
     input rv32i_word  EX_MEM_alu_out_i,
@@ -34,6 +35,7 @@ import rv32i_types::*;
     output rv32i_word EX_MEM_b_imm_o,
     output rv32i_word EX_MEM_u_imm_o,
     output rv32i_word EX_MEM_j_imm_o,
+    output rv32i_word EX_MEM_rs1_out_o,
     output rv32i_word EX_MEM_rs2_out_o,
     output rv32i_control_word EX_MEM_ctrl_word_o,
     output rv32i_word  EX_MEM_alu_out_o,
@@ -43,7 +45,7 @@ import rv32i_types::*;
 rv32i_word EX_MEM_pc_out, EX_MEM_pc_plus4;
 rv32i_word EX_MEM_instr;
 rv32i_word EX_MEM_i_imm, EX_MEM_s_imm, EX_MEM_b_imm, EX_MEM_u_imm, EX_MEM_j_imm;
-rv32i_word EX_MEM_rs2_out;
+rv32i_word EX_MEM_rs1_out, EX_MEM_rs2_out;
 rv32i_control_word EX_MEM_ctrl_word;
 logic [4:0] EX_MEM_rs1, EX_MEM_rs2, EX_MEM_rd;
 rv32i_word EX_MEM_alu_out;
@@ -59,6 +61,7 @@ always_ff @(posedge clk) begin
         EX_MEM_b_imm <= '0;
         EX_MEM_u_imm <= '0;
         EX_MEM_j_imm <= '0;
+        EX_MEM_rs1_out <= '0;
         EX_MEM_rs2_out <= '0;
         EX_MEM_ctrl_word <= '0;
         EX_MEM_rd <= '0;
@@ -76,6 +79,7 @@ always_ff @(posedge clk) begin
         EX_MEM_b_imm <= EX_MEM_b_imm_i;
         EX_MEM_u_imm <= EX_MEM_u_imm_i;
         EX_MEM_j_imm <= EX_MEM_j_imm_i;
+        EX_MEM_rs1_out <= EX_MEM_rs1_out_i;
         EX_MEM_rs2_out <= EX_MEM_rs2_out_i;
         EX_MEM_ctrl_word <= EX_MEM_ctrl_word_i;
         EX_MEM_rd <= EX_MEM_rd_i;
@@ -90,6 +94,7 @@ always_ff @(posedge clk) begin
         EX_MEM_b_imm <= EX_MEM_b_imm;
         EX_MEM_u_imm <= EX_MEM_u_imm;
         EX_MEM_j_imm <= EX_MEM_j_imm;
+        EX_MEM_rs1_out <= EX_MEM_rs1_out;
         EX_MEM_rs2_out <= EX_MEM_rs2_out;
         EX_MEM_ctrl_word <= EX_MEM_ctrl_word;
         EX_MEM_rd <= EX_MEM_rd;
@@ -111,6 +116,7 @@ always_comb begin
     EX_MEM_b_imm_o = EX_MEM_b_imm;
     EX_MEM_u_imm_o = EX_MEM_u_imm;
     EX_MEM_j_imm_o = EX_MEM_j_imm;
+    EX_MEM_rs1_out_o = EX_MEM_rs1_out;
     EX_MEM_rs2_out_o = EX_MEM_rs2_out;
     EX_MEM_ctrl_word_o = EX_MEM_ctrl_word;
     EX_MEM_rd_o = EX_MEM_rd;

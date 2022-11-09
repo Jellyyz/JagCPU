@@ -22,6 +22,7 @@ import rv32i_types::*;
     input logic[4:0] ID_EX_rs2_i,
     input logic[4:0] ID_EX_rd_i,
     input logic ID_EX_br_en_i,
+    input logic ID_EX_br_pred_i,
 
     output rv32i_control_word ID_EX_ctrl_word_o,
     output logic[width-1:0] ID_EX_instr_o,
@@ -36,7 +37,9 @@ import rv32i_types::*;
     output logic[4:0] ID_EX_rs1_o,
     output logic[4:0] ID_EX_rs2_o,
     output logic[4:0] ID_EX_rd_o,
-    output logic ID_EX_br_en_o
+    output logic ID_EX_br_en_o,
+
+    output logic ID_EX_br_pred_o
 );
 
     rv32i_control_word ID_EX_ctrl_word;
@@ -53,6 +56,7 @@ import rv32i_types::*;
     logic [4:0] ID_EX_rs2;
     logic [4:0] ID_EX_rd;
     logic ID_EX_br_en;
+    logic ID_EX_br_pred;
 
 
 always_ff @(posedge clk) begin
@@ -71,6 +75,8 @@ always_ff @(posedge clk) begin
         ID_EX_rs2 <= '0;
         ID_EX_rd <= '0;
         ID_EX_br_en <= '0;
+
+        ID_EX_br_pred <= '0;
     end else if (load_i) begin
         ID_EX_ctrl_word <= ID_EX_ctrl_word_i;
         ID_EX_instr <= ID_EX_instr_i;
@@ -86,6 +92,8 @@ always_ff @(posedge clk) begin
         ID_EX_rs2 <= ID_EX_rs2_i;
         ID_EX_rd <= ID_EX_rd_i;
         ID_EX_br_en <= ID_EX_br_en_i;
+
+        ID_EX_br_pred <= ID_EX_br_pred_i;
     end else begin // practically, load is fixed high, so this will never execute
         ID_EX_ctrl_word <= ID_EX_ctrl_word;
         ID_EX_instr <= ID_EX_instr;
@@ -101,6 +109,8 @@ always_ff @(posedge clk) begin
         ID_EX_rs2 <= ID_EX_rs2;
         ID_EX_rd <= ID_EX_rd;
         ID_EX_br_en <= ID_EX_br_en;
+
+        ID_EX_br_pred <= ID_EX_br_pred;
     end
 end
 
@@ -119,6 +129,8 @@ always_comb begin
     ID_EX_rs2_o = ID_EX_rs2;
     ID_EX_rd_o = ID_EX_rd;
     ID_EX_br_en_o = ID_EX_br_en;
+
+    ID_EX_br_pred_o = ID_EX_br_pred;
 end
 
 endmodule : ID_EX 

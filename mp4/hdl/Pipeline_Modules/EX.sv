@@ -23,6 +23,8 @@ import rv32i_types::*;
     input rv32i_word EX_from_WB_regfilemux_out_i,
     input rv32i_word EX_from_MEM_alu_out_i,
 
+    input logic EX_br_pred_i,
+
     
     output rv32i_reg EX_rs1_o, 
     output rv32i_reg EX_rs2_o, 
@@ -35,35 +37,44 @@ import rv32i_types::*;
     output rv32i_word EX_b_imm_o,
     output rv32i_word EX_u_imm_o,
     output rv32i_word EX_j_imm_o,
+    output rv32i_word EX_rs1_out_o,
     output rv32i_word EX_rs2_out_o,
     output rv32i_control_word EX_ctrl_word_o,
     
     output rv32i_word  EX_alu_out_o,
     output logic EX_br_en_o,
 
-    output logic EX_mem_read_o
+    output logic EX_mem_read_o,
 
+    output logic EX_br_pred_o,
 
+    output logic EX_load_regfile_o
 ); 
 rv32i_word forwardmuxA_out;
 rv32i_word forwardmuxB_out;
 rv32i_word alumux1_out;
 rv32i_word alumux2_out; 
 
+rv32i_word cmp_mux_out;
+logic ex_br_en;
+
 
 // alu_ops alu_op;
 // alumux::alumux1_sel_t alumux1_sel;
 // alumux::alumux2_sel_t alumux2_sel;
+logic load_regfile; 
 
+assign load_regfile = EX_ctrl_word_i.load_regfile; 
 always_comb begin : set_output
     EX_instr_o = EX_instr_i;
     EX_ctrl_word_o = EX_ctrl_word_i;
     EX_mem_read_o = EX_ctrl_word_i.mem_read;
-
+    EX_load_regfile_o = load_regfile; 
     EX_rs1_o = EX_rs1_i; 
     EX_rs2_o = EX_rs2_i; 
     EX_rd_o = EX_rd_i;
     
+    EX_rs1_out_o = EX_rs1_out_i; 
     EX_rs2_out_o = EX_rs2_out_i; 
     EX_pc_out_o = EX_pc_out_i;
     EX_pc_plus4_o = EX_pc_out_i + 4;
@@ -75,7 +86,8 @@ always_comb begin : set_output
     EX_j_imm_o = EX_j_imm_i; 
 
     EX_br_en_o = EX_br_en_i;
-    EX_rd_o = EX_rd_i;
+
+    EX_br_pred_o = EX_br_pred_i;
 end
 
 always_comb begin : Forwarding_MUXES
@@ -118,5 +130,23 @@ alu alu (
 
     .f(EX_alu_out_o)
 );
+
+always_comb begin : muxes
+    unique case (EX_ctrl_word_i.cmpmux_sel)
+        1'b0 : cmp_mux_out = EX_rs2_out_i;
+        1'b1 : cmp_mux_out = EX_i_imm_i;
+        default :
+            cmp_mux_out = EX_rs2_out_i;
+    endcase
+end
+
+// cmp cmp_ex(
+//     .cmpop(EX_ctrl_word_i.cmpop),
+//     .rs1_out(EX_rs1_i),
+//     .cmp_mux_out(cmp_mux_out),
+
+//     .br_en(ex_br_en)
+// ); 
+
 
 endmodule : EX

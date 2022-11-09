@@ -65,6 +65,32 @@ typedef enum bit {
 } forwardingmux2_sel_t;
 endpackage
 
+package forwardingmux3; 
+typedef enum bit [2:0] {
+    // id          = 2'b00
+    // ,ex         = 2'b01 
+    // ,mem_ld     = 2'b10   
+    // ,mem_alu    = 2'b11
+    id          = 3'b000
+    ,ex         = 3'b001 
+    ,mem_ld     = 3'b010   
+    ,mem_alu    = 3'b011
+    ,wb_ld      = 3'b100
+    ,wb_alu     = 3'b110
+} forwardingmux3_sel_t;
+endpackage 
+
+package forwardingmux4; 
+typedef enum bit [2:0] {
+    id          = 3'b000
+    ,ex         = 3'b001 
+    ,mem_ld     = 3'b010   
+    ,mem_alu    = 3'b011
+    ,wb_ld      = 3'b100
+    ,wb_alu     = 3'b110
+} forwardingmux4_sel_t;
+endpackage 
+
 package controlmux;
 typedef enum bit {
     zero = 1'b0

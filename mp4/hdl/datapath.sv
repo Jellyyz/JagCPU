@@ -54,12 +54,14 @@ logic [6:0] funct7;
 /****************************************/
 rv32i_word IF_pc_out;
 rv32i_word IF_instr_out; 
+logic IF_br_pred;
 
 /****************************************/
 /* Declarations for IF/ID ***************/
 /****************************************/
 rv32i_word IF_ID_pc_out;
 rv32i_word IF_ID_instr; 
+logic IF_ID_br_pred;
 
 /****************************************/
 /* Declarations for ID ******************/
@@ -74,6 +76,8 @@ logic [4:0] ID_rs1, ID_rs2, ID_rd;
 logic ID_br_en;
 logic [width-1:0] ID_branch_pc;
 pcmux::pcmux_sel_t ID_pcmux_sel;
+logic ID_br_pred;
+logic IF_ID_flush;
 
 /****************************************/
 /* Declarations for ID/EX ***************/
@@ -84,6 +88,7 @@ rv32i_word ID_EX_pc_out, ID_EX_rs1_out, ID_EX_rs2_out;
 rv32i_word ID_EX_i_imm, ID_EX_s_imm, ID_EX_b_imm, ID_EX_u_imm, ID_EX_j_imm; 
 logic [4:0] ID_EX_rs1, ID_EX_rs2, ID_EX_rd;
 logic ID_EX_br_en; 
+logic ID_EX_br_pred;
 
 /****************************************/
 /* Declarations for EX ******************/
@@ -92,11 +97,13 @@ rv32i_word EX_pc_out;
 rv32i_word EX_pc_plus4; 
 rv32i_word EX_instr; 
 rv32i_word EX_i_imm, EX_s_imm, EX_b_imm, EX_u_imm, EX_j_imm; 
-rv32i_word EX_rs2_out; 
+rv32i_word EX_rs1_out, EX_rs2_out; 
 rv32i_control_word EX_ctrl_word; 
 logic [4:0] EX_rs1, EX_rs2, EX_rd; 
 rv32i_word  EX_alu_out; 
 logic EX_br_en; 
+logic EX_br_pred;
+logic EX_load_regfile; 
 
 /****************************************/
 /* Declarations for EX/MEM **************/
@@ -104,7 +111,7 @@ logic EX_br_en;
 rv32i_word EX_MEM_pc_out, EX_MEM_pc_plus4; 
 rv32i_word EX_MEM_instr;
 rv32i_word EX_MEM_i_imm, EX_MEM_s_imm, EX_MEM_b_imm, EX_MEM_u_imm, EX_MEM_j_imm;
-rv32i_word EX_MEM_rs2_out;
+rv32i_word EX_MEM_rs1_out, EX_MEM_rs2_out;
 rv32i_control_word EX_MEM_ctrl_word;
 logic [4:0] EX_MEM_rs1, EX_MEM_rs2, EX_MEM_rd;
 rv32i_word  EX_MEM_alu_out;
@@ -172,6 +179,8 @@ logic [width-1:0] WB_regfilemux_out;
 forwardingmux::forwardingmux1_sel_t forwardA;
 forwardingmux::forwardingmux1_sel_t forwardB;
 forwardingmux2::forwardingmux2_sel_t forwardC;
+forwardingmux3::forwardingmux3_sel_t forwardD; 
+forwardingmux4::forwardingmux4_sel_t forwardE; 
 
 /****************************************/
 /* Declarations for forwarding unit *****/
@@ -205,6 +214,8 @@ IF IF(
     .IF_pcmux_sel_i(ID_pcmux_sel), // branch resolution in decode
     .IF_alu_out_i(ID_branch_pc), // branch resolution in decode
 
+    .IF_br_pred_o(IF_br_pred),
+
     // output 
     .IF_pc_out_o(IF_pc_out), 
     .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp1
@@ -214,16 +225,20 @@ IF_ID IF_ID(
     // input 
     .clk(clk), 
     .rst(rst), 
-    .flush_i(1'b0), 
+    .flush_i(IF_ID_flush), // this flush signal is calcualted in ID stage, looepd back
     // .load_i(1'b1), 
     .load_i(IF_ID_HD_write),
 
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(instr_mem_rdata), 
 
+    .IF_ID_br_pred_i(IF_br_pred),
+
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
-    .IF_ID_instr_o(IF_ID_instr)
+    .IF_ID_instr_o(IF_ID_instr),
+
+    .IF_ID_br_pred_o(IF_ID_br_pred) 
 ); 
 
 ID ID(
@@ -239,6 +254,10 @@ ID ID(
     .ID_wr_data_i(WB_regfilemux_out), 
 
     .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
+    .ID_forwardD_i(forwardD), 
+    .ID_forwardE_i(forwardE), 
+
+    .ID_br_pred_i(IF_ID_br_pred),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -249,17 +268,29 @@ ID ID(
     .ID_i_imm_o(ID_i_imm), .ID_s_imm_o(ID_s_imm), .ID_b_imm_o(ID_b_imm), 
     .ID_u_imm_o(ID_u_imm), .ID_j_imm_o(ID_j_imm), 
     
-    .ID_rs1_o(ID_rs1),
-    .ID_rs2_o(ID_rs2),
+    .ID_rs1_o(ID_rs1),             // 5 bit output 
+    .ID_rs2_o(ID_rs2),              
     .ID_rd_o(ID_rd), 
     .ID_br_en_o(ID_br_en),
 
     .ID_branch_pc_o(ID_branch_pc), // sent to IF
-    .ID_pcmux_sel_o(ID_pcmux_sel) // sent to IF
+    .ID_pcmux_sel_o(ID_pcmux_sel), // sent to IF
 
+    .ID_br_pred_o(ID_br_pred),
+    .ID_if_id_flush_o(IF_ID_flush),
 
+    // more inputs, for fwding
+    .EX_alu_out(EX_alu_out),
+    .EX_MEM_alu_out(EX_MEM_alu_out),
+    .MEM_data_mem_rdata(MEM_data_mem_rdata), 
+    .WB_data_mem_rdata(MEM_WB_data_mem_rdata)
 
+    // .ID_EX_rs1_out_i(EX_alu_out),
+    // .ID_EX_rs2_out_i(EX_alu_out), 
+    // .EX_MEM_rs1_out_i(EX_MEM_alu_out), 
+    // .EX_MEM_rs2_out_i(EX_MEM_alu_out),
 
+    // .MEM_WB_data_mem_rdata_i(MEM_data_mem_rdata)
 ); 
 
 ID_EX ID_EX(
@@ -284,6 +315,8 @@ ID_EX ID_EX(
     .ID_EX_rd_i(ID_rd),
     .ID_EX_br_en_i(ID_br_en),
 
+    .ID_EX_br_pred_i(ID_br_pred),
+
     // outputs 
     .ID_EX_ctrl_word_o(ID_EX_ctrl_word),
     .ID_EX_instr_o(ID_EX_instr),
@@ -300,7 +333,9 @@ ID_EX ID_EX(
     .ID_EX_rs1_o(ID_EX_rs1),
     .ID_EX_rs2_o(ID_EX_rs2),
     .ID_EX_rd_o(ID_EX_rd),
-    .ID_EX_br_en_o(ID_EX_br_en)
+    .ID_EX_br_en_o(ID_EX_br_en),
+
+    .ID_EX_br_pred_o(ID_EX_br_pred)
 
 ); 
 
@@ -327,6 +362,8 @@ EX EX(
     .EX_from_WB_regfilemux_out_i(WB_regfilemux_out), // from WB regfile mux select output
     .EX_from_MEM_alu_out_i(EX_MEM_alu_out), // from EX/MEM pipe reg output
 
+    .EX_br_pred_i(ID_EX_br_pred),
+
 
     // outputs 
     .EX_rs1_o(EX_rs1), 
@@ -340,12 +377,15 @@ EX EX(
     .EX_b_imm_o(EX_b_imm),
     .EX_s_imm_o(EX_s_imm),
     .EX_j_imm_o(EX_j_imm),
-
+    .EX_rs1_out_o(EX_rs1_out),
     .EX_rs2_out_o(EX_rs2_out), 
     .EX_ctrl_word_o(EX_ctrl_word), 
     .EX_alu_out_o(EX_alu_out),
-    .EX_br_en_o(EX_br_en) 
+    .EX_br_en_o(EX_br_en),
 
+    .EX_br_pred_o(EX_br_pred),               // branch prediction not carried past this point,
+
+    .EX_load_regfile_o(EX_load_regfile)
 ); 
 
 EX_MEM EX_MEM(
@@ -364,6 +404,7 @@ EX_MEM EX_MEM(
     .EX_MEM_b_imm_i(EX_b_imm),
     .EX_MEM_u_imm_i(EX_u_imm),
     .EX_MEM_j_imm_i(EX_j_imm),
+    .EX_MEM_rs1_out_i(EX_rs1_out),
     .EX_MEM_rs2_out_i(EX_rs2_out),
     .EX_MEM_ctrl_word_i(EX_ctrl_word),
     .EX_MEM_alu_out_i(EX_alu_out),
@@ -381,6 +422,7 @@ EX_MEM EX_MEM(
     .EX_MEM_b_imm_o(EX_MEM_b_imm),
     .EX_MEM_u_imm_o(EX_MEM_u_imm),
     .EX_MEM_j_imm_o(EX_MEM_j_imm),
+    .EX_MEM_rs1_out_o(EX_MEM_rs1_out),
     .EX_MEM_rs2_out_o(EX_MEM_rs2_out),
     .EX_MEM_ctrl_word_o(EX_MEM_ctrl_word), 
     .EX_MEM_alu_out_o(EX_MEM_alu_out),
@@ -437,6 +479,7 @@ MEM MEM(
     .MEM_load_regfile_o(MEM_load_regfile)
 ); 
 
+assign MEM_data_mem_rdata = data_mem_rdata; // MUST BE CHANGED WHEN INTEGRATING CACHE
 
 MEM_WB MEM_WB(
     // inputs 
@@ -461,7 +504,7 @@ MEM_WB MEM_WB(
     .MEM_WB_j_imm_i             (MEM_j_imm),
     // .MEM_WB_data_mem_address_i  (data_mem_address),
     // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
-    .MEM_WB_data_mem_rdata_i    (data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
+    .MEM_WB_data_mem_rdata_i    (MEM_data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
 
     // outputs
     // .MEM_WB_mem_read_o(MEM_WB_mem_read),
@@ -515,29 +558,37 @@ WB WB (
 forwarder forwarding(
     .ID_EX_rs1_i        (ID_EX_rs1),
     .ID_EX_rs2_i        (ID_EX_rs2),
+    .EX_MEM_rs2_i       (EX_MEM_rs2),
     .EX_MEM_rd_i        (EX_MEM_rd),
     .MEM_WB_rd_i        (MEM_WB_rd),
     .MEM_load_regfile_i (MEM_load_regfile),
     .WB_load_regfile_i  (WB_load_regfile),
-    .EX_MEM_rs2_i       (EX_MEM_rs2),
+    .EX_load_regfile_i  (EX_load_regfile), 
+    .REGFILE_rs1_i      (ID_rs1), 
+    .REGFILE_rs2_i      (ID_rs2), 
+    .ID_EX_rd_i         (ID_EX_rd),
+
 
     .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
     .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word),
 
     .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
-
+    
     .forwardA_o         (forwardA),
     .forwardB_o         (forwardB),
-    .forwardC_o         (forwardC)
+    .forwardC_o         (forwardC), 
+    .forwardD_o         (forwardD), 
+    .forwardE_o         (forwardE) 
 );
 
 
 hazard_detector hazard_detector (
     .EX_mem_read_i(EX_ctrl_word.mem_read),
+    .MEM_mem_read_i(MEM_ctrl_word.mem_read), 
     .ID_rs1_i(ID_rs1),
     .ID_rs2_i(ID_rs2),
     .EX_rd_i(EX_rd),
-
+    .MEM_rd_i(MEM_rd), 
     .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
     .IF_HD_PC_write_o(IF_HD_PC_write),
     .IF_ID_HD_write_o(IF_ID_HD_write)

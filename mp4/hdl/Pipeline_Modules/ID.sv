@@ -11,9 +11,25 @@ import rv32i_types::*;
 
     input logic [4:0] ID_rd_wr_i,          // from WB stage
     input logic [width-1:0] ID_wr_data_i,  // from WB stage
+    
+    input logic [width-1:0] MEM_data_mem_rdata, 
+    input logic [width-1:0] EX_MEM_alu_out, 
+    input logic [width-1:0] MEM_WB_alu_out,
+    input logic [width-1:0] WB_data_mem_rdata,
 
+    // input logic [width-1:0] MEM_WB_data_mem_rdata_i,
+    
     input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
 
+    input logic ID_br_pred_i,
+
+    input forwardingmux3::forwardingmux3_sel_t ID_forwardD_i,
+    input forwardingmux4::forwardingmux4_sel_t ID_forwardE_i,
+
+    input logic [width-1:0] EX_alu_out, 
+    // input logic [width-1:0] ID_EX_rs2_out_i, 
+    // input logic [width-1:0] EX_MEM_rs1_out_i,
+    // input logic [width-1:0] EX_MEM_rs2_out_i,
     
     // all outputs out to ID/EX reg
     output rv32i_control_word ID_ctrl_word_o,
@@ -36,7 +52,10 @@ import rv32i_types::*;
     output logic ID_br_en_o,
 
     output logic [width-1:0] ID_branch_pc_o,
-    output pcmux::pcmux_sel_t ID_pcmux_sel_o
+    output pcmux::pcmux_sel_t ID_pcmux_sel_o,
+
+    output logic ID_br_pred_o,
+    output logic ID_if_id_flush_o
 
     // specific wires for control
     // output logic ID_load_regfile_o;
@@ -45,6 +64,7 @@ import rv32i_types::*;
     // output logic [3:0] ID_mem_byte_en_o;
 );
 
+rv32i_word br_in1, br_in2;
 rv32i_opcode opcode;
 logic [2:0] funct3;
 logic [6:0] funct7;
@@ -137,21 +157,31 @@ end
 
 always_comb begin : muxes
     unique case (cmpmux_sel)
-        1'b0 : cmp_mux_out = rs2_out;
+        1'b0 : cmp_mux_out = br_in2;
         1'b1 : cmp_mux_out = i_imm;
         default :
-            cmp_mux_out = rs2_out;
+            cmp_mux_out = br_in2;
     endcase
 end
 
 
-cmp cmp (
+cmp cmp_id(
     .cmpop(cmpop),
-    .rs1_out(rs1_out),
+    .rs1_out(br_in1),
     .cmp_mux_out(cmp_mux_out),
     
     .br_en(br_en)
 );
+
+always_comb begin : PREDICTION_COMPARATOR
+    //if we have a correct prediction then we don't flush 
+    ID_if_id_flush_o = ~(br_en == ID_br_pred_i) 
+                        & ((ctrl_word_hd.opcode == op_br) 
+                            | (ctrl_word_hd.opcode == op_jal) 
+                            | (ctrl_word_hd.opcode == op_jalr)
+                        );
+                        
+end
 
 regfile regfile (
     .clk    (clk),
@@ -166,16 +196,48 @@ regfile regfile (
     .reg_b  (rs2_out)
 );
 
+always_comb begin : branchMuxes
+    unique case (ID_forwardD_i)
+        forwardingmux3::id      : br_in1 = rs1_out;
+        forwardingmux3::ex      : br_in1 = EX_alu_out;
+        forwardingmux3::mem_alu : br_in1 = EX_MEM_alu_out; // EX_MEM_rs1_out_i
+        forwardingmux3::mem_ld  : br_in1 = MEM_data_mem_rdata; 
+        forwardingmux3::wb_alu  : br_in1 = MEM_WB_alu_out;
+        forwardingmux3::wb_ld   : br_in1 = WB_data_mem_rdata;
+        default : begin
+            br_in1 = rs1_out;
+            $display("shsdf");
+        end
+    endcase
+
+
+
+    unique case (ID_forwardE_i)
+        forwardingmux4::id      : br_in2 = rs2_out;
+        forwardingmux4::ex      : br_in2 = EX_alu_out;
+        forwardingmux4::mem_alu : br_in2 = EX_MEM_alu_out; // EX_MEM_rs2_out_i
+        forwardingmux4::mem_ld  : br_in2 = MEM_data_mem_rdata;
+        forwardingmux4::wb_alu  : br_in2 = MEM_WB_alu_out;
+        forwardingmux4::wb_ld   : br_in2 = WB_data_mem_rdata;
+        default : begin
+            br_in2 = rs2_out;
+            $display("plplplp");
+        end
+    endcase 
+end
+
 branch_resolver branch_resolver (
     .opcode_i(opcode),
     .i_imm_i(i_imm), .b_imm_i(b_imm), .j_imm_i(j_imm),
-    .rs1_out_i(rs1_out), .rs2_out_i(rs2_out),
+    .rs1_out_i(br_in1), .rs2_out_i(br_in2),
     .br_en_i(br_en),
     .pc_addr_cur_i(ID_pc_out_i),
 
     .addr_o(branch_pc),
     .pcmux_sel_o(pcmux_sel)
 );
+
+
 
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
@@ -197,11 +259,7 @@ always_comb begin : set_output
     ID_rd_o = rd;
     ID_br_en_o = br_en;
 
-    // // hazard signals
-    // ID_load_regfile_o = load_regfile;
-    // ID_mem_read_o = mem_read;
-    // ID_mem_write_o = mem_write;
-    // ID_mem_byte_en_o = mem_byte_en;
+    ID_br_pred_o = ID_br_pred_i;
 end
 
 endmodule : ID
