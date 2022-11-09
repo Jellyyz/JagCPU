@@ -14,53 +14,53 @@ import rv32i_types::*;
     output [63:0] pmem_wdata
 );
 
-logic [31:0] i_mem_rdata, d_mem_rdata;
-logic i_mem_resp, d_mem_resp;
+logic [31:0] instr_mem_rdata, data_mem_rdata;
+logic instr_mem_resp, data_mem_resp;
 
-logic [31:0] i_mem_address, d_mem_address;
-logic i_mem_read, d_mem_read;
-logic i_mem_write, d_mem_write;
-logic [31:0] i_mem_wdata, d_mem_wdata;
+logic [31:0] instr_mem_address, data_mem_address;
+logic instr_mem_read, data_mem_read;
+logic instr_mem_write, data_mem_write;
+logic [31:0] instr_mem_wdata, data_mem_wdata;
 logic [3:0] i_mbe, d_mbe;
 
 datapath d0(
     .clk(clk), .rst(rst),
 
-    .i_mem_rdata(i_mem_rdata),
-    .i_mem_resp(i_mem_resp),
-    .i_mem_address(i_mem_address),
-    .i_mem_read(i_mem_read),
-    .i_mem_write(i_mem_write),
-    .i_mem_wdata(i_mem_wdata),
+    .instr_mem_rdata(instr_mem_rdata),
+    .instr_mem_resp(instr_mem_resp),
+    .instr_mem_address(instr_mem_address),
+    .instr_mem_read(instr_mem_read),
+    .instr_mem_write(instr_mem_write),
+    .instr_mem_wdata(instr_mem_wdata),
     .i_mbe(i_mbe),
 
-    .d_mem_rdata(d_mem_rdata),
-    .d_mem_resp(d_mem_resp),
-    .d_mem_address(d_mem_address),
-    .d_mem_read(d_mem_read),
-    .d_mem_write(d_mem_write),
-    .d_mem_wdata(d_mem_wdata),
+    .data_mem_rdata(data_mem_rdata),
+    .data_mem_resp(data_mem_resp),
+    .data_mem_address(data_mem_address),
+    .data_mem_read(data_mem_read),
+    .data_mem_write(data_mem_write),
+    .data_mem_wdata(data_mem_wdata),
     .d_mbe(d_mbe)
 ); 
 
 cache_interface cache(
     .clk(clk), .rst(rst),
     
-    .i_mem_address(i_mem_address),
-    .i_mem_rdata(i_mem_rdata),
-    .i_mem_wdata(i_mem_wdata),
-    .i_mem_read(i_mem_read),
-    .i_mem_write(i_mem_write),
-    .i_mem_byte_enable(i_mbe),
-    .i_mem_resp(i_mem_resp),
+    .instr_mem_address(instr_mem_address),
+    .instr_mem_rdata(instr_mem_rdata),
+    .instr_mem_wdata(instr_mem_wdata),
+    .instr_mem_read(instr_mem_read),
+    .instr_mem_write(instr_mem_write),
+    .instr_mem_byte_enable(i_mbe),
+    .instr_mem_resp(instr_mem_resp),
 
-    .d_mem_address(d_mem_address),
-    .d_mem_rdata(d_mem_rdata),
-    .d_mem_wdata(d_mem_wdata),
-    .d_mem_read(d_mem_read),
-    .d_mem_write(d_mem_write),
-    .d_mem_byte_enable(d_mbe),
-    .d_mem_resp(d_mem_resp),
+    .data_mem_address(data_mem_address),
+    .data_mem_rdata(data_mem_rdata),
+    .data_mem_wdata(data_mem_wdata),
+    .data_mem_read(data_mem_read),
+    .data_mem_write(data_mem_write),
+    .data_mem_byte_enable(d_mbe),
+    .data_mem_resp(data_mem_resp),
 
     .pmem_address(pmem_address),
     .pmem_rdata(pmem_rdata),

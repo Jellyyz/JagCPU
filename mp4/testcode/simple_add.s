@@ -13,8 +13,9 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     nop
     nop
-    lw x2, %pcrel_lo(pcrel_TWO)(x11)
-    lw x1, %pcrel_lo(pcrel_ONE)(x12)
+    lw x2, TWO
+    # lw x2, %pcrel_lo(pcrel_TWO)(x11)
+    # lw x1, %pcrel_lo(pcrel_ONE)(x12)
     # addi x1, x1, 1
     nop
     nop

@@ -5,19 +5,19 @@ import rv32i_types::*;
     input clk,
     input rst,
 
-    input  logic i_mem_write,
-    input  logic i_mem_read,
-    input  logic [31:0] i_mem_address,
-    input  logic [255:0] i_mem_wdata,
-    output logic [255:0] i_mem_rdata,
-    output logic i_mem_resp,
+    input  logic instr_mem_write,
+    input  logic instr_mem_read,
+    input  logic [31:0] instr_mem_address,
+    input  logic [255:0] instr_mem_wdata,
+    output logic [255:0] instr_mem_rdata,
+    output logic instr_mem_resp,
 
-    input  logic d_mem_write,
-    input  logic d_mem_read,
-    input  logic [31:0] d_mem_address,
-    input  logic [255:0] d_mem_wdata,
-    output logic [255:0] d_mem_rdata,
-    output logic d_mem_resp,
+    input  logic data_mem_write,
+    input  logic data_mem_read,
+    input  logic [31:0] data_mem_address,
+    input  logic [255:0] data_mem_wdata,
+    output logic [255:0] data_mem_rdata,
+    output logic data_mem_resp,
 
     input  logic main_pmem_resp,
     input  logic [255:0] main_pmem_rdata,
@@ -28,19 +28,19 @@ import rv32i_types::*;
 );
 
 logic i_request, d_request;
-assign i_request = i_mem_write || i_mem_read;
-assign d_request = d_mem_write || d_mem_read;
+assign i_request = instr_mem_write || instr_mem_read;
+assign d_request = data_mem_write || data_mem_read;
 
 enum int unsigned {
     idle, instruction_access, data_access
 } state, next_states;
 
 function void set_defaults();
-    i_mem_resp = 1'b0;
-    d_mem_resp = 1'b0;
+    instr_mem_resp = 1'b0;
+    data_mem_resp = 1'b0;
 
-    i_mem_rdata = 256'b0;
-    d_mem_rdata = 256'b0;
+    instr_mem_rdata = 256'b0;
+    data_mem_rdata = 256'b0;
     main_pmem_wdata = 256'b0;
 
     main_pmem_read = 1'b0;
@@ -58,21 +58,21 @@ begin : state_actions
         idle: ;
 
         instruction_access: begin
-            main_pmem_read = i_mem_read;
-            main_pmem_write = i_mem_write;
-            main_pmem_address = i_mem_address;
-            main_pmem_wdata = i_mem_wdata;
-            i_mem_rdata = main_pmem_rdata;
-            i_mem_resp = main_pmem_resp;
+            main_pmem_read = instr_mem_read;
+            main_pmem_write = instr_mem_write;
+            main_pmem_address = instr_mem_address;
+            main_pmem_wdata = instr_mem_wdata;
+            instr_mem_rdata = main_pmem_rdata;
+            instr_mem_resp = main_pmem_resp;
         end
 
         data_access: begin
-            main_pmem_read = d_mem_read;
-            main_pmem_write = d_mem_write;
-            main_pmem_address = d_mem_address;
-            main_pmem_wdata = d_mem_wdata;
-            d_mem_rdata = main_pmem_rdata;
-            d_mem_resp = main_pmem_resp;
+            main_pmem_read = data_mem_read;
+            main_pmem_write = data_mem_write;
+            main_pmem_address = data_mem_address;
+            main_pmem_wdata = data_mem_wdata;
+            data_mem_rdata = main_pmem_rdata;
+            data_mem_resp = main_pmem_resp;
         end
     endcase
 end

@@ -37,9 +37,9 @@ import rv32i_types::*;
 
     // specific wires for control
     // output logic ID_load_regfile_o;
-    // output logic ID_mem_read_o;
-    // output logic ID_mem_write_o;
-    // output logic [3:0] ID_mem_byte_en_o;
+    // output logic Idata_mem_read_o;
+    // output logic Idata_mem_write_o;
+    // output logic [3:0] Idata_mem_byte_en_o;
 );
 
 rv32i_opcode opcode;
@@ -179,9 +179,9 @@ always_comb begin : set_output
 
     // // hazard signals
     // ID_load_regfile_o = load_regfile;
-    // ID_mem_read_o = mem_read;
-    // ID_mem_write_o = mem_write;
-    // ID_mem_byte_en_o = mem_byte_en;
+    // Idata_mem_read_o = mem_read;
+    // Idata_mem_write_o = mem_write;
+    // Idata_mem_byte_en_o = mem_byte_en;
 end
 
 endmodule : ID
