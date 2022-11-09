@@ -1,31 +1,33 @@
 
 
-IF	ID	EX	MEM	WB	
+IF		ID		EX 		MEM 	WB 
 
-lh 
+LW1 										WAIT FOR I_RESP_I TO GO HIGH, TURN OFF PC, READ = 1
+	
+LW2		LW1									WAIT FOR I_RESP_I TO GO HIGH, TURN OFF PC, READ = 1, FREEZE ALL, (LATER OPTIMIZE BY 																														FREEZING IF)
 
-add     lh      
+LW3		LW2 	LW1							WAIT FOR I RESP TO GO HIG---, --------, -------, --------, ------------------
 
-bne     add     lh 
+ADD		LW3		LW2		LW1  				FREEZE PIPELINE IF ID EX MEM WAITING FOR D$, (LATER OPTIMIZE)
 
-        bne     add      lh 
+XOR		ADD		LW3		LW2		LW1 		DISABLE LOAD ------ X1 IS LOADED NEXT CYCLE 
 
-	bne     stall    add     lh          resolved branch 
+LW4		XOR		ADD		LW3 	LW2			FROZEN UNTIL I_RESP && D_RESP_I GOES HIGH, BUT WE CAN TURN BOTH I_READ + D_READ    
 
-                bne      stall   add 
+				XOR 	ADD		LW3 	 	DISABLE LOAD ------ X3 IS LOADED NEXT CYCLE 
 
-		         bne     stall 
-			          
-				 bne
+								
+
+I_RESP_I
+I_READ_O
+
+D_RESP_I
+D_READ_O
 
 
+LW X1, ONE
+LW X2, TWO 
+LW X3, THREE
 
-
-
-bne     rs1, rs2, offset 
-
-	x3   x2   
-
-	add  lh 
-
-	mem  wb 
+ADD X1 X1 X1 
+XOR X1 X1 X1
