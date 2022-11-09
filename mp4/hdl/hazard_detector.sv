@@ -15,10 +15,12 @@ import rv32i_types::*;
 
     output controlmux::controlmux_sel_t ID_HD_controlmux_sel_o,
     output logic IF_HD_PC_write_o,
-    output logic IF_ID_HD_write_o
+    output logic IF_ID_HD_write_o,
+    output logic stall_signal
 );
 
 logic stall;
+assign stall_signal = stall;
 
 always_comb begin : hazard_detection
     stall = (!i_mem_resp & i_mem_read)

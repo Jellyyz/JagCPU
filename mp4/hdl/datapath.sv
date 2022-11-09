@@ -163,7 +163,7 @@ controlmux::controlmux_sel_t ID_HD_controlmux_sel;
 logic IF_HD_PC_write;
 logic IF_ID_HD_write;
 
-
+logic stall_signal;
 /****************************************/
 /* Begin instantiation ******************/
 /****************************************/
@@ -220,6 +220,7 @@ ID ID(
     .ID_wr_data_i(WB_regfilemux_out), 
 
     .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
+    .stall_signal(stall_signal),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -259,6 +260,7 @@ ID_EX ID_EX(
     .ID_EX_rs2_i(ID_rs2),
     .ID_EX_rd_i(ID_rd),
     .ID_EX_br_en_i(ID_br_en),
+    .stall_signal(stall_signal),
 
     // outputs 
     .ID_EX_ctrl_word_o(ID_EX_ctrl_word),
@@ -521,7 +523,8 @@ hazard_detector hazard_detector (
 
     .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
     .IF_HD_PC_write_o(IF_HD_PC_write),
-    .IF_ID_HD_write_o(IF_ID_HD_write)
+    .IF_ID_HD_write_o(IF_ID_HD_write),
+    .stall_signal(stall_signal)
 );
 
 

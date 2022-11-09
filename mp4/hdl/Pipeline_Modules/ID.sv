@@ -5,6 +5,7 @@ import rv32i_types::*;
 (
     input clk,
     input rst,
+    input stall_signal,
     input ID_load_regfile_i,               // from WB stage
     input logic [width-1:0] ID_instr_i,    // from IF/ID reg
     input logic [width-1:0] ID_pc_out_i,   // from IF/ID reg
@@ -164,7 +165,12 @@ regfile regfile (
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
     ID_instr_o = ID_instr_i;
-    ID_pc_out_o = ID_pc_out_i;
+    if (stall_signal) begin
+        ID_pc_out_o = ID_pc_out_o;
+    end
+    else begin
+        ID_pc_out_o = ID_pc_out_i;
+    end
     ID_rs1_out_o = rs1_out;
     ID_rs2_out_o = rs2_out;
     ID_i_imm_o = i_imm;

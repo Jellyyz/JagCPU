@@ -5,7 +5,7 @@ import rv32i_types::*;
 (   
     input clk, 
     input rst,
-    input load_i,
+    input load_i, stall_signal,
 
     // all outputs out to ID/EX reg
     input rv32i_control_word ID_EX_ctrl_word_i,
@@ -74,7 +74,12 @@ always_ff @(posedge clk) begin
     end else if (load_i) begin
         ID_EX_ctrl_word <= ID_EX_ctrl_word_i;
         ID_EX_instr <= ID_EX_instr_i;
-        ID_EX_pc_out <= ID_EX_pc_out_i;
+        if (stall_signal) begin
+            ID_EX_pc_out <= ID_EX_pc_out_o;
+        end
+        else begin
+            ID_EX_pc_out <= ID_EX_pc_out_i;
+        end
         ID_EX_rs1_out <= ID_EX_rs1_out_i;
         ID_EX_rs2_out <= ID_EX_rs2_out_i;
         ID_EX_i_imm <= ID_EX_i_imm_i;
