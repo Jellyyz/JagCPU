@@ -283,8 +283,8 @@ ID ID(
     .EX_alu_out(EX_alu_out),
     .EX_MEM_alu_out(EX_MEM_alu_out),
     .MEM_data_mem_rdata(MEM_data_mem_rdata), 
-    .WB_data_mem_rdata(MEM_WB_data_mem_rdata)
-
+    .WB_data_mem_rdata(MEM_WB_data_mem_rdata),
+    .MEM_WB_alu_out(MEM_WB_alu_out)
     // .ID_EX_rs1_out_i(EX_alu_out),
     // .ID_EX_rs2_out_i(EX_alu_out), 
     // .EX_MEM_rs1_out_i(EX_MEM_alu_out), 

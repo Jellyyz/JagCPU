@@ -16,9 +16,8 @@ import rv32i_types::*;
     input logic [width-1:0] EX_MEM_alu_out, 
     input logic [width-1:0] MEM_WB_alu_out,
     input logic [width-1:0] WB_data_mem_rdata,
+    input logic [width-1:0] EX_alu_out, 
 
-    // input logic [width-1:0] MEM_WB_data_mem_rdata_i,
-    
     input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
 
     input logic ID_br_pred_i,
@@ -26,7 +25,6 @@ import rv32i_types::*;
     input forwardingmux3::forwardingmux3_sel_t ID_forwardD_i,
     input forwardingmux4::forwardingmux4_sel_t ID_forwardE_i,
 
-    input logic [width-1:0] EX_alu_out, 
     // input logic [width-1:0] ID_EX_rs2_out_i, 
     // input logic [width-1:0] EX_MEM_rs1_out_i,
     // input logic [width-1:0] EX_MEM_rs2_out_i,
