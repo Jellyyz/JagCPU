@@ -346,6 +346,7 @@ EX_MEM EX_MEM(
     .EX_MEM_ctrl_word_i(EX_ctrl_word),
     .EX_MEM_alu_out_i(EX_alu_out),
     .EX_MEM_br_en_i(EX_br_en),
+    .stall_signal(stall_signal),
 
     // outputs
     .EX_MEM_rs1_o(EX_MEM_rs1), 

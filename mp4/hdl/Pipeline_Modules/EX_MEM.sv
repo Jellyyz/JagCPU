@@ -6,6 +6,7 @@ import rv32i_types::*;
     input clk, 
     input rst,
     input load_i,
+    input stall_signal,
 
     input rv32i_reg EX_MEM_rs1_i, 
     input rv32i_reg EX_MEM_rs2_i, 
@@ -68,7 +69,12 @@ always_ff @(posedge clk) begin
         EX_MEM_rs1 = EX_MEM_rs1_i; 
         EX_MEM_rs2 = EX_MEM_rs2_i;
         EX_MEM_rd = EX_MEM_rd_i; 
-        EX_MEM_pc_out  <= EX_MEM_pc_out_i;
+        if (stall_signal) begin
+            EX_MEM_pc_out  <= EX_MEM_pc_out_o;
+        end
+        else begin
+            EX_MEM_pc_out  <= EX_MEM_pc_out_i;
+        end
         EX_MEM_pc_plus4  <= EX_MEM_pc_plus4_i;
         EX_MEM_instr <= EX_MEM_instr_i;
         EX_MEM_i_imm <= EX_MEM_i_imm_i;
