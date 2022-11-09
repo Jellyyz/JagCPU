@@ -38,10 +38,12 @@ end
 always_comb begin : forwardingA
     data_hazardA = MEM_load_regfile_i 
                     & |EX_MEM_rd_i 
+                    & |ID_EX_rs1_i 
                     & (EX_MEM_rd_i == ID_EX_rs1_i);
                     // & (ID_HD_controlmux_sel_i != controlmux::zero);
     mem_hazardA = WB_load_regfile_i 
                     & |MEM_WB_rd_i 
+                    & |ID_EX_rs1_i
                     & (MEM_WB_rd_i == ID_EX_rs1_i) 
                     // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardA;
@@ -68,10 +70,12 @@ end
 always_comb begin : forwardingB
     data_hazardB = MEM_load_regfile_i 
                     & |EX_MEM_rd_i 
+                    & |ID_EX_rs2_i
                     & (EX_MEM_rd_i == ID_EX_rs2_i);
                     // & (ID_HD_controlmux_sel_i != controlmux::zero);
     mem_hazardB = WB_load_regfile_i 
                     & |MEM_WB_rd_i 
+                    & |ID_EX_rs2_i
                     & (MEM_WB_rd_i == ID_EX_rs2_i) 
                     // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardB;

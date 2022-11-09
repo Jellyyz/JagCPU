@@ -157,12 +157,16 @@ forwardingmux::forwardingmux1_sel_t forwardB;
 forwardingmux2::forwardingmux2_sel_t forwardC;
 
 /****************************************/
-/* Declarations for forwarding unit *****/
+/* Declarations for hazard unit *****/
 /****************************************/
 controlmux::controlmux_sel_t ID_HD_controlmux_sel;
-logic IF_HD_PC_write;
-logic IF_ID_HD_write;
+// logic IF_HD_PC_write;
+// logic IF_ID_HD_write;
 
+logic stall_ex_mem; 
+logic stall_id_ex; 
+logic stall_if_id; 
+logic stall_pc; 
 
 /****************************************/
 /* Begin instantiation ******************/
@@ -181,8 +185,7 @@ IF IF(
     // input 
     .clk(clk),
     .rst(rst), 
-    .IF_PC_write_i(IF_HD_PC_write),
-    .IF_instr_mem_rdata_i(instr_mem_rdata), 
+    .IF_PC_write_i(~stall_pc),
     .IF_pcmux_sel_i(MEM_pcmux_sel),
     .IF_alu_out_i(EX_MEM_alu_out),
 
@@ -197,11 +200,11 @@ IF_ID IF_ID(
     .rst(rst), 
     .flush_i(1'b0), 
     // .load_i(1'b1), 
-    .load_i(IF_ID_HD_write),
+    .load_i(~stall_if_id),
 
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(instr_mem_rdata), 
-
+    .IF_ID_instr_mem_resp(instr_mem_resp), 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
     .IF_ID_instr_o(IF_ID_instr)
@@ -241,7 +244,7 @@ ID ID(
 ID_EX ID_EX(
     // inputs 
     .clk(clk), .rst(rst),
-    .load_i(1'b1), 
+    .load_i(~stall_id_ex), 
 
     .ID_EX_ctrl_word_i(ID_ctrl_word), 
     .ID_EX_instr_i(ID_instr), 
@@ -328,7 +331,7 @@ EX_MEM EX_MEM(
     // inputs 
     .clk(clk), 
     .rst(rst), 
-    .load_i(1'b1),
+    .load_i(~stall_ex_mem),
     .EX_MEM_rs1_i(EX_rs1),
     .EX_MEM_rs2_i(EX_rs2), 
     .EX_MEM_rd_i(EX_rd), 
@@ -393,7 +396,7 @@ MEM MEM(
 
     .MEM_mem_read_o(data_mem_read), 
     .MEM_mem_write_o(data_mem_write),
-    
+    .MEM_stall_ex_mem_i(stall_ex_mem),
     .MEM_br_en_o(MEM_br_en),
     .MEM_pc_out_o(MEM_pc_out), 
     .MEM_pc_plus4_o(MEM_pc_plus4), 
@@ -417,7 +420,7 @@ MEM MEM(
 MEM_WB MEM_WB(
     // inputs 
     .clk(clk), .rst(rst), 
-    .load_i(1'b1), 
+    .load_i(~stall_ex_mem), 
 
     // @ TODO FIX MEM_READ_O
     // .MEM_WB_mem_read_i          (MEM_mem_read),
@@ -518,10 +521,14 @@ hazard_detector hazard_detector (
     .data_mem_resp(data_mem_resp),
     .data_mem_read(data_mem_read),
     .data_mem_write(data_mem_write),
-
+    .MEM_ctrl_word(MEM_ctrl_word),
     .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
-    .IF_HD_PC_write_o(IF_HD_PC_write),
-    .IF_ID_HD_write_o(IF_ID_HD_write)
+    // .IF_HD_PC_write_o(IF_HD_PC_write),
+    // .IF_ID_HD_write_o(IF_ID_HD_write),
+    .stall_ex_mem_o(stall_ex_mem), 
+    .stall_id_ex_o(stall_id_ex), 
+    .stall_if_id_o(stall_if_id), 
+    .stall_pc_o(stall_pc)
 );
 
 

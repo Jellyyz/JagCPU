@@ -78,7 +78,7 @@ always_comb begin : NOP_generator
     if (ID_HD_controlmux_sel_i == controlmux::zero) begin
         $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
-        ctrl_word_hd.opcode = op_store;
+        ctrl_word_hd.opcode = op_csr;
 
 
         ctrl_word_hd.pcmux_sel = pcmux::pc_plus4;

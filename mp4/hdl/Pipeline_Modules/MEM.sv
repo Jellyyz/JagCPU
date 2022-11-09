@@ -19,6 +19,8 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_alu_out_i,
     input logic MEM_br_en_i,
     input logic MEM_forwardC_i, 
+
+    input logic MEM_stall_ex_mem_i, 
     
     output pcmux::pcmux_sel_t MEM_pcmux_sel_o,
     output logic [width-1:0] MEM_alu_out_o,
@@ -89,8 +91,8 @@ always_comb begin : set_output
     MEM_br_en_o = MEM_br_en_i;
 
     MEM_load_regfile_o = load_regfile;
-    MEM_mem_read_o = mem_read;
-    MEM_mem_write_o = mem_write;
+    MEM_mem_read_o = mem_read || (MEM_ctrl_word_i.opcode == op_load);
+    MEM_mem_write_o = mem_write || (MEM_ctrl_word_i.opcode == op_store);
     MEM_data_mem_address_o = data_mem_address;
     MEM_data_mem_wdata_o = data_mem_wdata;
 

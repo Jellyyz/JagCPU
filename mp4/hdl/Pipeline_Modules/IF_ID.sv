@@ -9,7 +9,7 @@ import rv32i_types::*;
         input logic load_i,
         input logic [width-1:0] IF_ID_pc_out_i,
         input logic [width-1:0] IF_ID_instr_i,
-
+        input logic IF_ID_instr_mem_resp, 
         output logic [width-1:0] IF_ID_pc_out_o,
         output logic [width-1:0] IF_ID_instr_o
     );
@@ -26,7 +26,9 @@ import rv32i_types::*;
             instr <= {width{1'b0}};
         end else if (load_i) begin
             pc_out <= IF_ID_pc_out_i;
-            instr <= IF_ID_instr_i;
+            if(IF_ID_instr_mem_resp)begin 
+                instr <= IF_ID_instr_i;
+            end 
         end else begin // practically, load is fixed high, so this will never execute
             pc_out <= pc_out;
             instr <= instr;

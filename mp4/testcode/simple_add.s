@@ -13,7 +13,11 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     nop
     nop
+    lw x1, ONE
     lw x2, TWO
+    lw x3, THREE
+    lw x4, FOUR
+    lw x5, FIVE
     # lw x2, %pcrel_lo(pcrel_TWO)(x11)
     # lw x1, %pcrel_lo(pcrel_ONE)(x12)
     # addi x1, x1, 1
@@ -39,6 +43,9 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
 .balign 256
 ONE:    .word 0x00000001
 TWO:    .word 0x00000002
+THREE:  .word 0x00000003
+FOUR:   .word 0x00000004
+FIVE:   .word 0x00000005
 NEGTWO: .word 0xFFFFFFFE
 TEMP1:  .word 0x00000001
 GOOD:   .word 0x600D600D

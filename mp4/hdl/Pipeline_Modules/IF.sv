@@ -6,10 +6,8 @@ import rv32i_types::*;
     input logic clk,
     input logic rst,
     input logic IF_PC_write_i,
-    input rv32i_word IF_instr_mem_rdata_i,
     input pcmux::pcmux_sel_t IF_pcmux_sel_i,
     input rv32i_word IF_alu_out_i,
-
     output rv32i_word IF_pc_out_o,
     output rv32i_word IF_instr_out_o // undriven, for cp1 comes from magic memory
 ); 
