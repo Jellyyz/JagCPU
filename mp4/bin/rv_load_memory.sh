@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Settings
-ECE411DIR=$HOME/MP4
+ECE411DIR=$HOME/411_meme/mp4
 DEFAULT_TARGET=$ECE411DIR/mp4/sim/memory.lst
 ASSEMBLER=/class/ece411/software/riscv-tools/bin/riscv32-unknown-elf-gcc
 OBJCOPY=/class/ece411/software/riscv-tools/bin/riscv32-unknown-elf-objcopy
 OBJDUMP=/class/ece411/software/riscv-tools/bin/riscv32-unknown-elf-objdump
 
 # CHANGE FOR CP2
-ADDRESSABILITY=1
+ADDRESSABILITY=32
 
 
 # Command line parameters

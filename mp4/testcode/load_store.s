@@ -21,8 +21,8 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
     nop
     nop
     lw x4, ONE
-    nop
-    nop
+    lw x3, THREE
+    lw x2, CHEESE
     nop
     nop
     nop
@@ -48,6 +48,8 @@ pcrel_ONE: auipc x12, %pcrel_hi(ONE)
 .balign 256
 ONE:    .word 0x00000001
 TWO:    .word 0x00000002
+THREE:  .word 0x00000003
+CHEESE: .word 0xC8335E00
 NEGTWO: .word 0xFFFFFFFE
 TEMP1:  .word 0x00000001
 GOOD:   .word 0x600D600D

@@ -53,13 +53,16 @@ import rv32i_types::*;
     output pcmux::pcmux_sel_t ID_pcmux_sel_o,
 
     output logic ID_br_pred_o,
-    output logic ID_if_id_flush_o
+    output logic ID_if_id_flush_o,
 
     // specific wires for control
     // output logic ID_load_regfile_o;
     // output logic ID_mem_read_o;
     // output logic ID_mem_write_o;
     // output logic [3:0] ID_mem_byte_en_o;
+
+    input logic stall_IF_ID_ld,
+    input logic stall_ID_EX_ld
 );
 
 rv32i_word br_in1, br_in2;
@@ -98,10 +101,10 @@ rv32i_control_word ctrl_word_hd;
 always_comb begin : NOP_generator
     ctrl_word_hd = ctrl_word;
 
-    if (ID_HD_controlmux_sel_i == controlmux::zero) begin
+    if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) begin
         $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
-        ctrl_word_hd.opcode = op_store;
+        ctrl_word_hd.opcode = op_csr;
 
 
         ctrl_word_hd.pcmux_sel = pcmux::pc_plus4;

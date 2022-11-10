@@ -4,7 +4,7 @@ import rv32i_types::*;
     parameter width = 32
 ) (
     /*******************************************************/
-    /* InputsOutputs for Data Hazard Fwds*******************/
+    /* Inputs   -   Outputs for Data Hazard Fwds*******************/
     /*******************************************************/
     input logic EX_mem_read_i,
     input rv32i_reg EX_rd_i,
@@ -16,7 +16,7 @@ import rv32i_types::*;
     output logic IF_ID_HD_write_o,
 
     /*******************************************************/
-    /* InputsOutputs for branch Hazard Fwds****************/
+    /* Inputs   -   Outputs for branch Hazard Fwds****************/
     /*******************************************************/
 
     input logic MEM_mem_read_i,
