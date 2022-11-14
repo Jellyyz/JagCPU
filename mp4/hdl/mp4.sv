@@ -23,51 +23,57 @@ logic instr_mem_write, data_mem_write;
 logic [31:0] instr_mem_wdata, data_mem_wdata;
 logic [3:0] i_mbe, d_mbe;
 
-datapath d0(
-    .clk(clk), .rst(rst),
+// datapath d0(
+//     .clk(clk), .rst(rst),
 
-    .instr_mem_rdata(instr_mem_rdata),
-    .instr_mem_resp(instr_mem_resp),
-    .instr_mem_address(instr_mem_address),
-    .instr_mem_read(instr_mem_read),
-    .instr_mem_write(instr_mem_write),
-    .instr_mem_wdata(instr_mem_wdata),
-    .i_mbe(i_mbe),
+//     .instr_mem_rdata(instr_mem_rdata),
+//     .instr_mem_resp(instr_mem_resp),
+//     .instr_mem_address(instr_mem_address),
+//     .instr_mem_read(instr_mem_read),
+//     .instr_mem_write(instr_mem_write),
+//     .instr_mem_wdata(instr_mem_wdata),
+//     .i_mbe(i_mbe),
 
-    .data_mem_rdata(data_mem_rdata),
-    .data_mem_resp(data_mem_resp),
-    .data_mem_address(data_mem_address),
-    .data_mem_read(data_mem_read),
-    .data_mem_write(data_mem_write),
-    .data_mem_wdata(data_mem_wdata),
-    .d_mbe(d_mbe)
-); 
+//     .data_mem_rdata(data_mem_rdata),
+//     .data_mem_resp(data_mem_resp),
+//     .data_mem_address(data_mem_address),
+//     .data_mem_read(data_mem_read),
+//     .data_mem_write(data_mem_write),
+//     .data_mem_wdata(data_mem_wdata),
+//     .d_mbe(d_mbe)
+// ); 
 
-cache_interface cache(
-    .clk(clk), .rst(rst),
+// cache_interface cache(
+//     .clk(clk), .rst(rst),
     
-    .instr_mem_address(instr_mem_address),
-    .instr_mem_rdata(instr_mem_rdata),
-    .instr_mem_wdata(instr_mem_wdata),
-    .instr_mem_read(instr_mem_read),
-    .instr_mem_write(instr_mem_write),
-    .instr_mem_byte_enable(i_mbe),
-    .instr_mem_resp(instr_mem_resp),
+//     .instr_mem_address(instr_mem_address),
+//     .instr_mem_rdata(instr_mem_rdata),
+//     .instr_mem_wdata(instr_mem_wdata),
+//     .instr_mem_read(instr_mem_read),
+//     .instr_mem_write(instr_mem_write),
+//     .instr_mem_byte_enable(i_mbe),
+//     .instr_mem_resp(instr_mem_resp),
 
-    .data_mem_address(data_mem_address),
-    .data_mem_rdata(data_mem_rdata),
-    .data_mem_wdata(data_mem_wdata),
-    .data_mem_read(data_mem_read),
-    .data_mem_write(data_mem_write),
-    .data_mem_byte_enable(d_mbe),
-    .data_mem_resp(data_mem_resp),
+//     .data_mem_address(data_mem_address),
+//     .data_mem_rdata(data_mem_rdata),
+//     .data_mem_wdata(data_mem_wdata),
+//     .data_mem_read(data_mem_read),
+//     .data_mem_write(data_mem_write),
+//     .data_mem_byte_enable(d_mbe),
+//     .data_mem_resp(data_mem_resp),
 
-    .pmem_address(pmem_address),
-    .pmem_rdata(pmem_rdata),
-    .pmem_wdata(pmem_wdata),
-    .pmem_read(pmem_read),
-    .pmem_write(pmem_write),
-    .pmem_resp(pmem_resp)
-);
+//     .pmem_address(pmem_address),
+//     .pmem_rdata(pmem_rdata),
+//     .pmem_wdata(pmem_wdata),
+//     .pmem_read(pmem_read),
+//     .pmem_write(pmem_write),
+//     .pmem_resp(pmem_resp)
+// );
 
+
+
+array_multiplier m0(
+    .clk(clk), .rst(rst)
+
+); 
 endmodule : mp4
