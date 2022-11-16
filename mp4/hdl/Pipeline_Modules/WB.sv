@@ -37,6 +37,7 @@ import rv32i_types::*;
     output logic [4:0] WB_rd_o,
     output logic [width-1:0] WB_regfilemux_out_o, 
 
+    // output logic WB_halt_en_o,
 
     // temporary outputs for verdi and vcs to stop complaining
     // output logic WB_mem_read_o,
@@ -46,9 +47,7 @@ import rv32i_types::*;
     output logic [width - 1:0] WB_i_imm_o,
     output logic [width - 1:0] WB_s_imm_o,
     output logic [width - 1:0] WB_b_imm_o,
-    output logic [width - 1:0] WB_j_imm_o,
-
-    // output logic WB_halt_en_o
+    output logic [width - 1:0] WB_j_imm_o
 ); 
 always_comb begin: VCSstfu
  
