@@ -106,7 +106,7 @@ always_comb begin : NOP_generator
     if (ID_HD_controlmux_sel_i == controlmux::zero) begin
         $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
-        ctrl_word_hd.opcode = op_store;
+        ctrl_word_hd.opcode = op_csr;
 
 
         ctrl_word_hd.pcmux_sel = pcmux::pc_plus4;
@@ -242,7 +242,7 @@ branch_resolver branch_resolver (
 
 always_comb begin : HALT_CHECK
     br_equal = branch_pc == ID_pc_out_i;
-    halt_en = br_en & br_equal ? 1'b1 : 1'b0;
+    halt_en = br_en & br_equal & ~rst ? 1'b1 : 1'b0;
 end
 
 always_comb begin : set_output

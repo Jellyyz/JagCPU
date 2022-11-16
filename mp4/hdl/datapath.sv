@@ -78,7 +78,7 @@ logic [width-1:0] ID_branch_pc;
 pcmux::pcmux_sel_t ID_pcmux_sel;
 logic ID_br_pred;
 logic IF_ID_flush;
-lgoic ID_halt_en;
+logic ID_halt_en;
 
 /****************************************/
 /* Declarations for ID/EX ***************/
@@ -108,7 +108,7 @@ logic EX_br_en;
 logic EX_br_pred;
 logic EX_load_regfile; 
 
-logic ID_EX_halt_en;
+logic EX_halt_en;
 
 /****************************************/
 /* Declarations for EX/MEM **************/
@@ -331,7 +331,7 @@ ID_EX ID_EX(
 
     .ID_EX_br_pred_i(ID_br_pred),
 
-    .ID_EX_halt_en_i(ID_halt_en)
+    .ID_EX_halt_en_i(ID_halt_en),
 
     // outputs 
     .ID_EX_ctrl_word_o(ID_EX_ctrl_word),
@@ -379,6 +379,8 @@ EX EX(
     // .EX_from_WB_regfilemux_out_i(MEM_WB_alu_out), // from MEM/WB pipe reg output
     .EX_from_WB_regfilemux_out_i(WB_regfilemux_out), // from WB regfile mux select output
     .EX_from_MEM_alu_out_i(EX_MEM_alu_out), // from EX/MEM pipe reg output
+    .EX_from_MEM_u_imm_i(EX_MEM_u_imm), // from EX/MEM pipe reg output
+    .EX_from_WB_u_imm_i(MEM_WB_u_imm), // from EX/MEM pipe reg output
 
     .EX_br_pred_i(ID_EX_br_pred),
 
@@ -590,7 +592,7 @@ WB WB (
     // outputs 
     .WB_load_regfile_o      (WB_load_regfile),
     .WB_rd_o                (WB_rd),
-    .WB_regfilemux_out_o    (WB_regfilemux_out),
+    .WB_regfilemux_out_o    (WB_regfilemux_out)
 
     // .WB_halt_en_o           (WB_halt_en)
 );

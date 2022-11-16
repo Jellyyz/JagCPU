@@ -51,10 +51,12 @@ typedef enum bit [3:0] {
 endpackage 
 
 package forwardingmux;
-typedef enum bit [1:0] {
-    id_ex       = 2'b00 // ALU operand comes from the register file
-    ,ex_mem     = 2'b10 // ALU operand forwarded from prior ALU result
-    ,mem_wb     = 2'b01 // ALU operand forwarded from data memory or earlier ALU result
+typedef enum bit [2:0] {
+    id_ex           = 3'b000 // ALU operand comes from the register file
+    ,ex_mem         = 3'b010 // ALU operand forwarded from prior ALU result
+    ,mem_wb         = 3'b001 // ALU operand forwarded from data memory or earlier ALU result
+    ,u_imm_ex_mem   = 3'b110 // handle forwarding when ALU unused
+    ,u_imm_mem_wb   = 3'b101 // handle forwarding when ALU unused
 } forwardingmux1_sel_t;
 endpackage 
 

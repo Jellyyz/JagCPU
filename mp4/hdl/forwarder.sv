@@ -86,12 +86,16 @@ always_comb begin : forwardingA
     // end
 
     unique case ({mem_hazardA, data_hazardA})
-        2'b10           : forwardA = forwardingmux::mem_wb;
-        2'b01, 2'b11    : forwardA = forwardingmux::ex_mem;
+        2'b10           : forwardA = regfilemux::u_imm == MEM_WB_ctrl_word_i.regfilemux_sel ? 
+                                                        forwardingmux::u_imm_mem_wb :
+                                                        forwardingmux::mem_wb;
+        2'b01, 2'b11    : forwardA = regfilemux::u_imm == EX_MEM_ctrl_word_i.regfilemux_sel ? 
+                                                        forwardingmux::u_imm_ex_mem :
+                                                        forwardingmux::ex_mem;
         2'b00           : forwardA = forwardingmux::id_ex;
         default         : begin
             forwardA = forwardingmux::id_ex;
-            $display("Error on forwardmux_sel A @:", $time); 
+            $display("Zero on forwardmux_sel A @:", $time); 
         end
     endcase
 end
@@ -110,12 +114,16 @@ always_comb begin : forwardingB
                     & ~data_hazardB;
 
     unique case ({mem_hazardB, data_hazardB})
-        2'b10           : forwardB = forwardingmux::mem_wb;
-        2'b01, 2'b11    : forwardB = forwardingmux::ex_mem;
+        2'b10           : forwardB = regfilemux::u_imm == MEM_WB_ctrl_word_i.regfilemux_sel ? 
+                                                        forwardingmux::u_imm_mem_wb :
+                                                        forwardingmux::mem_wb;
+        2'b01, 2'b11    : forwardB = regfilemux::u_imm == EX_MEM_ctrl_word_i.regfilemux_sel ? 
+                                                        forwardingmux::u_imm_ex_mem :
+                                                        forwardingmux::ex_mem;
         2'b00           : forwardB = forwardingmux::id_ex;
         default         : begin
             forwardB = forwardingmux::id_ex;
-            $display("Error on forwardmux_sel B @:", $time); 
+            $display("Zero on forwardmux_sel B @:", $time); 
         end
     endcase
 end
@@ -130,7 +138,7 @@ always_comb begin : forwardingC // WB -> MEM
         1'b0            : forwardC = forwardingmux2::mem;
         1'b1            : forwardC = forwardingmux2::wb;
         default         : begin 
-            $display("Error on forwardmux_sel C @:", $time); 
+            $display("Zero on forwardmux_sel C @:", $time); 
         end 
      endcase
 end 
