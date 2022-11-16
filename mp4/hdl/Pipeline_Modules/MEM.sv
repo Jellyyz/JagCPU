@@ -19,7 +19,12 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_alu_out_i,
     input logic MEM_br_en_i,
     input logic MEM_forwardC_i, 
+
+    input logic MEM_halt_en_i,
     
+
+
+    // output
     output pcmux::pcmux_sel_t MEM_pcmux_sel_o,
     output logic [width-1:0] MEM_alu_out_o,
     output logic [4:0] MEM_rd_o,
@@ -44,7 +49,9 @@ import rv32i_types::*;
 
     output logic [3:0] MEM_mem_byte_en_o,
 
-    output logic MEM_load_regfile_o
+    output logic MEM_load_regfile_o,
+
+    output logic MEM_halt_en_o
 );
 
 logic [4:0] rs1, rs2, rd;
@@ -95,6 +102,8 @@ always_comb begin : set_output
     MEM_data_mem_wdata_o = data_mem_wdata;
 
     MEM_mem_byte_en_o = mem_byte_en;
+
+    MEM_halt_en_o = MEM_halt_en_i;
 end
 
 //assign data_mem_wdata = MEM_rs2_out_i;

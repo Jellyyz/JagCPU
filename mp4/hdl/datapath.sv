@@ -78,6 +78,7 @@ logic [width-1:0] ID_branch_pc;
 pcmux::pcmux_sel_t ID_pcmux_sel;
 logic ID_br_pred;
 logic IF_ID_flush;
+lgoic ID_halt_en;
 
 /****************************************/
 /* Declarations for ID/EX ***************/
@@ -89,6 +90,8 @@ rv32i_word ID_EX_i_imm, ID_EX_s_imm, ID_EX_b_imm, ID_EX_u_imm, ID_EX_j_imm;
 logic [4:0] ID_EX_rs1, ID_EX_rs2, ID_EX_rd;
 logic ID_EX_br_en; 
 logic ID_EX_br_pred;
+
+logic ID_EX_halt_en;
 
 /****************************************/
 /* Declarations for EX ******************/
@@ -105,6 +108,8 @@ logic EX_br_en;
 logic EX_br_pred;
 logic EX_load_regfile; 
 
+logic ID_EX_halt_en;
+
 /****************************************/
 /* Declarations for EX/MEM **************/
 /****************************************/
@@ -116,6 +121,8 @@ rv32i_control_word EX_MEM_ctrl_word;
 logic [4:0] EX_MEM_rs1, EX_MEM_rs2, EX_MEM_rd;
 rv32i_word  EX_MEM_alu_out;
 logic EX_MEM_br_en;
+
+logic EX_MEM_halt_en;
 
 /****************************************/
 /* Declarations for MEM *****************/
@@ -142,6 +149,7 @@ rv32i_word MEM_data_mem_wdata;
 rv32i_word MEM_data_mem_rdata;
 logic MEM_load_regfile;
 
+logic MEM_halt_en;
 // [3:0] MEM_mem_byte_en;
 
 /****************************************/
@@ -166,12 +174,16 @@ logic [width-1:0] MEM_WB_data_mem_address; // magic
 logic [width-1:0] MEM_WB_data_mem_wdata; // magic 
 logic [width-1:0] MEM_WB_data_mem_rdata;// magic
 
+logic MEM_WB_halt_en;
+
 /****************************************/
 /* Declarations for WB ******************/
 /****************************************/
 logic WB_load_regfile;
 logic [4:0] WB_rd;
 logic [width-1:0] WB_regfilemux_out;
+
+logic WB_halt_en;
 
 /****************************************/
 /* Declarations for forwarding unit *****/
@@ -218,7 +230,7 @@ IF IF(
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
-    .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp1
+    .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp2
 );
 
 IF_ID IF_ID(
@@ -284,13 +296,15 @@ ID ID(
     .EX_MEM_alu_out(EX_MEM_alu_out),
     .MEM_data_mem_rdata(MEM_data_mem_rdata), 
     .WB_data_mem_rdata(MEM_WB_data_mem_rdata),
-    .MEM_WB_alu_out(MEM_WB_alu_out)
+    .MEM_WB_alu_out(MEM_WB_alu_out),
     // .ID_EX_rs1_out_i(EX_alu_out),
     // .ID_EX_rs2_out_i(EX_alu_out), 
     // .EX_MEM_rs1_out_i(EX_MEM_alu_out), 
     // .EX_MEM_rs2_out_i(EX_MEM_alu_out),
 
     // .MEM_WB_data_mem_rdata_i(MEM_data_mem_rdata)
+
+    .ID_halt_en_o(ID_halt_en)
 ); 
 
 ID_EX ID_EX(
@@ -317,6 +331,8 @@ ID_EX ID_EX(
 
     .ID_EX_br_pred_i(ID_br_pred),
 
+    .ID_EX_halt_en_i(ID_halt_en)
+
     // outputs 
     .ID_EX_ctrl_word_o(ID_EX_ctrl_word),
     .ID_EX_instr_o(ID_EX_instr),
@@ -335,7 +351,9 @@ ID_EX ID_EX(
     .ID_EX_rd_o(ID_EX_rd),
     .ID_EX_br_en_o(ID_EX_br_en),
 
-    .ID_EX_br_pred_o(ID_EX_br_pred)
+    .ID_EX_br_pred_o(ID_EX_br_pred),
+
+    .ID_EX_halt_en_o(ID_EX_halt_en)
 
 ); 
 
@@ -364,6 +382,8 @@ EX EX(
 
     .EX_br_pred_i(ID_EX_br_pred),
 
+    .EX_halt_en_i(ID_EX_halt_en),
+
 
     // outputs 
     .EX_rs1_o(EX_rs1), 
@@ -385,7 +405,9 @@ EX EX(
 
     .EX_br_pred_o(EX_br_pred),               // branch prediction not carried past this point,
 
-    .EX_load_regfile_o(EX_load_regfile)
+    .EX_load_regfile_o(EX_load_regfile),
+
+    .EX_halt_en_o(EX_halt_en)
 ); 
 
 EX_MEM EX_MEM(
@@ -410,6 +432,8 @@ EX_MEM EX_MEM(
     .EX_MEM_alu_out_i(EX_alu_out),
     .EX_MEM_br_en_i(EX_br_en),
 
+    .EX_MEM_halt_en_i(EX_halt_en),
+
     // outputs
     .EX_MEM_rs1_o(EX_MEM_rs1), 
     .EX_MEM_rs2_o(EX_MEM_rs2), 
@@ -426,7 +450,9 @@ EX_MEM EX_MEM(
     .EX_MEM_rs2_out_o(EX_MEM_rs2_out),
     .EX_MEM_ctrl_word_o(EX_MEM_ctrl_word), 
     .EX_MEM_alu_out_o(EX_MEM_alu_out),
-    .EX_MEM_br_en_o(EX_MEM_br_en)
+    .EX_MEM_br_en_o(EX_MEM_br_en),
+
+    .EX_MEM_halt_en_o(EX_MEM_halt_en)
 ); 
 
 
@@ -450,6 +476,8 @@ MEM MEM(
     .MEM_rd_i(EX_MEM_rd),
     .MEM_alu_out_i(EX_MEM_alu_out),
     .MEM_br_en_i(EX_MEM_br_en),
+
+    .MEM_halt_en_i(EX_MEM_halt_en),
 
     // outputs 
     .MEM_pcmux_sel_o(MEM_pcmux_sel),
@@ -476,7 +504,9 @@ MEM MEM(
 
     .MEM_mem_byte_en_o(data_mbe),
 
-    .MEM_load_regfile_o(MEM_load_regfile)
+    .MEM_load_regfile_o(MEM_load_regfile),
+
+    .MEM_halt_en_o(MEM_halt_en)
 ); 
 
 assign MEM_data_mem_rdata = data_mem_rdata; // MUST BE CHANGED WHEN INTEGRATING CACHE
@@ -502,9 +532,11 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_i             (MEM_b_imm),
     .MEM_WB_u_imm_i             (MEM_u_imm),
     .MEM_WB_j_imm_i             (MEM_j_imm),
-    // .MEM_WB_data_mem_address_i  (data_mem_address),
-    // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),
+    .MEM_WB_data_mem_address_i  (data_mem_address), // only for rvfi
+    .MEM_WB_data_mem_wdata_i    (data_mem_wdata),   // only for rvfi
     .MEM_WB_data_mem_rdata_i    (MEM_data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
+
+    .MEM_WB_halt_en_i(MEM_halt_en),
 
     // outputs
     // .MEM_WB_mem_read_o(MEM_WB_mem_read),
@@ -522,9 +554,11 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_o(MEM_WB_b_imm),
     .MEM_WB_u_imm_o(MEM_WB_u_imm),
     .MEM_WB_j_imm_o(MEM_WB_j_imm),
-    // .MEM_WB_data_mem_address_o(data_mem_address), // magic
-    // .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
-    .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata) // magic
+    .MEM_WB_data_mem_address_o(data_mem_address), // magic // only for rvfi
+    .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic // only for rvfi
+    .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata), // magic
+
+    .MEM_WB_halt_en_o(MEM_WB_halt_en)
 ); 
 
 
@@ -545,14 +579,18 @@ WB WB (
     .WB_b_imm_i             (MEM_WB_b_imm),
     .WB_u_imm_i             (MEM_WB_u_imm),
     .WB_j_imm_i             (MEM_WB_j_imm),
-    // .WB_data_mem_address_i  (data_mem_address), 
-    // .WB_data_mem_wdata_i    (data_mem_wdata), 
+    .WB_data_mem_address_i  (data_mem_address), // only for rvfi
+    .WB_data_mem_wdata_i    (data_mem_wdata), // only for rvfi 
     .WB_data_mem_rdata_i    (MEM_WB_data_mem_rdata),
+
+    .WB_halt_en_i(MEM_WB_halt_en),
 
     // outputs 
     .WB_load_regfile_o      (WB_load_regfile),
     .WB_rd_o                (WB_rd),
-    .WB_regfilemux_out_o    (WB_regfilemux_out)
+    .WB_regfilemux_out_o    (WB_regfilemux_out),
+
+    // .WB_halt_en_o           (WB_halt_en)
 );
 
 forwarder forwarding(

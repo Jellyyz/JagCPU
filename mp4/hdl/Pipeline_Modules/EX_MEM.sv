@@ -23,6 +23,7 @@ import rv32i_types::*;
     input rv32i_control_word EX_MEM_ctrl_word_i,
     input rv32i_word  EX_MEM_alu_out_i,
     input logic EX_MEM_br_en_i,
+    input logic EX_MEM_halt_en_i,
 
     output rv32i_reg EX_MEM_rs1_o, 
     output rv32i_reg EX_MEM_rs2_o, 
@@ -39,7 +40,8 @@ import rv32i_types::*;
     output rv32i_word EX_MEM_rs2_out_o,
     output rv32i_control_word EX_MEM_ctrl_word_o,
     output rv32i_word  EX_MEM_alu_out_o,
-    output logic EX_MEM_br_en_o
+    output logic EX_MEM_br_en_o,
+    output logic EX_MEM_halt_en_o
 );
 
 rv32i_word EX_MEM_pc_out, EX_MEM_pc_plus4;
@@ -50,6 +52,7 @@ rv32i_control_word EX_MEM_ctrl_word;
 logic [4:0] EX_MEM_rs1, EX_MEM_rs2, EX_MEM_rd;
 rv32i_word EX_MEM_alu_out;
 logic EX_MEM_br_en;
+logic EX_MEM_halt_en;
 
 always_ff @(posedge clk) begin
     if (rst) begin
@@ -67,6 +70,7 @@ always_ff @(posedge clk) begin
         EX_MEM_rd <= '0;
         EX_MEM_alu_out <= '0;
         EX_MEM_br_en <= '0;
+        EX_MEM_halt_en <= '0;
     end else if (load_i) begin
         EX_MEM_rs1 = EX_MEM_rs1_i; 
         EX_MEM_rs2 = EX_MEM_rs2_i;
@@ -85,6 +89,7 @@ always_ff @(posedge clk) begin
         EX_MEM_rd <= EX_MEM_rd_i;
         EX_MEM_alu_out <= EX_MEM_alu_out_i;
         EX_MEM_br_en <= EX_MEM_br_en_i;
+        EX_MEM_halt_en <= EX_MEM_halt_en_i;
     end else begin
         EX_MEM_pc_out  <= EX_MEM_pc_out;
         EX_MEM_pc_plus4  <= EX_MEM_pc_plus4;
@@ -100,6 +105,7 @@ always_ff @(posedge clk) begin
         EX_MEM_rd <= EX_MEM_rd;
         EX_MEM_alu_out <= EX_MEM_alu_out;
         EX_MEM_br_en <= EX_MEM_br_en;
+        EX_MEM_halt_en <= EX_MEM_halt_en;
     end
 end
 
@@ -122,6 +128,7 @@ always_comb begin
     EX_MEM_rd_o = EX_MEM_rd;
     EX_MEM_alu_out_o = EX_MEM_alu_out;
     EX_MEM_br_en_o = EX_MEM_br_en;
+    EX_MEM_halt_en_o = EX_MEM_halt_en;
 end
 
 endmodule : EX_MEM 

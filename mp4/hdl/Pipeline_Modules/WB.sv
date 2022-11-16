@@ -30,6 +30,8 @@ import rv32i_types::*;
     // input logic [width-1:0] WB_pc_out_i, // magic
     // input logic [width-1:0] WB_data_mem_wdata_i, // magic
     input logic [width-1:0] WB_data_mem_rdata_i, // magic
+    input logic WB_halt_en_i,
+
 
     output logic WB_load_regfile_o,
     output logic [4:0] WB_rd_o,
@@ -44,8 +46,9 @@ import rv32i_types::*;
     output logic [width - 1:0] WB_i_imm_o,
     output logic [width - 1:0] WB_s_imm_o,
     output logic [width - 1:0] WB_b_imm_o,
-    output logic [width - 1:0] WB_j_imm_o
+    output logic [width - 1:0] WB_j_imm_o,
 
+    // output logic WB_halt_en_o
 ); 
 always_comb begin: VCSstfu
  

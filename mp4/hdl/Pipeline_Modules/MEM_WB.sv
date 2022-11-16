@@ -22,9 +22,10 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_WB_b_imm_i,
     input logic [width-1:0] MEM_WB_u_imm_i,
     input logic [width-1:0] MEM_WB_j_imm_i,
-    // input logic [width-1:0] MEM_WB_data_mem_address_i, // magic
-    // input logic [width-1:0] MEM_WB_data_mem_wdata_i, // magic
+    input logic [width-1:0] MEM_WB_data_mem_address_i, // magic
+    input logic [width-1:0] MEM_WB_data_mem_wdata_i, // magic
     input logic [width-1:0] MEM_WB_data_mem_rdata_i, // magic
+    input logic MEM_WB_halt_en_i,
 
     // output logic MEM_WB_mem_read_o,
     // output logic MEM_WB_mem_write_o,
@@ -41,9 +42,10 @@ import rv32i_types::*;
     output logic [width-1:0] MEM_WB_b_imm_o,
     output logic [width-1:0] MEM_WB_u_imm_o,
     output logic [width-1:0] MEM_WB_j_imm_o,
-    // output logic [width-1:0] MEM_WB_data_mem_address_o, // magic
-    // output logic [width-1:0] MEM_WB_data_mem_wdata_o, // magic 
-    output logic [width-1:0] MEM_WB_data_mem_rdata_o // magic
+    output logic [width-1:0] MEM_WB_data_mem_address_o, // magic
+    output logic [width-1:0] MEM_WB_data_mem_wdata_o, // magic 
+    output logic [width-1:0] MEM_WB_data_mem_rdata_o, // magic
+    output logic MEM_WB_halt_en_o
 );
 
 // logic MEM_WB_mem_read;
@@ -61,9 +63,10 @@ logic [width-1:0] MEM_WB_s_imm;
 logic [width-1:0] MEM_WB_b_imm;
 logic [width-1:0] MEM_WB_u_imm;
 logic [width-1:0] MEM_WB_j_imm;
-// logic [width-1:0] MEM_WB_data_mem_address;
-// logic [width-1:0] MEM_WB_data_mem_wdata;
+logic [width-1:0] MEM_WB_data_mem_address;
+logic [width-1:0] MEM_WB_data_mem_wdata;
 logic [width-1:0] MEM_WB_data_mem_rdata;
+logic MEM_WB_halt_en;
 
 always_ff @(posedge clk) begin
     if (rst) begin
@@ -82,9 +85,10 @@ always_ff @(posedge clk) begin
         MEM_WB_b_imm <= '0;
         MEM_WB_u_imm <= '0;
         MEM_WB_j_imm <= '0;
-        // MEM_WB_data_mem_address <= '0;
-        // MEM_WB_data_mem_wdata <= '0;
+        MEM_WB_data_mem_address <= '0;
+        MEM_WB_data_mem_wdata <= '0;
         MEM_WB_data_mem_rdata <= '0;
+        MEM_WB_halt_en <= '0;
     end else if (load_i) begin
         // MEM_WB_mem_write <= MEM_WB_mem_write_i;
         // MEM_WB_mem_read <= MEM_WB_mem_read_i;
@@ -101,9 +105,10 @@ always_ff @(posedge clk) begin
         MEM_WB_b_imm <= MEM_WB_b_imm_i;
         MEM_WB_u_imm <= MEM_WB_u_imm_i;
         MEM_WB_j_imm <= MEM_WB_j_imm_i;
-        // MEM_WB_data_mem_address <= MEM_WB_data_mem_address_i;
-        // MEM_WB_data_mem_wdata <= MEM_WB_data_mem_wdata_i;
+        MEM_WB_data_mem_address <= MEM_WB_data_mem_address_i;
+        MEM_WB_data_mem_wdata <= MEM_WB_data_mem_wdata_i;
         MEM_WB_data_mem_rdata <= MEM_WB_data_mem_rdata_i;
+        MEM_WB_halt_en <= MEM_WB_halt_en_i;
     end else begin // practically, load is fixed high, so this will never execute
         // MEM_WB_mem_write <= MEM_WB_mem_write;
         // MEM_WB_mem_read <= MEM_WB_mem_read;
@@ -120,9 +125,10 @@ always_ff @(posedge clk) begin
         MEM_WB_b_imm <= MEM_WB_b_imm;
         MEM_WB_u_imm <= MEM_WB_u_imm;
         MEM_WB_j_imm <= MEM_WB_j_imm;
-        // MEM_WB_data_mem_address <= MEM_WB_data_mem_address;
-        // MEM_WB_data_mem_wdata <= MEM_WB_data_mem_wdata;
+        MEM_WB_data_mem_address <= MEM_WB_data_mem_address;
+        MEM_WB_data_mem_wdata <= MEM_WB_data_mem_wdata;
         MEM_WB_data_mem_rdata <= MEM_WB_data_mem_rdata;
+        MEM_WB_halt_en <= MEM_WB_halt_en;
     end 
 end
 
@@ -142,9 +148,10 @@ always_comb begin
     MEM_WB_b_imm_o = MEM_WB_b_imm;
     MEM_WB_u_imm_o = MEM_WB_u_imm;
     MEM_WB_j_imm_o = MEM_WB_j_imm;
-    // MEM_WB_data_mem_address_o = MEM_WB_data_mem_address;
-    // MEM_WB_data_mem_wdata_o = MEM_WB_data_mem_wdata;
+    MEM_WB_data_mem_address_o = MEM_WB_data_mem_address;
+    MEM_WB_data_mem_wdata_o = MEM_WB_data_mem_wdata;
     MEM_WB_data_mem_rdata_o = MEM_WB_data_mem_rdata;
+    MEM_WB_halt_en_o = MEM_WB_halt_en;
 end
 
 endmodule : MEM_WB 

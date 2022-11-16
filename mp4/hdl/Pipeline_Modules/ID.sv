@@ -53,7 +53,9 @@ import rv32i_types::*;
     output pcmux::pcmux_sel_t ID_pcmux_sel_o,
 
     output logic ID_br_pred_o,
-    output logic ID_if_id_flush_o
+    output logic ID_if_id_flush_o,
+
+    output logic ID_halt_en_o
 
     // specific wires for control
     // output logic ID_load_regfile_o;
@@ -79,6 +81,9 @@ logic [width-1:0] branch_pc;
 
 logic br_en;
 logic [31:0] cmp_mux_out; 
+
+logic br_equal;
+logic halt_en;
 
 
 /****************************************/
@@ -235,7 +240,10 @@ branch_resolver branch_resolver (
     .pcmux_sel_o(pcmux_sel)
 );
 
-
+always_comb begin : HALT_CHECK
+    br_equal = branch_pc == ID_pc_out_i;
+    halt_en = br_en & br_equal ? 1'b1 : 1'b0;
+end
 
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
@@ -258,6 +266,8 @@ always_comb begin : set_output
     ID_br_en_o = br_en;
 
     ID_br_pred_o = ID_br_pred_i;
+
+    ID_halt_en_o = halt_en;
 end
 
 endmodule : ID
