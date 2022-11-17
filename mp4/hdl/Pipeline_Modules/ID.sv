@@ -176,13 +176,19 @@ cmp cmp_id(
     .br_en(br_en)
 );
 
+
+logic br_flush, jal_flush, jalr_flush;
 always_comb begin : PREDICTION_COMPARATOR
     //if we have a correct prediction then we don't flush 
-    ID_if_id_flush_o = ~(br_en == ID_br_pred_i) 
-                        & ((ctrl_word_hd.opcode == op_br) 
-                            | (ctrl_word_hd.opcode == op_jal) 
-                            | (ctrl_word_hd.opcode == op_jalr)
-                        );
+    // ID_if_id_flush_o = ~(br_en == ID_br_pred_i) 
+    //                     & ((ctrl_word_hd.opcode == op_br) 
+    //                         | (ctrl_word_hd.opcode == op_jal) 
+    //                         | (ctrl_word_hd.opcode == op_jalr)
+    //                     );
+    br_flush = ~(br_en == ID_br_pred_i) & (ctrl_word_hd.opcode == op_br);
+    jal_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jal);
+    jalr_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jalr);
+    ID_if_id_flush_o = br_flush | jal_flush | jalr_flush;
                         
 end
 

@@ -29,7 +29,7 @@ end
 assign rvfi.commit = 0; // Set high when a valid instruction is modifying regfile or PC
                     // = |dut.d0.WB.WB_ctrl_word_i.opcode && ~not stall
                     // grab signal to define stall
-assign rvfi.halt = dut.d0.WB.WB_halt_en_i; // Set high when target PC == Current PC for a branch
+assign rvfi.halt = 0;//dut.d0.WB.WB_halt_en_i; // Set high when target PC == Current PC for a branch
                     // probably = rvfi.pc_rdata == rvfi.pc_wdata && rvfi.commit
                     // i also have wire called halt, computed in ID stage
 initial rvfi.order = 0;
