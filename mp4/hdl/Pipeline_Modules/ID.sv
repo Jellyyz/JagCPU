@@ -104,7 +104,7 @@ always_comb begin : NOP_generator
     ctrl_word_hd = ctrl_word;
 
     if (ID_HD_controlmux_sel_i == controlmux::zero) begin
-        $display("pls stuff @", $time);
+        // $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
         ctrl_word_hd.opcode = op_csr;
 

@@ -81,7 +81,8 @@ always_comb begin : set_output
     EX_rd_o = EX_rd_i;
     
     EX_rs1_out_o = EX_rs1_out_i; 
-    EX_rs2_out_o = EX_rs2_out_i; 
+    // EX_rs2_out_o = EX_rs2_out_i; 
+    EX_rs2_out_o = forwardmuxB_out; // for correct forwarding for stores
     EX_pc_out_o = EX_pc_out_i;
     EX_pc_plus4_o = EX_pc_out_i + 4;
     

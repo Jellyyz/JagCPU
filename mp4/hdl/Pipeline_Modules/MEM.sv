@@ -68,7 +68,7 @@ always_comb begin : ctrl_decode
     mem_byte_en = MEM_ctrl_word_i.mem_byte_en << data_mem_address[1:0];
 end
 
-always_comb begin : Forwarding_MUXES
+always_comb begin : Forwarding_LDST_MUXES
     unique case (MEM_forwardC_i)
         forwardingmux2::mem : data_mem_wdata = MEM_rs2_out_i;// whatever it originally was
         forwardingmux2::wb  : data_mem_wdata = MEM_from_WB_rd_i; // whatever got read in by previous instruction 

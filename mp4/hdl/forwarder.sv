@@ -18,8 +18,8 @@ import rv32i_types::*;
 
     input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i,
 
-    input rv32i_reg MEM_WB_data_mem_rdata,
-    input rv32i_reg EX_MEM_rs2,
+    // input rv32i_reg MEM_WB_data_mem_rdata,
+    // input rv32i_reg EX_MEM_rs2,
 
     output forwardingmux::forwardingmux1_sel_t forwardA_o,
     output forwardingmux::forwardingmux1_sel_t forwardB_o,
@@ -67,12 +67,12 @@ end
 always_comb begin : forwardingA
     data_hazardA = MEM_load_regfile_i 
                     & |EX_MEM_rd_i 
-                    & |ID_EX_rs1_i                  // is this good????
+                    & |ID_EX_rs1_i
                     & (EX_MEM_rd_i == ID_EX_rs1_i);
                     // & (ID_HD_controlmux_sel_i != controlmux::zero);
     mem_hazardA = WB_load_regfile_i 
                     & |MEM_WB_rd_i 
-                    & |ID_EX_rs1_i                  // is this good????
+                    & |ID_EX_rs1_i
                     & (MEM_WB_rd_i == ID_EX_rs1_i) 
                     // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardA;
@@ -103,13 +103,13 @@ end
 always_comb begin : forwardingB
     data_hazardB = MEM_load_regfile_i 
                     & |EX_MEM_rd_i 
-                    & |ID_EX_rs2_i                  // is this good????
+                    & |ID_EX_rs2_i
                     & (EX_MEM_rd_i == ID_EX_rs2_i);
                     // & (ID_HD_controlmux_sel_i != controlmux::zero);
-    mem_hazardB = WB_load_regfile_i 
-                    & |MEM_WB_rd_i 
-                    & |ID_EX_rs2_i                  // is this good????
-                    & (MEM_WB_rd_i == ID_EX_rs2_i) 
+    mem_hazardB = WB_load_regfile_i
+                    & |MEM_WB_rd_i
+                    & |ID_EX_rs2_i
+                    & (MEM_WB_rd_i == ID_EX_rs2_i)
                     // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardB;
 
@@ -130,9 +130,15 @@ end
 
 always_comb begin : forwardingC // WB -> MEM
 
-    load_hazard = (MEM_WB_rd_i == EX_MEM_rs2_i) 
-                   & (EX_MEM_ctrl_word_i.opcode == op_store) 
-                   & (MEM_WB_ctrl_word_i.opcode == op_load);
+    // load_hazard = (MEM_WB_rd_i == EX_MEM_rs2_i) 
+    //                & (EX_MEM_ctrl_word_i.opcode == op_store) 
+    //                & (MEM_WB_ctrl_word_i.opcode == op_load);
+    load_hazard = WB_load_regfile_i
+                    & |MEM_WB_rd_i
+                    & |EX_MEM_rs2_i
+                    & (MEM_WB_rd_i == EX_MEM_rs2_i) // don't need rs1 also because only rs2 feeds into dcache wdata
+                    & (MEM_WB_ctrl_word_i.opcode == op_load)
+                    & (EX_MEM_ctrl_word_i.opcode == op_store); // this one is probably unnecessary / posssibly not even CORRECT ??????
 
      unique case (load_hazard)
         1'b0            : forwardC = forwardingmux2::mem;

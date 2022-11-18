@@ -1,0 +1,290 @@
+Magic 271485
+Revision Verdi_R-2020.12-SP1-1
+
+; Window Layout <x> <y> <width> <height> <signalwidth> <valuewidth>
+viewPort 0 25 1680 817 259 103
+
+; File list:
+; openDirFile [-d delimiter] [-s time_offset] [-rf auto_bus_rule_file] path_name file_name
+openDirFile -d / "" "/home/jpohov2/ece411/mp4/mp4/sim/dump.fsdb"
+
+; file time scale:
+; fileTimeScale ### s|ms|us|ns|ps
+
+; signal spacing:
+signalSpacing 5
+
+; windowTimeUnit is used for zoom, cursor & marker
+; waveform viewport range
+zoom 2075121.031813 2242706.797215
+cursor 2155000.000000
+marker 0.000000
+
+; user define markers
+; userMarker time_pos marker_name color linestyle
+; visible top row signal index
+top 23
+; marker line index
+markerPos 83
+
+; rename signal list
+; addRenameSig new_name org_name
+activeDirFile "" "/home/jpohov2/ece411/mp4/mp4/sim/dump.fsdb"
+
+addRenameSig "/mp4_tb/dut/d0/ID/ID_opcode[6:0]" "/mp4_tb/dut/d0/ID/opcode[6:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/mp4_tb/dut/d0/ID/rID_d[4:0]" "/mp4_tb/dut/d0/ID/rd[4:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/mp4_tb/dut/d0/ID/ID_rd[4:0]" "/mp4_tb/dut/d0/ID/rID_d[4:0]" keep
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/mp4_tb/dut/d0/ID/ID_rs1[4:0]" "/mp4_tb/dut/d0/ID/rs1[4:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/mp4_tb/dut/d0/ID/ID_rs2[4:0]" "/mp4_tb/dut/d0/ID/rs2[4:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/mp4_tb/dut/d0/ID/ID_rs1_out[31:0]" "/mp4_tb/dut/d0/ID/rs1_out[31:0]"
+
+; rename signal list
+; addRenameSig new_name org_name
+
+addRenameSig "/mp4_tb/dut/d0/ID/ID_rs2_out[31:0]" "/mp4_tb/dut/d0/ID/rs2_out[31:0]"
+
+; event list
+; addEvent event_name event_expression
+; curEvent event_name
+
+
+
+COMPLEX_EVENT_BEGIN
+
+
+COMPLEX_EVENT_END
+
+
+
+; toolbar current search type
+; curSTATUS search_type
+curSTATUS ByChange
+
+
+addGroup "G1"
+activeDirFile "" "/home/jpohov2/ece411/mp4/mp4/sim/dump.fsdb"
+addSignal -h 15 /mp4_tb/dut/clk
+addSignal -h 15 -holdScope rst
+addSignal -expanded -h 15 -UNSIGNED -HEX /mp4_tb/dut/d0/ID/regfile/data[0:31]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[0][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[1][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[2][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[3][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[4][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[5][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[6][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[7][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[8][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[9][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[10][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[11][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[12][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[13][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[14][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[15][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[16][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[17][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[18][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[19][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[20][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[21][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[22][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[23][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[24][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[25][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[26][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[27][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[28][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[29][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[30][31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope data[31][31:0]
+addSignal -h 15 /mp4_tb/dut/d0/IF/IF_PC_write_i
+addSignal -h 15 -holdScope IF_alu_out_i[31:0]
+addSignal -h 15 -UNSIGNED -holdScope IF_pcmux_sel_i[1:0]
+addSignal -h 15 -holdScope pcmux_out[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope IF_pc_out_o[31:0]
+addSignal -h 15 /mp4_tb/dut/d0/ID/ID_halt_en_o
+addSignal -h 15 /mp4_tb/dut/d0/EX/EX_halt_en_o
+addSignal -h 15 /mp4_tb/dut/d0/MEM/MEM_halt_en_o
+addSignal -h 15 /mp4_tb/dut/d0/WB/WB_halt_en_i
+addSignal -c ID_PURPLE6 -ls solid -lw 1 -h 15 -UNSIGNED -HEX /mp4_tb/dut/d0/ID/ID_ctrl_word_o
+addSignal -h 15 -holdScope ID_pc_out_o[31:0]
+addSignal -h 15 -holdScope ID_instr_i[31:0]
+addSignal -h 15 -UNSIGNED -holdScope ID_opcode[6:0]
+addSignal -h 15 -holdScope u_imm[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ID_rd[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ID_rs1[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ID_rs2[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ID_rs1_out[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope ID_rs2_out[31:0]
+addSignal -h 15 -holdScope ID_HD_controlmux_sel_i
+addSignal -h 15 -holdScope ID_if_id_flush_o
+addSignal -h 15 -holdScope br_en
+addSignal -h 15 /mp4_tb/dut/d0/ID/ctrl_rom/funct3[2:0]
+addSignal -h 15 -holdScope funct7[6:0]
+addSignal -h 15 -UNSIGNED -holdScope opcode[6:0]
+addSignal -expanded -h 15 -holdScope ctrl
+addSignal -expanded -h 15 -UNSIGNED -holdScope ctrl.opcode[6:0]
+addSignal -h 15 -holdScope ctrl.opcode[6]
+addSignal -h 15 -holdScope ctrl.opcode[5]
+addSignal -h 15 -holdScope ctrl.opcode[4]
+addSignal -h 15 -holdScope ctrl.opcode[3]
+addSignal -h 15 -holdScope ctrl.opcode[2]
+addSignal -h 15 -holdScope ctrl.opcode[1]
+addSignal -h 15 -holdScope ctrl.opcode[0]
+addSignal -h 15 -holdScope ctrl.mem_read
+addSignal -h 15 -holdScope ctrl.mem_write
+addSignal -h 15 -holdScope ctrl.load_regfile
+addSignal -h 15 -holdScope ctrl.funct3[2:0]
+addSignal -h 15 -holdScope ctrl.funct7[6:0]
+addSignal -h 15 -holdScope ctrl.mem_byte_en[3:0]
+addSignal -h 15 -UNSIGNED -holdScope ctrl.pcmux_sel[1:0]
+addSignal -h 15 -holdScope ctrl.alumux1_sel
+addSignal -h 15 -UNSIGNED -holdScope ctrl.alumux2_sel[2:0]
+addSignal -h 15 -UNSIGNED -holdScope ctrl.regfilemux_sel[3:0]
+addSignal -h 15 -holdScope ctrl.cmpmux_sel
+addSignal -h 15 -holdScope ctrl.marmux_sel
+addSignal -h 15 -UNSIGNED -holdScope ctrl.aluop[2:0]
+addSignal -h 15 -UNSIGNED -holdScope ctrl.cmpop[2:0]
+addSignal -h 15 /mp4_tb/dut/d0/ID/ctrl_word_hd
+addSignal -h 15 -UNSIGNED -holdScope ID_forwardD_i[2:0]
+addSignal -h 15 -UNSIGNED -holdScope ID_forwardE_i[2:0]
+addSignal -h 15 -holdScope EX_MEM_alu_out[31:0]
+addSignal -h 15 -holdScope EX_alu_out[31:0]
+addSignal -h 15 -holdScope MEM_WB_alu_out[31:0]
+addSignal -h 15 -holdScope MEM_data_mem_rdata[31:0]
+addSignal -h 15 -holdScope WB_data_mem_rdata[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope rs1_out[31:0]
+addSignal -h 15 -holdScope br_in1[31:0]
+addSignal -h 15 -holdScope br_in2[31:0]
+addSignal -h 15 -holdScope branch_pc[31:0]
+addSignal -h 15 -holdScope br_equal
+addSignal -expanded -c ID_PURPLE6 -ls solid -lw 1 -h 15 -UNSIGNED -HEX /mp4_tb/dut/d0/EX/EX_ctrl_word_o
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.opcode[6:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_ctrl_word_o.mem_read
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_ctrl_word_o.mem_write
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_ctrl_word_o.load_regfile
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_ctrl_word_o.funct3[2:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_ctrl_word_o.funct7[6:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_ctrl_word_o.mem_byte_en[3:0]
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.pcmux_sel[1:0]
+addSignal -h 15 -holdScope EX_ctrl_word_o.alumux1_sel
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.alumux2_sel[2:0]
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.regfilemux_sel[3:0]
+addSignal -h 15 -holdScope EX_ctrl_word_o.cmpmux_sel
+addSignal -h 15 -holdScope EX_ctrl_word_o.marmux_sel
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.aluop[2:0]
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.cmpop[2:0]
+addSignal -h 15 -holdScope EX_pc_out_o[31:0]
+addSignal -h 15 -holdScope EX_instr_i[31:0]
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.opcode[6:0]
+addSignal -h 15 -holdScope EX_u_imm_i[31:0]
+addSignal -h 15 -holdScope EX_ctrl_word_o.alumux1_sel
+addSignal -h 15 -UNSIGNED -holdScope EX_ctrl_word_o.alumux2_sel[2:0]
+addSignal -h 15 -holdScope EX_ctrl_word_o.cmpmux_sel
+addSignal -h 15 -UNSIGNED -holdScope EX_forwardA_i[2:0]
+addSignal -h 15 -UNSIGNED -holdScope EX_forwardB_i[2:0]
+addSignal -h 15 -holdScope EX_rd_o[4:0]
+addSignal -h 15 -holdScope EX_rs1_o[4:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_rs2_o[4:0]
+addSignal -h 15 -holdScope EX_rs1_out_o[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_rs2_out_o[31:0]
+addSignal -h 15 -UNSIGNED /mp4_tb/dut/d0/EX/alu/aluop[2:0]
+addSignal -h 15 -holdScope a[31:0]
+addSignal -h 15 -holdScope b[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope f[31:0]
+addSignal -h 15 /mp4_tb/dut/d0/EX/EX_alu_out_o[31:0]
+addSignal -h 15 -UNSIGNED -holdScope EX_forwardB_i[2:0]
+addSignal -h 15 -holdScope EX_from_MEM_alu_out_i[31:0]
+addSignal -h 15 -holdScope EX_from_MEM_u_imm_i[31:0]
+addSignal -h 15 -holdScope EX_from_WB_regfilemux_out_i[31:0]
+addSignal -h 15 -holdScope EX_from_WB_u_imm_i[31:0]
+addSignal -h 15 -holdScope EX_rs2_out_i[31:0]
+addSignal -h 15 -holdScope forwardmuxB_out[31:0]
+addSignal -h 15 -holdScope alumux2_out[31:0]
+addSignal -h 15 -UNSIGNED -HEX -holdScope EX_rs2_out_o[31:0]
+addSignal -c ID_PURPLE6 -ls solid -lw 1 -h 15 -UNSIGNED -HEX /mp4_tb/dut/d0/MEM/MEM_ctrl_word_o
+addSignal -h 15 /mp4_tb/dut/d0/EX_MEM/EX_MEM_rs1_o[4:0]
+addSignal -h 15 -holdScope EX_MEM_rs2_o[4:0]
+addSignal -h 15 -holdScope EX_MEM_rd_o[4:0]
+addSignal -h 15 /mp4_tb/dut/d0/MEM/MEM_rd_i[4:0]
+addSignal -h 15 -holdScope MEM_alu_out_o[31:0]
+addSignal -h 15 /mp4_tb/dut/d0/forwarding/forwardC
+addSignal -h 15 -holdScope load_hazard
+addSignal -h 15 /mp4_tb/dut/d0/MEM_WB/MEM_WB_data_mem_address_i[31:0]
+addSignal -h 15 -holdScope MEM_WB_data_mem_rdata_i[31:0]
+addSignal -h 15 -holdScope MEM_WB_data_mem_wdata_i[31:0]
+addSignal -c ID_PURPLE6 -ls solid -lw 1 -h 15 -UNSIGNED -HEX /mp4_tb/dut/d0/WB/WB_ctrl_word_i
+addSignal -h 15 -holdScope WB_pc_out_i[31:0]
+addSignal -h 15 -holdScope WB_load_regfile_o
+addSignal -h 15 -holdScope WB_rd_i[4:0]
+addSignal -h 15 -holdScope WB_regfilemux_out_o[31:0]
+addGroup "G2"
+addGroup "G3"
+
+; getSignalForm Scope Hierarchy Status
+; active file of getSignalForm
+activeDirFile "" "/home/jpohov2/ece411/mp4/mp4/sim/dump.fsdb"
+
+GETSIGNALFORM_SCOPE_HIERARCHY_BEGIN
+getSignalForm close
+
+"/mp4_tb"
+"/mp4_tb/dut"
+"/mp4_tb/dut/d0"
+"/mp4_tb/dut/d0/EX"
+"/mp4_tb/dut/d0/ID"
+"/mp4_tb/dut/d0/MEM"
+"/mp4_tb/dut/d0/MEM_WB"
+"/mp4_tb/dut/d0/WB"
+"/mp4_tb/dut/d0/forwarding"
+
+SCOPE_LIST_BEGIN
+"/mp4_tb"
+"/mp4_tb/dut"
+"/mp4_tb/dut/d0"
+"/mp4_tb/dut/d0/ID"
+"/mp4_tb/dut/d0/ID/regfile"
+"/mp4_tb/dut/d0/IF/pc_mux"
+"/mp4_tb/dut/d0/IF/pc_register"
+"/mp4_tb/dut/d0/IF/setOutput"
+"/mp4_tb/dut/d0/IF_ID"
+"/mp4_tb/dut/d0/IF"
+"/mp4_tb/dut/d0/EX"
+"/mp4_tb/dut/d0/MEM"
+"/mp4_tb/dut/d0/WB"
+"/mp4_tb/dut/d0/ID/branch_resolver"
+"/mp4_tb/dut/d0/hazard_detector"
+"/mp4_tb/dut/d0/EX/ALU_MUX"
+"/mp4_tb/dut/d0/EX/alu"
+"/mp4_tb/dut/d0/forwarding"
+"/mp4_tb/dut/d0/ID_EX"
+"/mp4_tb/dut/d0/forwarding/forwardingC"
+"/mp4_tb/dut/d0/MEM_WB"
+"/mp4_tb/dut/d0/EX_MEM"
+"/mp4_tb/dut/d0/ID/ctrl_rom"
+SCOPE_LIST_END
+
+GETSIGNALFORM_SCOPE_HIERARCHY_END
+
+
