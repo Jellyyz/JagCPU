@@ -158,13 +158,20 @@ begin
                     ctrl.cmpop = bltu;
                     ctrl.regfilemux_sel = regfilemux::br_en;
                 end
-                default: begin
-                    // ctrl.aluop = alu_ops'(funct3);
+                add: begin
                     ctrl.regfilemux_sel = regfilemux::alu_out;
-                    unique case (funct7[5]) 
+                    unique case (funct7[5]) // check for subtraction or add
                         1'b0 : ctrl.aluop = alu_add;
                         1'b1 : ctrl.aluop = alu_sub;
                     endcase
+                end
+                default: begin
+                    ctrl.aluop = alu_ops'(funct3);
+                    ctrl.regfilemux_sel = regfilemux::alu_out;
+                    // unique case (funct7[5]) 
+                    //     1'b0 : ctrl.aluop = alu_add;
+                    //     1'b1 : ctrl.aluop = alu_sub;
+                    // endcase
                 end
             endcase
         end
