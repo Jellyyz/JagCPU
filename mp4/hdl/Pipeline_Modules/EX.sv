@@ -24,6 +24,8 @@ import rv32i_types::*;
     input rv32i_word EX_from_MEM_alu_out_i, // for forwarding
     input rv32i_word EX_from_MEM_u_imm_i, // for forwarding
     input rv32i_word EX_from_WB_u_imm_i, // for forwarding
+    input logic EX_from_MEM_br_en_i,
+    input logic EX_from_WB_br_en_i,
 
     input logic EX_br_pred_i,
     
@@ -106,7 +108,9 @@ always_comb begin : Forwarding_MUXES
         forwardingmux::mem_wb       : forwardmuxA_out = EX_from_WB_regfilemux_out_i;
         forwardingmux::u_imm_ex_mem : forwardmuxA_out = EX_from_MEM_u_imm_i;
         forwardingmux::u_imm_mem_wb : forwardmuxA_out = EX_from_WB_u_imm_i;
-        default : ;
+        forwardingmux::br_en_ex_mem : forwardmuxA_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_MEM_br_en_i};
+        forwardingmux::br_en_mem_wb : forwardmuxA_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_WB_br_en_i};
+        default : $display("forwarding mux output A undefined");
     endcase
 
     unique case (EX_forwardB_i)
@@ -115,7 +119,9 @@ always_comb begin : Forwarding_MUXES
         forwardingmux::mem_wb       : forwardmuxB_out = EX_from_WB_regfilemux_out_i;
         forwardingmux::u_imm_ex_mem : forwardmuxB_out = EX_from_MEM_u_imm_i;
         forwardingmux::u_imm_mem_wb : forwardmuxB_out = EX_from_WB_u_imm_i;
-        default : ;
+        forwardingmux::br_en_ex_mem : forwardmuxB_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_MEM_br_en_i};
+        forwardingmux::br_en_mem_wb : forwardmuxB_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_WB_br_en_i};
+        default : $display("forwarding mux output B undefined");
     endcase
 end
 

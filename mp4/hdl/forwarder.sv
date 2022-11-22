@@ -85,14 +85,38 @@ always_comb begin : forwardingA
     //     forwardA = forwardingmux::id_ex;
     // end
 
+    // unique case ({mem_hazardA, data_hazardA})
+    //     2'b10           : forwardA = regfilemux::u_imm == MEM_WB_ctrl_word_i.regfilemux_sel ? 
+    //                                                     forwardingmux::u_imm_mem_wb :
+    //                                                     forwardingmux::mem_wb;
+    //     2'b01, 2'b11    : forwardA = regfilemux::u_imm == EX_MEM_ctrl_word_i.regfilemux_sel ? 
+    //                                                     forwardingmux::u_imm_ex_mem :
+    //                                                     forwardingmux::ex_mem;
+    //     2'b00           : forwardA = forwardingmux::id_ex;
+    //     default         : begin
+    //         forwardA = forwardingmux::id_ex;
+    //         $display("Zero on forwardmux_sel A @:", $time); 
+    //     end
+    // endcase
+
     unique case ({mem_hazardA, data_hazardA})
-        2'b10           : forwardA = regfilemux::u_imm == MEM_WB_ctrl_word_i.regfilemux_sel ? 
-                                                        forwardingmux::u_imm_mem_wb :
-                                                        forwardingmux::mem_wb;
-        2'b01, 2'b11    : forwardA = regfilemux::u_imm == EX_MEM_ctrl_word_i.regfilemux_sel ? 
-                                                        forwardingmux::u_imm_ex_mem :
-                                                        forwardingmux::ex_mem;
-        2'b00           : forwardA = forwardingmux::id_ex;
+        2'b10       : begin
+            unique case (MEM_WB_ctrl_word_i.regfilemux_sel)
+                regfilemux::u_imm   : forwardA = forwardingmux::u_imm_mem_wb;
+                regfilemux::br_en   : forwardA = forwardingmux::br_en_mem_wb;
+                default             : forwardA = forwardingmux::mem_wb;
+            endcase
+        end 
+        2'b01, 2'b11: begin
+            unique case (EX_MEM_ctrl_word_i.regfilemux_sel)
+                regfilemux::u_imm   : forwardA = forwardingmux::u_imm_ex_mem;
+                regfilemux::br_en   : forwardA = forwardingmux::br_en_ex_mem;
+                default             : forwardA = forwardingmux::ex_mem;
+            endcase
+        end
+        2'b00       : begin
+            forwardA = forwardingmux::id_ex;
+        end
         default         : begin
             forwardA = forwardingmux::id_ex;
             $display("Zero on forwardmux_sel A @:", $time); 
@@ -113,17 +137,41 @@ always_comb begin : forwardingB
                     // & (ID_HD_controlmux_sel_i != controlmux::zero)
                     & ~data_hazardB;
 
+    // unique case ({mem_hazardB, data_hazardB})
+    //     2'b10           : forwardB = regfilemux::u_imm == MEM_WB_ctrl_word_i.regfilemux_sel ? 
+    //                                                     forwardingmux::u_imm_mem_wb :
+    //                                                     forwardingmux::mem_wb;
+    //     2'b01, 2'b11    : forwardB = regfilemux::u_imm == EX_MEM_ctrl_word_i.regfilemux_sel ? 
+    //                                                     forwardingmux::u_imm_ex_mem :
+    //                                                     forwardingmux::ex_mem;
+    //     2'b00           : forwardB = forwardingmux::id_ex;
+    //     default         : begin
+    //         forwardB = forwardingmux::id_ex;
+    //         $display("Zero on forwardmux_sel B @:", $time); 
+    //     end
+    // endcase
+
     unique case ({mem_hazardB, data_hazardB})
-        2'b10           : forwardB = regfilemux::u_imm == MEM_WB_ctrl_word_i.regfilemux_sel ? 
-                                                        forwardingmux::u_imm_mem_wb :
-                                                        forwardingmux::mem_wb;
-        2'b01, 2'b11    : forwardB = regfilemux::u_imm == EX_MEM_ctrl_word_i.regfilemux_sel ? 
-                                                        forwardingmux::u_imm_ex_mem :
-                                                        forwardingmux::ex_mem;
-        2'b00           : forwardB = forwardingmux::id_ex;
+        2'b10       : begin
+            unique case (MEM_WB_ctrl_word_i.regfilemux_sel)
+                regfilemux::u_imm   : forwardB = forwardingmux::u_imm_mem_wb;
+                regfilemux::br_en   : forwardB = forwardingmux::br_en_mem_wb;
+                default             : forwardB = forwardingmux::mem_wb;
+            endcase
+        end 
+        2'b01, 2'b11: begin
+            unique case (EX_MEM_ctrl_word_i.regfilemux_sel)
+                regfilemux::u_imm   : forwardB = forwardingmux::u_imm_ex_mem;
+                regfilemux::br_en   : forwardB = forwardingmux::br_en_ex_mem;
+                default             : forwardB = forwardingmux::ex_mem;
+            endcase
+        end
+        2'b00       : begin
+            forwardB = forwardingmux::id_ex;
+        end
         default         : begin
             forwardB = forwardingmux::id_ex;
-            $display("Zero on forwardmux_sel B @:", $time); 
+            $display("Zero on forwardmux_sel A @:", $time); 
         end
     endcase
 end

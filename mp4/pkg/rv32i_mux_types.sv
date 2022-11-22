@@ -57,6 +57,8 @@ typedef enum bit [2:0] {
     ,mem_wb         = 3'b001 // ALU operand forwarded from data memory or earlier ALU result
     ,u_imm_ex_mem   = 3'b110 // handle forwarding when ALU unused
     ,u_imm_mem_wb   = 3'b101 // handle forwarding when ALU unused
+    ,br_en_ex_mem   = 3'b011 // handle forwarding when ALU unused
+    ,br_en_mem_wb   = 3'b111 // handle forwarding when ALU unused
 } forwardingmux1_sel_t;
 endpackage 
 

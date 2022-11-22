@@ -380,7 +380,9 @@ EX EX(
     .EX_from_WB_regfilemux_out_i(WB_regfilemux_out), // from WB regfile mux select output
     .EX_from_MEM_alu_out_i(EX_MEM_alu_out), // from EX/MEM pipe reg output
     .EX_from_MEM_u_imm_i(EX_MEM_u_imm), // from EX/MEM pipe reg output
-    .EX_from_WB_u_imm_i(MEM_WB_u_imm), // from EX/MEM pipe reg output
+    .EX_from_WB_u_imm_i(MEM_WB_u_imm), // from MEM/WB pipe reg output
+    .EX_from_MEM_br_en_i(EX_MEM_br_en), // from EX/MEM pipe reg output
+    .EX_from_WB_br_en_i(MEM_WB_br_en), // from MEM/WB pipe reg output
 
     .EX_br_pred_i(ID_EX_br_pred),
 
