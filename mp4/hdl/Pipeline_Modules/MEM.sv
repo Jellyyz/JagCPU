@@ -3,7 +3,7 @@ module MEM
 import rv32i_types::*;
 #(parameter width = 32) 
 (
-    input logic [width-1:0] MEM_from_WB_rd_i, 
+    input logic [width-1:0] MEM_from_WB_rdata_i, 
     input logic [width-1:0] MEM_pc_out_i, 
     input logic [width-1:0] MEM_pc_plus4_i, 
     input logic [width-1:0] MEM_instr_i,
@@ -71,7 +71,7 @@ end
 always_comb begin : Forwarding_LDST_MUXES
     unique case (MEM_forwardC_i)
         forwardingmux2::mem : data_mem_wdata = MEM_rs2_out_i;// whatever it originally was
-        forwardingmux2::wb  : data_mem_wdata = MEM_from_WB_rd_i; // whatever got read in by previous instruction 
+        forwardingmux2::wb  : data_mem_wdata = MEM_from_WB_rdata_i; // whatever got read in by previous instruction 
         default : ;
     endcase
 end

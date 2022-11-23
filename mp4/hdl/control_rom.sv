@@ -5,6 +5,8 @@ import rv32i_types::*;
     input rv32i_opcode opcode,
     input logic [2:0] funct3,
     input logic [6:0] funct7,
+    input clk,
+    input rst,
 
     output rv32i_control_word ctrl
 );
@@ -175,7 +177,14 @@ begin
                 end
             endcase
         end
-        default: ;
+        default: begin // invalid instruction
+            ctrl = '0;
+            // $display("invalid opcode @", $time);
+        end
     endcase
 end
+
+// always_ff @(posedge clk) begin : blockName
+//     if (~rst) $display("invalid opcode @", $time);
+// end
 endmodule : control_rom

@@ -94,6 +94,8 @@ control_rom ctrl_rom (
     .opcode (opcode),
     .funct3 (funct3),
     .funct7 (funct7),
+    .clk(clk),
+    .rst(rst),
 
     .ctrl   (ctrl_word)
 );

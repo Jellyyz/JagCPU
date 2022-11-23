@@ -475,7 +475,7 @@ MEM MEM(
     .MEM_rs2_out_i(EX_MEM_rs2_out),
     // .MEM_mem_wb_rdata_i(MEM_WB_data_mem_rdata), // from MEM_WB register, rdata from data memory
     .MEM_forwardC_i(forwardC),
-    .MEM_from_WB_rd_i(MEM_WB_data_mem_rdata), 
+    .MEM_from_WB_rdata_i(MEM_WB_data_mem_rdata), 
     .MEM_ctrl_word_i(EX_MEM_ctrl_word),
     .MEM_rd_i(EX_MEM_rd),
     .MEM_alu_out_i(EX_MEM_alu_out),
@@ -616,6 +616,9 @@ forwarder forwarding(
     .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
     .MEM_WB_ctrl_word_i(MEM_WB_ctrl_word),
 
+    .stall_br_haz1(stall_br_haz1),
+    .stall_br_haz2(stall_br_haz2),
+
     .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
     
     .forwardA_o         (forwardA),
@@ -625,7 +628,7 @@ forwarder forwarding(
     .forwardE_o         (forwardE) 
 );
 
-
+logic stall_br_haz1, stall_br_haz2;
 hazard_detector hazard_detector (
     .EX_mem_read_i(EX_ctrl_word.mem_read),
     .MEM_mem_read_i(MEM_ctrl_word.mem_read), 
@@ -633,9 +636,13 @@ hazard_detector hazard_detector (
     .ID_rs2_i(ID_rs2),
     .EX_rd_i(EX_rd),
     .MEM_rd_i(MEM_rd), 
+
     .ID_HD_controlmux_sel_o(ID_HD_controlmux_sel),
     .IF_HD_PC_write_o(IF_HD_PC_write),
-    .IF_ID_HD_write_o(IF_ID_HD_write)
+    .IF_ID_HD_write_o(IF_ID_HD_write),
+
+    .stall_br1_o(stall_br_haz1),
+    .stall_br2_o(stall_br_haz2)
 );
 
 

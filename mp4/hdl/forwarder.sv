@@ -18,6 +18,9 @@ import rv32i_types::*;
 
     input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i,
 
+    input logic stall_br_haz1,
+    input logic stall_br_haz2,
+
     // input rv32i_reg MEM_WB_data_mem_rdata,
     // input rv32i_reg EX_MEM_rs2,
 
@@ -199,26 +202,29 @@ end
 // **********************************************************************************************************
 // ************************** Divider between branch and data hazard ***************************************
 // **********************************************************************************************************
-
+logic is_br_haz_stall;
 always_comb begin : forwardingD // forwarding for branches to input 1 of adder in decode stage
-
+    is_br_haz_stall = stall_br_haz1 | stall_br_haz2;
     control_hazard_EX_D = EX_load_regfile_i
                             & |ID_EX_rd_i
                             & |REGFILE_rs1_i
-                            & (REGFILE_rs1_i == ID_EX_rd_i); 
+                            & (REGFILE_rs1_i == ID_EX_rd_i)
+                            & ~is_br_haz_stall; 
 
     control_hazard_MEM_D = MEM_load_regfile_i
                             & |EX_MEM_rd_i
                             & |REGFILE_rs1_i
                             & (REGFILE_rs1_i == EX_MEM_rd_i)
-                            & ~control_hazard_EX_D;
+                            & ~control_hazard_EX_D
+                            & ~is_br_haz_stall; 
 
     control_hazard_WB_D = WB_load_regfile_i
                             & |MEM_WB_rd_i
                             & |REGFILE_rs1_i
                             & (REGFILE_rs1_i == MEM_WB_rd_i)
                             & ~control_hazard_EX_D
-                            & ~control_hazard_MEM_D;
+                            & ~control_hazard_MEM_D
+                            & ~is_br_haz_stall; 
 
     // if ex load regfile and 
     //  rs1 out of regfile == ID_EX_rd 
