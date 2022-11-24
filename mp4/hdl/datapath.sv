@@ -195,8 +195,9 @@ forwardingmux3::forwardingmux3_sel_t forwardD;
 forwardingmux4::forwardingmux4_sel_t forwardE; 
 
 /****************************************/
-/* Declarations for forwarding unit *****/
+/* Declarations for hazard unit *********/
 /****************************************/
+logic stall_br_haz1, stall_br_haz2;
 controlmux::controlmux_sel_t ID_HD_controlmux_sel;
 logic IF_HD_PC_write;
 logic IF_ID_HD_write;
@@ -628,7 +629,7 @@ forwarder forwarding(
     .forwardE_o         (forwardE) 
 );
 
-logic stall_br_haz1, stall_br_haz2;
+
 hazard_detector hazard_detector (
     .EX_mem_read_i(EX_ctrl_word.mem_read),
     .MEM_mem_read_i(MEM_ctrl_word.mem_read), 

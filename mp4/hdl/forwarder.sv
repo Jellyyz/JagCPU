@@ -174,7 +174,7 @@ always_comb begin : forwardingB
         end
         default         : begin
             forwardB = forwardingmux::id_ex;
-            $display("Zero on forwardmux_sel A @:", $time); 
+            $display("Zero on forwardmux_sel B @:", $time); 
         end
     endcase
 end

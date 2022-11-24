@@ -123,7 +123,7 @@ always_comb begin : wb_mux
                     $display("Found no possible placement for LBU ALU_out[1:0] = %b at time " , WB_alu_out_i[1:0], $time);
             endcase 
         end 
-        default: $display("hit regfilemux error");
+        default: $display("hit regfilemux error @ time=",$time);
     endcase 
 end 
 

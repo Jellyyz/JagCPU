@@ -63,7 +63,7 @@ rv32i_word forwardmuxB_out;
 rv32i_word alumux1_out;
 rv32i_word alumux2_out; 
 
-rv32i_word cmp_mux_out;
+// rv32i_word cmp_mux_out;
 logic ex_br_en;
 
 
@@ -108,8 +108,8 @@ always_comb begin : Forwarding_MUXES
         forwardingmux::mem_wb       : forwardmuxA_out = EX_from_WB_regfilemux_out_i;
         forwardingmux::u_imm_ex_mem : forwardmuxA_out = EX_from_MEM_u_imm_i;
         forwardingmux::u_imm_mem_wb : forwardmuxA_out = EX_from_WB_u_imm_i;
-        forwardingmux::br_en_ex_mem : forwardmuxA_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_MEM_br_en_i};
-        forwardingmux::br_en_mem_wb : forwardmuxA_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_WB_br_en_i};
+        forwardingmux::br_en_ex_mem : forwardmuxA_out = {{31'b0000000000000000000000000000000}, EX_from_MEM_br_en_i};
+        forwardingmux::br_en_mem_wb : forwardmuxA_out = {{31'b0000000000000000000000000000000}, EX_from_WB_br_en_i};
         default : $display("forwarding mux output A undefined");
     endcase
 
@@ -119,8 +119,8 @@ always_comb begin : Forwarding_MUXES
         forwardingmux::mem_wb       : forwardmuxB_out = EX_from_WB_regfilemux_out_i;
         forwardingmux::u_imm_ex_mem : forwardmuxB_out = EX_from_MEM_u_imm_i;
         forwardingmux::u_imm_mem_wb : forwardmuxB_out = EX_from_WB_u_imm_i;
-        forwardingmux::br_en_ex_mem : forwardmuxB_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_MEM_br_en_i};
-        forwardingmux::br_en_mem_wb : forwardmuxB_out = {/*{28'b0000000}, {3'b000}*/{31'b0000000000000000000000000000000}, EX_from_WB_br_en_i};
+        forwardingmux::br_en_ex_mem : forwardmuxB_out = {{31'b0000000000000000000000000000000}, EX_from_MEM_br_en_i};
+        forwardingmux::br_en_mem_wb : forwardmuxB_out = {{31'b0000000000000000000000000000000}, EX_from_WB_br_en_i};
         default : $display("forwarding mux output B undefined");
     endcase
 end
@@ -129,7 +129,7 @@ always_comb begin : ALU_MUX
     unique case (EX_ctrl_word_i.alumux1_sel)
         alumux::rs1_out : alumux1_out = forwardmuxA_out; 
         alumux::pc_out : alumux1_out = EX_pc_out_i; 
-        default: $display("hit alumux1 error");
+        default: $display("hit alumux1 error @ time=",$time);
     endcase 
     unique case (EX_ctrl_word_i.alumux2_sel)
         alumux::i_imm : alumux2_out = EX_i_imm_i; 
@@ -138,7 +138,7 @@ always_comb begin : ALU_MUX
         alumux::s_imm : alumux2_out = EX_s_imm_i; 
         alumux::j_imm : alumux2_out = EX_j_imm_i; 
         alumux::rs2_out : alumux2_out = forwardmuxB_out;
-        default: $display("hit alumux2 error");
+        default: $display("hit alumux2 error @ time=",$time);
     endcase
 end 
 
@@ -150,14 +150,14 @@ alu alu (
     .f(EX_alu_out_o)
 );
 
-always_comb begin : muxes
-    unique case (EX_ctrl_word_i.cmpmux_sel)
-        1'b0 : cmp_mux_out = EX_rs2_out_i;
-        1'b1 : cmp_mux_out = EX_i_imm_i;
-        default :
-            cmp_mux_out = EX_rs2_out_i;
-    endcase
-end
+// always_comb begin : muxes
+//     unique case (EX_ctrl_word_i.cmpmux_sel)
+//         1'b0 : cmp_mux_out = EX_rs2_out_i;
+//         1'b1 : cmp_mux_out = EX_i_imm_i;
+//         default :
+//             cmp_mux_out = EX_rs2_out_i;
+//     endcase
+// end
 
 // cmp cmp_ex(
 //     .cmpop(EX_ctrl_word_i.cmpop),

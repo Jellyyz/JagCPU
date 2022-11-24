@@ -34,7 +34,7 @@ always_comb begin : pc_mux
         pcmux::alu_mod2 : pcmux_out = IF_alu_out_i & ~(32'b0000_0000_0000_0000_0000_0000_0000_0001);  
         pcmux::alu_out  : pcmux_out = IF_alu_out_i; 
         default:begin 
-            $display("error no pcmux found"); 
+            $display("error no pcmux found @ time=",$time); 
             $finish; 
         end 
     endcase 

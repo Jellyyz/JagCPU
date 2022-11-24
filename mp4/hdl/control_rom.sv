@@ -49,7 +49,7 @@ endfunction
 always_comb
 begin
     set_defaults();
-    case(opcode)
+    unique case(opcode)
         op_lui: begin
             ctrl.load_regfile = 1'b1;
             ctrl.regfilemux_sel = regfilemux::u_imm;

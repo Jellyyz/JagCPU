@@ -56,6 +56,9 @@ logic EX_MEM_halt_en;
 
 always_ff @(posedge clk) begin
     if (rst) begin
+        EX_MEM_rs1 <= '0; 
+        EX_MEM_rs2 <= '0;
+        EX_MEM_rd <= '0;
         EX_MEM_pc_out  <= '0;
         EX_MEM_pc_plus4  <= '0;
         EX_MEM_instr <= '0;
@@ -72,9 +75,9 @@ always_ff @(posedge clk) begin
         EX_MEM_br_en <= '0;
         EX_MEM_halt_en <= '0;
     end else if (load_i) begin
-        EX_MEM_rs1 = EX_MEM_rs1_i; 
-        EX_MEM_rs2 = EX_MEM_rs2_i;
-        EX_MEM_rd = EX_MEM_rd_i; 
+        EX_MEM_rs1 <= EX_MEM_rs1_i; 
+        EX_MEM_rs2 <= EX_MEM_rs2_i;
+        EX_MEM_rd <= EX_MEM_rd_i; 
         EX_MEM_pc_out  <= EX_MEM_pc_out_i;
         EX_MEM_pc_plus4  <= EX_MEM_pc_plus4_i;
         EX_MEM_instr <= EX_MEM_instr_i;
@@ -91,6 +94,9 @@ always_ff @(posedge clk) begin
         EX_MEM_br_en <= EX_MEM_br_en_i;
         EX_MEM_halt_en <= EX_MEM_halt_en_i;
     end else begin
+        EX_MEM_rs1 <= EX_MEM_rs1; 
+        EX_MEM_rs2 <= EX_MEM_rs2;
+        EX_MEM_rd <= EX_MEM_rd; 
         EX_MEM_pc_out  <= EX_MEM_pc_out;
         EX_MEM_pc_plus4  <= EX_MEM_pc_plus4;
         EX_MEM_instr <= EX_MEM_instr;
@@ -102,7 +108,6 @@ always_ff @(posedge clk) begin
         EX_MEM_rs1_out <= EX_MEM_rs1_out;
         EX_MEM_rs2_out <= EX_MEM_rs2_out;
         EX_MEM_ctrl_word <= EX_MEM_ctrl_word;
-        EX_MEM_rd <= EX_MEM_rd;
         EX_MEM_alu_out <= EX_MEM_alu_out;
         EX_MEM_br_en <= EX_MEM_br_en;
         EX_MEM_halt_en <= EX_MEM_halt_en;
