@@ -20,7 +20,7 @@ import rv32i_types::*;
 
     input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
 
-    input logic ID_br_pred_i,
+    input ctrl_flow_preds ID_br_pred_i,
 
     input forwardingmux3::forwardingmux3_sel_t ID_forwardD_i,
     input forwardingmux4::forwardingmux4_sel_t ID_forwardE_i,
@@ -52,7 +52,7 @@ import rv32i_types::*;
     output logic [width-1:0] ID_branch_pc_o,
     output pcmux::pcmux_sel_t ID_pcmux_sel_o,
 
-    output logic ID_br_pred_o,
+    output ctrl_flow_preds ID_br_pred_o,
     output logic ID_if_id_flush_o,
 
     output logic ID_halt_en_o
@@ -159,13 +159,13 @@ always_comb begin : instr_decode
     rd = ID_instr_i[11:7];
 end
 
-always_comb begin : ctrl_decode
-    cmpop = ctrl_word.cmpop;
-    cmpmux_sel = ctrl_word.cmpmux_sel;
-end
+// always_comb begin : ctrl_decode
+//     cmpop = ctrl_word.cmpop;
+//     cmpmux_sel = ctrl_word.cmpmux_sel;
+// end
 
 always_comb begin : muxes
-    unique case (cmpmux_sel)
+    unique case (ctrl_word_hd.cmpmux_sel)
         1'b0 : cmp_mux_out = br_in2;
         1'b1 : cmp_mux_out = i_imm;
         default :
@@ -175,7 +175,7 @@ end
 
 
 cmp cmp_id(
-    .cmpop(cmpop),
+    .cmpop(ctrl_word_hd.cmpop),
     .rs1_out(br_in1),
     .cmp_mux_out(cmp_mux_out),
     
@@ -183,17 +183,25 @@ cmp cmp_id(
 );
 
 
-logic br_flush, jal_flush, jalr_flush;
+logic br_flush, jal_flush, jalr_flush, active_predictor;
 always_comb begin : FLUSH_CALC
-    //if we have a correct prediction then we don't flush 
-    // ID_if_id_flush_o = ~(br_en == ID_br_pred_i) 
-    //                     & ((ctrl_word_hd.opcode == op_br) 
-    //                         | (ctrl_word_hd.opcode == op_jal) 
-    //                         | (ctrl_word_hd.opcode == op_jalr)
-    //                     );
-    br_flush = ~(br_en == ID_br_pred_i) & (ctrl_word_hd.opcode == op_br);
-    jal_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jal);
-    jalr_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jalr);
+    // br_flush = ~(br_en == ID_br_pred_i) & (ctrl_word_hd.opcode == op_br);
+    // jal_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jal);
+    // jalr_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jalr);
+    // ID_if_id_flush_o = (br_flush | jal_flush | jalr_flush);
+
+
+    active_predictor = ID_br_pred_i.staticBTFNT_pred; // select which of struct being used
+
+    // currently, instr decode + br resolve not until ID stage
+    // if predict taken, there is mandatory one flush / stall 
+    // of one cycle so there is time to compute the target
+
+
+    br_flush = (~(br_en == active_predictor) | (active_predictor & br_en)) & (ctrl_word_hd.opcode == op_br) & br_en;
+    // predict wrong -> flush. predict right -> flush because target addr was not ready, loaded wrong instr
+    jal_flush = (~active_predictor | (active_predictor == 1'b1)) & (ctrl_word_hd.opcode == op_jal); 
+    jalr_flush = (~active_predictor | (active_predictor == 1'b1)) & (ctrl_word_hd.opcode == op_jalr); // 
     ID_if_id_flush_o = (br_flush | jal_flush | jalr_flush);
                         
 end
@@ -305,6 +313,10 @@ always_ff @(posedge clk or posedge rst) begin : BRANCH_COUNTERS
         endcase
 
         total_br_mispredict <= br_flush ? total_br_mispredict + 1 : total_br_mispredict;
+
+        always_nt_br_mispred <= ~(br_en == ID_br_pred_i.staticNT_pred) & ctrl_word_hd.opcode == op_br ? always_nt_br_mispred + 1 : always_nt_br_mispred;
+        btfnt_br_mispred <= ~(br_en == ID_br_pred_i.staticBTFNT_pred) & ctrl_word_hd.opcode == op_br ? btfnt_br_mispred + 1 : btfnt_br_mispred;
+
         total_jal_mispredict <= jal_flush ? total_jal_mispredict + 1 : total_jal_mispredict;
         total_jalr_mispredict <= jalr_flush ? total_jalr_mispredict + 1 : total_jalr_mispredict;
     end

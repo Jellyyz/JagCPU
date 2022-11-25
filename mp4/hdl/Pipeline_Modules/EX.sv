@@ -27,7 +27,7 @@ import rv32i_types::*;
     input logic EX_from_MEM_br_en_i,
     input logic EX_from_WB_br_en_i,
 
-    input logic EX_br_pred_i,
+    input ctrl_flow_preds EX_br_pred_i,
     
     input logic EX_halt_en_i,
 
@@ -52,7 +52,7 @@ import rv32i_types::*;
 
     output logic EX_mem_read_o,
 
-    output logic EX_br_pred_o,
+    output ctrl_flow_preds EX_br_pred_o,
 
     output logic EX_load_regfile_o,
 

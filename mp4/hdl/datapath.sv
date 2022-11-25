@@ -54,14 +54,14 @@ logic [6:0] funct7;
 /****************************************/
 rv32i_word IF_pc_out;
 rv32i_word IF_instr_out; 
-logic IF_br_pred;
+ctrl_flow_preds IF_br_pred;
 
 /****************************************/
 /* Declarations for IF/ID ***************/
 /****************************************/
 rv32i_word IF_ID_pc_out;
 rv32i_word IF_ID_instr; 
-logic IF_ID_br_pred;
+ctrl_flow_preds IF_ID_br_pred;
 
 /****************************************/
 /* Declarations for ID ******************/
@@ -76,7 +76,7 @@ logic [4:0] ID_rs1, ID_rs2, ID_rd;
 logic ID_br_en;
 logic [width-1:0] ID_branch_pc;
 pcmux::pcmux_sel_t ID_pcmux_sel;
-logic ID_br_pred;
+ctrl_flow_preds ID_br_pred;
 logic IF_ID_flush;
 logic ID_halt_en;
 
@@ -89,7 +89,7 @@ rv32i_word ID_EX_pc_out, ID_EX_rs1_out, ID_EX_rs2_out;
 rv32i_word ID_EX_i_imm, ID_EX_s_imm, ID_EX_b_imm, ID_EX_u_imm, ID_EX_j_imm; 
 logic [4:0] ID_EX_rs1, ID_EX_rs2, ID_EX_rd;
 logic ID_EX_br_en; 
-logic ID_EX_br_pred;
+ctrl_flow_preds ID_EX_br_pred;
 
 logic ID_EX_halt_en;
 
@@ -105,7 +105,7 @@ rv32i_control_word EX_ctrl_word;
 logic [4:0] EX_rs1, EX_rs2, EX_rd; 
 rv32i_word  EX_alu_out; 
 logic EX_br_en; 
-logic EX_br_pred;
+ctrl_flow_preds EX_br_pred;
 logic EX_load_regfile; 
 
 logic EX_halt_en;

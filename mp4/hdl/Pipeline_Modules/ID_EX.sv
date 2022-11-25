@@ -22,7 +22,7 @@ import rv32i_types::*;
     input logic[4:0] ID_EX_rs2_i,
     input logic[4:0] ID_EX_rd_i,
     input logic ID_EX_br_en_i,
-    input logic ID_EX_br_pred_i,
+    input ctrl_flow_preds ID_EX_br_pred_i,
     input logic ID_EX_halt_en_i,
 
     output rv32i_control_word ID_EX_ctrl_word_o,
@@ -40,7 +40,7 @@ import rv32i_types::*;
     output logic[4:0] ID_EX_rd_o,
     output logic ID_EX_br_en_o,
 
-    output logic ID_EX_br_pred_o,
+    output ctrl_flow_preds ID_EX_br_pred_o,
     output logic ID_EX_halt_en_o
 );
 
@@ -58,7 +58,7 @@ import rv32i_types::*;
     logic [4:0] ID_EX_rs2;
     logic [4:0] ID_EX_rd;
     logic ID_EX_br_en;
-    logic ID_EX_br_pred;
+    ctrl_flow_preds ID_EX_br_pred;
     logic ID_EX_halt_en;
 
 

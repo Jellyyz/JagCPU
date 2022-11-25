@@ -91,6 +91,16 @@ typedef struct packed {
     
 } rv32i_control_word;
 
+typedef struct packed {
+    logic staticNT_pred;
+    logic staticBTFNT_pred;
+    logic dynamicLocalBHT_pred;
+    logic dynamicGlobalBHT_pred;
+    logic dynamicTourney_pred;
+    logic jal_pred;
+    logic jalr_pred;
+} ctrl_flow_preds;
+
 
 endpackage : rv32i_types
 
