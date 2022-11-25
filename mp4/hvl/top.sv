@@ -175,4 +175,13 @@ mp4 dut(
 );
 /***************************** End Instantiation *****************************/
 
+final begin 
+    $display ("total_br_instructin = ", dut.d0.ID.total_br);
+    $display ("total_br_mispredict = ", dut.d0.ID.total_br_mispredict);
+    $display ("total_jal_instructin = ", dut.d0.ID.total_jal);
+    $display ("total_jal_mispredict = ", dut.d0.ID.total_jal_mispredict);
+    $display ("total_jalr_instructin = ", dut.d0.ID.total_jalr);
+    $display ("total_jalr_mispredict = ", dut.d0.ID.total_jalr_mispredict);
+end
+
 endmodule

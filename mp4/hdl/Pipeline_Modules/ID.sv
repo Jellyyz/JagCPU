@@ -64,6 +64,10 @@ import rv32i_types::*;
     // output logic [3:0] ID_mem_byte_en_o;
 );
 
+int total_br, total_jal, total_jalr;
+int total_br_mispredict, total_jal_mispredict, total_jalr_mispredict;
+int always_nt_br_mispred, btfnt_br_mispred, local_br_mispred, global_br_mispred, tournament_br_mispred;
+
 rv32i_word br_in1, br_in2;
 rv32i_opcode opcode;
 logic [2:0] funct3;
@@ -277,6 +281,33 @@ always_comb begin : set_output
     ID_br_pred_o = ID_br_pred_i;
 
     ID_halt_en_o = halt_en;
+end
+
+always_ff @(posedge clk or posedge rst) begin : BRANCH_COUNTERS
+    if (rst) begin
+        total_br <= '0;
+        total_jal <= '0;
+        total_jalr <= '0;
+        total_br_mispredict <= '0;
+        total_jal_mispredict <= '0;
+        total_jalr_mispredict <= '0;
+        always_nt_br_mispred <= '0;
+        btfnt_br_mispred <= '0;
+        local_br_mispred <= '0;
+        global_br_mispred <= '0;
+        tournament_br_mispred <= '0;
+    end else begin
+        unique case (opcode) 
+            op_br   : total_br <= total_br + 1;
+            op_jal  : total_jal <= total_jal + 1;
+            op_jalr : total_jalr <= total_jalr + 1;
+            default : ;
+        endcase
+
+        total_br_mispredict <= br_flush ? total_br_mispredict + 1 : total_br_mispredict;
+        total_jal_mispredict <= jal_flush ? total_jal_mispredict + 1 : total_jal_mispredict;
+        total_jalr_mispredict <= jalr_flush ? total_jalr_mispredict + 1 : total_jalr_mispredict;
+    end
 end
 
 endmodule : ID

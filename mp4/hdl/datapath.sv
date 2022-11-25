@@ -202,6 +202,12 @@ controlmux::controlmux_sel_t ID_HD_controlmux_sel;
 logic IF_HD_PC_write;
 logic IF_ID_HD_write;
 
+/****************************************/
+/* Declarations for counters ************/
+/****************************************/
+// int total_br, total_jal, total_jalr;
+// int total_br_mispredict, total_jal_mispredict, total_jalr_mispredict;
+// int always_nt_br_mispred, btfnt_br_mispred, local_br_mispred, global_br_mispred, tournament_br_mispred;
 
 /****************************************/
 /* Begin instantiation ******************/
@@ -271,6 +277,12 @@ ID ID(
     .ID_forwardE_i(forwardE), 
 
     .ID_br_pred_i(IF_ID_br_pred),
+
+    // // branch counters (inputs)
+    // .total_br(total_br), .total_jal(total_jal), .total_jalr(total_jalr),
+    // .total_br_mispredict(total_br_mispredict), .total_jal_mispredict(total_jal_mispredict), .total_jalr_mispredict(total_jalr_mispredict),
+    // .always_nt_br_mispred(always_nt_br_mispred), .btfnt_br_mispred(btfnt_br_mispred), .local_br_mispred(local_br_mispred), .global_br_mispred(global_br_mispred), .tournament_br_mispred(tournament_br_mispred),
+
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
