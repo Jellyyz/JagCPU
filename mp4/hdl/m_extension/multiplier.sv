@@ -9,7 +9,6 @@ module array_multiplier(
 
 logic [63:0] c;
 logic [63:0] mult_accum [32];
-logic [63:0] ans; 
 
 always_ff @(posedge clk or posedge rst)begin 
 

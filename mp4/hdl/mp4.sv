@@ -70,10 +70,16 @@ logic [3:0] i_mbe, d_mbe;
 //     .pmem_resp(pmem_resp)
 // );
 
+logic [31:0] a, b; 
+logic [63:0] c; 
 
+assign a = 32'b11111111111111111111111111111111;
+assign b = 32'b11111111111111111111111111111111;
 
 array_multiplier m0(
-    .clk(clk), .rst(rst)
+    .clk(clk), .rst(rst),
+    .a(a), .b(b),
+    .ans(c)
 
 ); 
 endmodule : mp4
