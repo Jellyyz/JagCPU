@@ -73,13 +73,48 @@ logic [3:0] i_mbe, d_mbe;
 logic [31:0] a, b; 
 logic [63:0] c; 
 
-assign a = 32'b11111111111111111111111111111111;
-assign b = 32'b11111111111111111111111111111111;
+assign a = 32'b11100111000111111111111111111111;
+assign b = 32'b00000000000000001101001101011011;
 
-array_multiplier m0(
+
+// array_multiplier m0(
+//     .clk(clk), .rst(rst),
+//     .a(a), .b(b),
+//     .ans(c)
+
+// ); 
+logic [31:0] dividend, divisor; 
+
+
+logic [31:0] q, r; 
+// glue logic for dividing unit 
+logic div_cpy_trigger, shift_en, subtract_trigger;
+
+assign dividend = a; 
+assign divisor = b; 
+
+divider div0(
+
+    .clk(clk), .rst(rst), 
+    .dividend(dividend), .divisor(divisor), 
+    .div_cpy_trigger(div_cpy_trigger), 
+    .shift_en(shift_en),
+    
+    .subtract_trigger(subtract_trigger), 
+    .q(q), .r(r) 
+
+);
+
+
+divider_control div_ctrl0(
     .clk(clk), .rst(rst),
-    .a(a), .b(b),
-    .ans(c)
+    .start(1'b1), .subtract_trigger(subtract_trigger), 
+    .shift_en(shift_en),
+    .div_cpy_trigger(div_cpy_trigger) 
+
+
 
 ); 
+
+
 endmodule : mp4
