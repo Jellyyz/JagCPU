@@ -27,8 +27,8 @@ import rv32i_types::*;
     input logic [width-1:0] WB_b_imm_i,
     input logic [width-1:0] WB_u_imm_i,
     input logic [width-1:0] WB_j_imm_i,
-    // input logic [width-1:0] WB_pc_out_i, // magic
-    // input logic [width-1:0] WB_data_mem_wdata_i, // magic
+    input logic [width-1:0] WB_data_mem_address_i,
+    // input logic [width-1:0] WB_data_mem_wdata_i, 
     input logic [width-1:0] WB_data_mem_rdata_i, // magic
     input logic WB_halt_en_i,
 
@@ -84,7 +84,7 @@ always_comb begin : wb_mux
         regfilemux::lw          : regfilemux_out = WB_data_mem_rdata_i;
         regfilemux::pc_plus4    : regfilemux_out = WB_pc_out_i + {32'h00000004};
         regfilemux::lh          : begin 
-            unique case(WB_pc_out_i[1:0])
+            unique case(WB_data_mem_address_i[1:0])
                 2'b00 : regfilemux_out = {{16{WB_data_mem_rdata_i[15]}}, WB_data_mem_rdata_i[15:0]};
                 // 2'b01 : regfilemux_out = {{16{WB_data_mem_rdata_i[23]}}, WB_data_mem_rdata_i[23:8]};
                 2'b10 : regfilemux_out = {{16{WB_data_mem_rdata_i[31]}}, WB_data_mem_rdata_i[31:16]};
@@ -94,7 +94,7 @@ always_comb begin : wb_mux
             endcase 
         end 
         regfilemux::lhu         : begin 
-            unique case(WB_pc_out_i[1:0])
+            unique case(WB_data_mem_address_i[1:0])
                 2'b00 : regfilemux_out = {16'h0, WB_data_mem_rdata_i[15:0]}; 
                 // 2'b01 : regfilemux_out = {16'h0, WB_data_mem_rdata_i[23:8]}; 
                 2'b10 : regfilemux_out = {16'h0, WB_data_mem_rdata_i[31:16]}; 
@@ -104,7 +104,7 @@ always_comb begin : wb_mux
             endcase 
         end 
         regfilemux::lb          : begin
-            unique case(WB_pc_out_i[1:0])
+            unique case(WB_data_mem_address_i[1:0])
                 2'b00 : regfilemux_out = {{24{WB_data_mem_rdata_i[7]}}, WB_data_mem_rdata_i[7:0]}; 
                 2'b01 : regfilemux_out = {{24{WB_data_mem_rdata_i[15]}}, WB_data_mem_rdata_i[15:8]}; 
                 2'b10 : regfilemux_out = {{24{WB_data_mem_rdata_i[23]}}, WB_data_mem_rdata_i[23:16]}; 
@@ -114,7 +114,7 @@ always_comb begin : wb_mux
             endcase 
         end 
         regfilemux::lbu         : begin 
-            unique case(WB_pc_out_i[1:0])
+            unique case(WB_data_mem_address_i[1:0])
                 2'b00 : regfilemux_out = {24'h0, WB_data_mem_rdata_i[7:0]}; 
                 2'b01 : regfilemux_out = {24'h0, WB_data_mem_rdata_i[15:8]}; 
                 2'b10 : regfilemux_out = {24'h0, WB_data_mem_rdata_i[23:16]}; 

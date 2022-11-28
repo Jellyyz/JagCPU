@@ -582,8 +582,8 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_i             (MEM_b_imm),
     .MEM_WB_u_imm_i             (MEM_u_imm),
     .MEM_WB_j_imm_i             (MEM_j_imm),
-    // .MEM_WB_data_mem_address_i  (data_mem_address), // only for rvfi
-    // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),   // only for rvfi
+    .MEM_WB_data_mem_address_i  (data_mem_address), // only for rvfi
+    .MEM_WB_data_mem_wdata_i    (data_mem_wdata),   // only for rvfi
     .MEM_WB_data_mem_rdata_i    (MEM_data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
 
     .MEM_WB_halt_en_i(MEM_halt_en),
@@ -604,11 +604,11 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_o(MEM_WB_b_imm),
     .MEM_WB_u_imm_o(MEM_WB_u_imm),
     .MEM_WB_j_imm_o(MEM_WB_j_imm),
-    // .MEM_WB_data_mem_address_o(data_mem_address), // magic 
-    // .MEM_WB_data_mem_wdata_o(data_mem_wdata), // magic 
+    .MEM_WB_data_mem_address_o(MEM_WB_data_mem_address), // magic 
+    .MEM_WB_data_mem_wdata_o(MEM_WB_data_mem_wdata), // magic 
     .MEM_WB_data_mem_rdata_o(MEM_WB_data_mem_rdata), // magic
-    .MEM_WB_data_mem_wdata_o(MEM_WB_data_mem_wdata), // only for rvfi
-    .MEM_WB_data_mem_address_o(MEM_WB_data_mem_address), // only for rvfi
+    // .MEM_WB_data_mem_wdata_o(MEM_WB_data_mem_wdata), // only for rvfi
+    // .MEM_WB_data_mem_address_o(MEM_WB_data_mem_address), // only for rvfi
 
     .MEM_WB_halt_en_o(MEM_WB_halt_en)
 ); 
@@ -631,7 +631,7 @@ WB WB (
     .WB_b_imm_i             (MEM_WB_b_imm),
     .WB_u_imm_i             (MEM_WB_u_imm),
     .WB_j_imm_i             (MEM_WB_j_imm),
-    // .WB_data_mem_address_i  (MEM_WB_data_mem_address), // only for rvfi, output yadada same as below
+    .WB_data_mem_address_i  (MEM_WB_data_mem_address), // only for rvfi, output yadada same as below
     // .WB_data_mem_wdata_i    (MEM_WB_data_mem_wdata), // only for rvfi, output of mem wb reg is same as input to here, not adding
     .WB_data_mem_rdata_i    (MEM_WB_data_mem_rdata),
 

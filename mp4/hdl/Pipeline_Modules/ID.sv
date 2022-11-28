@@ -265,13 +265,14 @@ branch_resolver branch_resolver (
 
 always_comb begin : HALT_CHECK
     br_equal = branch_pc == ID_pc_out_i;
-    halt_en = (br_en /*| (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr)*/) & br_equal & ~rst & |ctrl_word_hd.opcode ? 1'b1 : 1'b0;
+    halt_en = (br_en & |ID_pc_out_i /*| (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr)*/) & br_equal & ~rst & |ctrl_word_hd.opcode ? 1'b1 : 1'b0;
     // halt_en = (br_equal & ( (br_en & (ctrl_word_hd.opcode == op_br)) | (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr))) & ~rst & ~ID_if_id_flush_o ? 1'b1 : 1'b0;g
 end
 
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
     ID_instr_o = ID_instr_i;
+    // ID_pc_out_o = ~((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) ? ID_pc_out_i : '1;
     ID_pc_out_o = ID_pc_out_i;
 
     ID_branch_pc_o = branch_pc;

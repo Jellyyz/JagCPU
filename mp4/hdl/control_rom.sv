@@ -95,6 +95,7 @@ begin
                 lh  :  ctrl.regfilemux_sel = regfilemux::lh;
                 lhu : ctrl.regfilemux_sel = regfilemux::lhu;
                 lw  :  ctrl.regfilemux_sel = regfilemux::lw;
+                default : $display("Load type select error @", $time);
             endcase
         end
         op_store: begin
@@ -107,7 +108,7 @@ begin
                 sb : ctrl.mem_byte_en = 4'b0001;// << mem_addr_byte_sel[1:0];
                 sh : ctrl.mem_byte_en = 4'b0011;// << mem_addr_byte_sel[1:0];
                 sw : ctrl.mem_byte_en = 4'b1111;// << mem_addr_byte_sel[1:0];
-                default : ;
+                default : $display("Store type select error @", $time);
             endcase
         end
         op_imm: begin
@@ -120,6 +121,7 @@ begin
                     unique case (funct7[5])
                         1'b0: ctrl.aluop = alu_srl;
                         1'b1: ctrl.aluop = alu_sra;
+                        default : $display("Right shift Imm type select error @", $time);
                     endcase
                 end
                 slt: begin
@@ -131,6 +133,14 @@ begin
                     ctrl.cmpmux_sel = cmpmux:: i_imm;
                     ctrl.cmpop = bltu;
                     ctrl.regfilemux_sel = regfilemux::br_en;
+                end
+                add: begin
+                    ctrl.regfilemux_sel = regfilemux::alu_out;
+                    unique case (funct7[5]) // check for subtraction or add
+                        1'b0 : ctrl.aluop = alu_add;
+                        1'b1 : ctrl.aluop = alu_sub;
+                        default : $display("Add Immm type select error @", $time);
+                    endcase
                 end
                 default: begin
                     ctrl.aluop = alu_ops'(funct3);
@@ -148,6 +158,7 @@ begin
                     unique case (funct7[5])
                         1'b0: ctrl.aluop = alu_srl;
                         1'b1: ctrl.aluop = alu_sra;
+                        default : $display("Right shift Reg type select error @", $time);
                     endcase
                 end
                 slt: begin
@@ -165,15 +176,13 @@ begin
                     unique case (funct7[5]) // check for subtraction or add
                         1'b0 : ctrl.aluop = alu_add;
                         1'b1 : ctrl.aluop = alu_sub;
+                        default : $display("Add Regtype select error @", $time);
                     endcase
                 end
                 default: begin
                     ctrl.aluop = alu_ops'(funct3);
                     ctrl.regfilemux_sel = regfilemux::alu_out;
-                    // unique case (funct7[5]) 
-                    //     1'b0 : ctrl.aluop = alu_add;
-                    //     1'b1 : ctrl.aluop = alu_sub;
-                    // endcase
+
                 end
             endcase
         end
