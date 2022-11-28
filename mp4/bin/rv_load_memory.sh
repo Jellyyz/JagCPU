@@ -1,14 +1,14 @@
 #!/bin/bash
 
 # Settings
-ECE411DIR=$HOME/MP4
+ECE411DIR=$HOME/ece411/mp4
 DEFAULT_TARGET=$ECE411DIR/mp4/sim/memory.lst
 ASSEMBLER=/class/ece411/software/riscv-tools/bin/riscv32-unknown-elf-gcc
 OBJCOPY=/class/ece411/software/riscv-tools/bin/riscv32-unknown-elf-objcopy
 OBJDUMP=/class/ece411/software/riscv-tools/bin/riscv32-unknown-elf-objdump
 
 # CHANGE FOR CP2
-ADDRESSABILITY=1
+ADDRESSABILITY=32
 
 
 # Command line parameters
@@ -47,7 +47,7 @@ fi
 OBJ_FILE="${WORK_DIR}/$(basename $ASM_FILE .asm).obj"
 
 # Assemble code
-"$ASSEMBLER" -ffreestanding -nostdlib -march=rv32i "${WORK_DIR}/$(basename $ASM_FILE)" -Wl,--no-relax -o "$OBJ_FILE"
+"$ASSEMBLER" -ffreestanding -nostdlib -march=rv32im "${WORK_DIR}/$(basename $ASM_FILE)" -Wl,--no-relax -o "$OBJ_FILE"
 
 # Fail if object file doesn't exist or has no memory content
 if [[ ! -e "$OBJ_FILE" || "$(cat "$OBJ_FILE" | wc -c)" -le "1" ]]; then
