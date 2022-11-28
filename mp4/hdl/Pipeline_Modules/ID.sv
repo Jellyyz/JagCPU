@@ -25,6 +25,9 @@ import rv32i_types::*;
     input forwardingmux3::forwardingmux3_sel_t ID_forwardD_i,
     input forwardingmux4::forwardingmux4_sel_t ID_forwardE_i,
 
+    input logic stall_IF_ID_ld,
+    input logic stall_ID_EX_ld,
+
     // input logic [width-1:0] ID_EX_rs2_out_i, 
     // input logic [width-1:0] EX_MEM_rs1_out_i,
     // input logic [width-1:0] EX_MEM_rs2_out_i,
@@ -98,8 +101,8 @@ control_rom ctrl_rom (
     .opcode (opcode),
     .funct3 (funct3),
     .funct7 (funct7),
-    .clk(clk),
-    .rst(rst),
+    // .clk(clk),
+    // .rst(rst),
 
     .ctrl   (ctrl_word)
 );
@@ -109,7 +112,7 @@ rv32i_control_word ctrl_word_hd;
 always_comb begin : NOP_generator
     ctrl_word_hd = ctrl_word;
 
-    if (ID_HD_controlmux_sel_i == controlmux::zero) begin
+    if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) begin
         // $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
         ctrl_word_hd.opcode = op_csr;

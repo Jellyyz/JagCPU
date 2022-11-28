@@ -222,6 +222,16 @@ logic IF_HD_PC_write;
 logic IF_ID_HD_write;
 
 /****************************************/
+/* Declarations for stall for mem unit **/
+/****************************************/
+logic stall_IF_ID_ld;
+logic stall_ID_EX_ld;
+logic stall_EX_MEM_ld;
+logic stall_MEM_WB_ld;
+logic IF_i_cache_read_stall;
+logic stall_i_cache_pc;
+
+/****************************************/
 /* Declarations for counters ************/
 /****************************************/
 // int total_br, total_jal, total_jalr;
@@ -234,7 +244,8 @@ logic IF_ID_HD_write;
 
 always_comb begin : MEM_PORTS
 
-    instr_read = 1'b1; 
+    // instr_read = 1'b1;
+    instr_mem_read = IF_HD_PC_write | IF_i_cache_read_stall;
     instr_mem_address = IF_pc_out; 
 
 end 
@@ -245,7 +256,7 @@ IF IF(
     // input 
     .clk(clk),
     .rst(rst), 
-    .IF_PC_write_i(IF_HD_PC_write),
+    .IF_PC_write_i(IF_HD_PC_write & ~stall_i_cache_pc),
     .IF_instr_mem_rdata_i(instr_mem_rdata), 
     // .IF_pcmux_sel_i(MEM_pcmux_sel), // branch resolution in mem
     // .IF_alu_out_i(EX_MEM_alu_out), // branch resolution in mem
@@ -264,8 +275,8 @@ IF_ID IF_ID(
     .clk(clk), 
     .rst(rst), 
     .flush_i(IF_ID_flush), // this flush signal is calcualted in ID stage, looepd back
-    // .load_i(1'b1), 
-    .load_i(IF_ID_HD_write),
+
+    .load_i(IF_ID_HD_write & ~stall_IF_ID_ld),
 
     .IF_ID_pc_out_i(IF_pc_out), 
     .IF_ID_instr_i(instr_mem_rdata), 
@@ -302,6 +313,9 @@ ID ID(
     // .total_br_mispredict(total_br_mispredict), .total_jal_mispredict(total_jal_mispredict), .total_jalr_mispredict(total_jalr_mispredict),
     // .always_nt_br_mispred(always_nt_br_mispred), .btfnt_br_mispred(btfnt_br_mispred), .local_br_mispred(local_br_mispred), .global_br_mispred(global_br_mispred), .tournament_br_mispred(tournament_br_mispred),
 
+
+    .stall_IF_ID_ld(stall_IF_ID_ld),
+    .stall_ID_EX_ld(stall_ID_EX_ld),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),
@@ -342,7 +356,7 @@ ID ID(
 ID_EX ID_EX(
     // inputs 
     .clk(clk), .rst(rst),
-    .load_i(1'b1), 
+    .load_i(~stall_ID_EX_ld), 
 
     .ID_EX_ctrl_word_i(ID_ctrl_word), 
     .ID_EX_instr_i(ID_instr), 
@@ -450,7 +464,7 @@ EX_MEM EX_MEM(
     // inputs 
     .clk(clk), 
     .rst(rst), 
-    .load_i(1'b1),
+    .load_i(~stall_EX_MEM_ld),
     .EX_MEM_rs1_i(EX_rs1),
     .EX_MEM_rs2_i(EX_rs2), 
     .EX_MEM_rd_i(EX_rd), 
@@ -521,8 +535,8 @@ MEM MEM(
     .MEM_rd_o(MEM_rd),
     .MEM_ctrl_word_o(MEM_ctrl_word),
 
-    .MEM_mem_read_o(data_read), 
-    .MEM_mem_write_o(data_write),
+    .MEM_mem_read_o(data_mem_read), 
+    .MEM_mem_write_o(data_mem_write),
     
     .MEM_br_en_o(MEM_br_en),
     .MEM_pc_out_o(MEM_pc_out), 
@@ -538,7 +552,7 @@ MEM MEM(
     .MEM_b_imm_o(MEM_b_imm), .MEM_u_imm_o(MEM_u_imm),
     .MEM_j_imm_o(MEM_j_imm),
 
-    .MEM_mem_byte_en_o(data_mbe),
+    .MEM_mem_byte_en_o(d_mbe),
 
     .MEM_load_regfile_o(MEM_load_regfile),
 
@@ -550,7 +564,7 @@ assign MEM_data_mem_rdata = data_mem_rdata; // MUST BE CHANGED WHEN INTEGRATING 
 MEM_WB MEM_WB(
     // inputs 
     .clk(clk), .rst(rst), 
-    .load_i(1'b1), 
+    .load_i(~stall_MEM_WB_ld), 
 
     // @ TODO FIX MEM_READ_O
     // .MEM_WB_mem_read_i          (MEM_mem_read),
@@ -568,8 +582,8 @@ MEM_WB MEM_WB(
     .MEM_WB_b_imm_i             (MEM_b_imm),
     .MEM_WB_u_imm_i             (MEM_u_imm),
     .MEM_WB_j_imm_i             (MEM_j_imm),
-    .MEM_WB_data_mem_address_i  (data_mem_address), // only for rvfi
-    .MEM_WB_data_mem_wdata_i    (data_mem_wdata),   // only for rvfi
+    // .MEM_WB_data_mem_address_i  (data_mem_address), // only for rvfi
+    // .MEM_WB_data_mem_wdata_i    (data_mem_wdata),   // only for rvfi
     .MEM_WB_data_mem_rdata_i    (MEM_data_mem_rdata), // MUST BE CHANGED WHEN INTEGRATING CACHE
 
     .MEM_WB_halt_en_i(MEM_halt_en),
@@ -676,6 +690,24 @@ hazard_detector hazard_detector (
     .stall_br1_o(stall_br_haz1),
     .stall_br2_o(stall_br_haz2)
 );
+
+stall_for_mem stall_for_mem(
+    // Memory interface
+    // inputs  
+    .clk(clk), .rst(rst),
+    .instr_mem_resp_i(instr_mem_resp), 
+    .data_mem_resp_i(data_mem_resp), 
+    .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
+
+    // outputs 
+    .stall_IF_ID_ld_o(stall_IF_ID_ld),
+    .stall_ID_EX_ld_o(stall_ID_EX_ld),
+    .stall_EX_MEM_ld_o(stall_EX_MEM_ld),
+    .stall_MEM_WB_ld_o(stall_MEM_WB_ld),
+    
+    .IF_i_cache_read_stall_o(IF_i_cache_read_stall), 
+    .stall_i_cache_pc_o(stall_i_cache_pc)
+); 
 
 
 
