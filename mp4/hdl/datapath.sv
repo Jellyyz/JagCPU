@@ -316,6 +316,7 @@ ID ID(
 
     .stall_IF_ID_ld(stall_IF_ID_ld),
     .stall_ID_EX_ld(stall_ID_EX_ld),
+    .ID_instr_mem_resp_i(instr_mem_resp),
 
     // outputs
     .ID_ctrl_word_o(ID_ctrl_word),

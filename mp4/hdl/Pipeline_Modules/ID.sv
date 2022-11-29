@@ -27,6 +27,7 @@ import rv32i_types::*;
 
     input logic stall_IF_ID_ld,
     input logic stall_ID_EX_ld,
+    input logic ID_instr_mem_resp_i,
 
     // input logic [width-1:0] ID_EX_rs2_out_i, 
     // input logic [width-1:0] EX_MEM_rs1_out_i,
@@ -85,6 +86,7 @@ branch_funct3_t cmpop;
 cmpmux::cmpmux_sel_t cmpmux_sel;
 pcmux::pcmux_sel_t pcmux_sel;
 logic [width-1:0] branch_pc;
+rv32i_word ID_pc_out_hd;
 
 logic br_en;
 logic [31:0] cmp_mux_out; 
@@ -92,10 +94,24 @@ logic [31:0] cmp_mux_out;
 logic br_equal;
 logic halt_en;
 
+logic one_cycle_nop_insertion_delay;
+
 
 /****************************************/
 /* Start Hazard stuff *******************/
 /****************************************/
+
+always_ff @( posedge clk ) begin : blockName
+    if (rst) begin
+        one_cycle_nop_insertion_delay <= '0;
+    end else begin
+        if (ID_instr_mem_resp_i) begin
+            one_cycle_nop_insertion_delay <= '1;
+        end else begin
+            one_cycle_nop_insertion_delay <= '0;
+        end
+    end
+end
 
 control_rom ctrl_rom (
     .opcode (opcode),
@@ -111,8 +127,11 @@ rv32i_control_word ctrl_word_hd;
 
 always_comb begin : NOP_generator
     ctrl_word_hd = ctrl_word;
+    ID_pc_out_hd = ID_pc_out_i;
 
+    // if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & (~one_cycle_nop_insertion_delay | ID_instr_mem_resp_i) & ~stall_ID_EX_ld)) begin
     if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) begin
+        ID_pc_out_hd = '1;
         // $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
         ctrl_word_hd.opcode = op_csr;
@@ -272,8 +291,8 @@ end
 always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
     ID_instr_o = ID_instr_i;
-    // ID_pc_out_o = ~((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) ? ID_pc_out_i : '1;
-    ID_pc_out_o = ID_pc_out_i;
+    ID_pc_out_o = ID_pc_out_hd;
+    // ID_pc_out_o = ID_pc_out_i;
 
     ID_branch_pc_o = branch_pc;
     ID_pcmux_sel_o = pcmux_sel;

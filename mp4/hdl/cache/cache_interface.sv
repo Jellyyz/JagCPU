@@ -57,20 +57,20 @@ cache data_cache
     .clk (clk),
     .rst (rst),
     
-    .mem_read             (data_mem_read),
-    .mem_write            (data_mem_write),
-    .mem_byte_enable_cpu  (data_mem_byte_enable),
-    .mem_address          (data_mem_address),
-    .mem_wdata_cpu        (data_mem_wdata),
-    .mem_resp             (data_mem_resp),
-    .mem_rdata_cpu        (data_mem_rdata),
+    .mem_read             (data_mem_read),          // from cpu
+    .mem_write            (data_mem_write),         // from cpu
+    .mem_byte_enable_cpu  (data_mem_byte_enable),   // from cpu
+    .mem_address          (data_mem_address),       // from cpu
+    .mem_wdata_cpu        (data_mem_wdata),         // from cpu
+    .mem_resp             (data_mem_resp),          // to cpu
+    .mem_rdata_cpu        (data_mem_rdata),         // to cpu
 
-    .pmem_resp            (d_pmem_resp),
-    .pmem_rdata           (d_pmem_rdata),
-    .pmem_address         (d_pmem_address),
-    .pmem_wdata           (d_pmem_wdata),
-    .pmem_read            (d_pmem_read),
-    .pmem_write           (d_pmem_write)
+    .pmem_resp            (d_pmem_resp),    // from mem (from arb)
+    .pmem_rdata           (d_pmem_rdata),   // from mem (from arb)
+    .pmem_address         (d_pmem_address), // to mem (to arb)
+    .pmem_wdata           (d_pmem_wdata),   // to mem (to arb)
+    .pmem_read            (d_pmem_read),    // to mem (to arb)
+    .pmem_write           (d_pmem_write)    // to mem (to arb)
 );
 
 cache instruction_cache
@@ -78,20 +78,20 @@ cache instruction_cache
     .clk (clk),
     .rst (rst),
     
-    .mem_read             (instr_mem_read),
-    .mem_write            (instr_mem_write),
-    .mem_byte_enable_cpu  (instr_mem_byte_enable),
-    .mem_address          (instr_mem_address),
-    .mem_wdata_cpu        (instr_mem_wdata),
-    .mem_resp             (instr_mem_resp),
-    .mem_rdata_cpu        (instr_mem_rdata),
+    .mem_read             (instr_mem_read),         // from cpu
+    .mem_write            (instr_mem_write),        // from cpu
+    .mem_byte_enable_cpu  (instr_mem_byte_enable),  // from cpu
+    .mem_address          (instr_mem_address),      // from cpu
+    .mem_wdata_cpu        (instr_mem_wdata),        // from cpu
+    .mem_resp             (instr_mem_resp),         // to cpu
+    .mem_rdata_cpu        (instr_mem_rdata),        // to cpu
 
-    .pmem_resp            (i_pmem_resp),
-    .pmem_rdata           (i_pmem_rdata),
-    .pmem_address         (i_pmem_address),
-    .pmem_wdata           (i_pmem_wdata),
-    .pmem_read            (i_pmem_read),
-    .pmem_write           (i_pmem_write)
+    .pmem_resp            (i_pmem_resp),    // from mem (from arb)
+    .pmem_rdata           (i_pmem_rdata),   // from mem (from arb)
+    .pmem_address         (i_pmem_address), // to mem (to arb)
+    .pmem_wdata           (i_pmem_wdata),   // to mem (to arb)
+    .pmem_read            (i_pmem_read),    // to mem (to arb)
+    .pmem_write           (i_pmem_write)    // to mem (to arb)
 );
 
 arbiter arbiter
@@ -99,26 +99,26 @@ arbiter arbiter
     .clk (clk),
     .rst (rst),
 
-    .instr_mem_write          (i_pmem_write),
-    .instr_mem_read           (i_pmem_read),
-    .instr_mem_address        (i_pmem_address),
-    .instr_mem_wdata          (i_pmem_wdata),
-    .instr_mem_rdata          (i_pmem_rdata),
-    .instr_mem_resp           (i_pmem_resp),
+    .instr_mem_write          (i_pmem_write),   // to mem (from icache)
+    .instr_mem_read           (i_pmem_read),    // to mem (from icache)
+    .instr_mem_address        (i_pmem_address), // to mem (from icache)
+    .instr_mem_wdata          (i_pmem_wdata),   // to mem (from icache)
+    .instr_mem_rdata          (i_pmem_rdata),   // from mem (to icache)
+    .instr_mem_resp           (i_pmem_resp),    // from mem (to icache)
 
-    .data_mem_write          (d_pmem_write),
-    .data_mem_read           (d_pmem_read),
-    .data_mem_address        (d_pmem_address),
-    .data_mem_wdata          (d_pmem_wdata),
-    .data_mem_rdata          (d_pmem_rdata),
-    .data_mem_resp           (d_pmem_resp),
+    .data_mem_write          (d_pmem_write),    // to mem (from dcache)
+    .data_mem_read           (d_pmem_read),     // to mem (from dcache)
+    .data_mem_address        (d_pmem_address),  // to mem (from dcache)
+    .data_mem_wdata          (d_pmem_wdata),    // to mem (from dcache)
+    .data_mem_rdata          (d_pmem_rdata),    // from mem (to dcache)
+    .data_mem_resp           (d_pmem_resp),     // from mem (to dcache)
 
-    .main_pmem_resp       (resp_o),
-    .main_pmem_rdata      (line_o),
-    .main_pmem_read       (read_i),
-    .main_pmem_write      (write_i),
-    .main_pmem_address    (address_i),
-    .main_pmem_wdata      (line_i)
+    .main_pmem_resp       (resp_o),     // from mem (to icache)
+    .main_pmem_rdata      (line_o),     // from mem (to icache)
+    .main_pmem_read       (read_i),     // to mem (to adaptor)
+    .main_pmem_write      (write_i),    // to mem (to adaptor)
+    .main_pmem_address    (address_i),  // to mem (to adaptor)
+    .main_pmem_wdata      (line_i)      // to mem (to adaptor)
 );
 
 cacheline_adaptor cacheline_adaptor
@@ -126,19 +126,19 @@ cacheline_adaptor cacheline_adaptor
     .clk                    (clk), 
     .reset_n                (~rst),
 
-    .line_i                 (line_i), 
-    .line_o                 (line_o),
-    .address_i              (address_i), 
-    .read_i                 (read_i), 
-    .write_i                (write_i), 
-    .resp_o                 (resp_o), 
+    .line_i                 (line_i),   // to mem (from arb)
+    .line_o                 (line_o),   // from mem (to arb)
+    .address_i              (address_i),// to mem (from arb)
+    .read_i                 (read_i),   // to mem (from arb)
+    .write_i                (write_i),  // to mem (from arb)
+    .resp_o                 (resp_o),   // from mem (to arb)
     
-    .burst_i                (pmem_rdata), 
-    .burst_o                (pmem_wdata), 
-    .address_o              (pmem_address), 
-    .read_o                 (pmem_read), 
-    .write_o                (pmem_write), 
-    .resp_i                 (pmem_resp) 
+    .burst_i                (pmem_rdata),   // from mem
+    .burst_o                (pmem_wdata),   // to mem
+    .address_o              (pmem_address), // to mem
+    .read_o                 (pmem_read),    // to mem
+    .write_o                (pmem_write),   // to mem
+    .resp_i                 (pmem_resp)     // from mem
 );
 
 
