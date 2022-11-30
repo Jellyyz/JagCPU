@@ -104,7 +104,7 @@ rv32i_word  EX_alu_out;
 logic EX_br_en; 
 logic EX_br_pred;
 logic EX_load_regfile; 
-
+logic mult_stall, divide_stall; 
 /****************************************/
 /* Declarations for EX/MEM **************/
 /****************************************/
@@ -366,6 +366,7 @@ EX EX(
 
 
     // outputs 
+    .mult_stall(mult_stall), .divide_stall(divide_stall), 
     .EX_rs1_o(EX_rs1), 
     .EX_rs2_o(EX_rs2), 
     .EX_rd_o(EX_rd), 
@@ -593,6 +594,27 @@ hazard_detector hazard_detector (
     .IF_HD_PC_write_o(IF_HD_PC_write),
     .IF_ID_HD_write_o(IF_ID_HD_write)
 );
+
+stall_for_mem stall_for_mem(
+    // Memory interface
+    // inputs  
+    .clk(clk), .rst(rst),
+    .instr_mem_resp_i(instr_mem_resp), 
+    .data_mem_resp_i(data_mem_resp), 
+    .EX_MEM_ctrl_word_i(EX_MEM_ctrl_word),
+    .mult_stall(mult_stall), .divide_stall(divide_stall), 
+    
+    // outputs 
+    .stall_IF_ID_ld_o(stall_IF_ID_ld),
+    .stall_ID_EX_ld_o(stall_ID_EX_ld),
+    .stall_EX_MEM_ld_o(stall_EX_MEM_ld),
+    .stall_MEM_WB_ld_o(stall_MEM_WB_ld),
+    
+    .IF_i_cache_read_stall_o(IF_i_cache_read_stall), 
+    .stall_i_cache_pc_o(stall_i_cache_pc)
+
+
+); 
 
 
 

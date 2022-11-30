@@ -1,4 +1,4 @@
-
+ 
 module EX 
 import rv32i_types::*;
 #(parameter width = 32) 
@@ -25,7 +25,7 @@ import rv32i_types::*;
 
     input logic EX_br_pred_i,
 
-    
+    output logic mult_stall, divide_stall, 
     output rv32i_reg EX_rs1_o, 
     output rv32i_reg EX_rs2_o, 
     output rv32i_reg EX_rd_o, 
@@ -58,6 +58,7 @@ rv32i_word alumux2_out;
 rv32i_word cmp_mux_out;
 logic ex_br_en;
 
+logic start_div, done_div; 
 
 // alu_ops alu_op;
 // alumux::alumux1_sel_t alumux1_sel;
@@ -125,9 +126,11 @@ end
 
 alu alu (
     .aluop(EX_ctrl_word_i.aluop),
+    .funct7(EX_ctrl_word_i.funct7), 
     .a(alumux1_out),
     .b(alumux2_out), 
-
+    .start_div(start_div), 
+    .done_div(done_div), 
     .f(EX_alu_out_o)
 );
 
@@ -140,13 +143,22 @@ always_comb begin : muxes
     endcase
 end
 
-// cmp cmp_ex(
-//     .cmpop(EX_ctrl_word_i.cmpop),
-//     .rs1_out(EX_rs1_i),
-//     .cmp_mux_out(cmp_mux_out),
+always_comb begin: mult_div_stall_detector
+    //else default no stalling 
+    {mult_stall, divide_stall} = 2'b00; 
 
-//     .br_en(ex_br_en)
-// ); 
+    // is it a M ext instruction
+    if(EX_ctrl_word_i.opcode == 7'b0110011 && EX_ctrl_word_i.funct7 == 7'b0000001)begin 
+        // if mult - lets say 3 cycles of stall for now 
+        
+
+        // if divide - need much more stalls, need to use done and start handshaking 
+
+
+
+    end 
+
+end 
 
 
 endmodule : EX
