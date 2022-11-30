@@ -90,15 +90,22 @@ begin : next_state_logic
         end
 
         instruction_access: begin
-            //if (main_pmem_resp && d_request) next_states = data_access;
-            //else if (main_pmem_resp) next_states = idle;
+            // if (main_pmem_resp && d_request) next_states = data_access;
+            // else if (main_pmem_resp) next_states = idle;
+            
+            // if (main_pmem_resp) begin
+            //     if (d_request) next_states = data_access;
+            //     else if (i_request) next_states = instruction_access;
+            //     else next_states = idle;
+            // end 
+
             if (main_pmem_resp) next_states = idle;
             else next_states = instruction_access;
         end
 
         data_access: begin
-            //if (main_pmem_resp && i_request) next_states = instruction_access;
-            //else if (main_pmem_resp) next_states = idle;
+            // if (main_pmem_resp && i_request) next_states = instruction_access;
+            // else if (main_pmem_resp) next_states = idle;
             if (main_pmem_resp) next_states = idle;
             else next_states = data_access;
         end

@@ -131,7 +131,7 @@ always_comb begin : NOP_generator
 
     // if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & (~one_cycle_nop_insertion_delay | ID_instr_mem_resp_i) & ~stall_ID_EX_ld)) begin
     if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) begin
-        ID_pc_out_hd = '1;
+        // ID_pc_out_hd = '1;
         // $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
         ctrl_word_hd.opcode = op_csr;
