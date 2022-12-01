@@ -31,6 +31,8 @@ import rv32i_types::*;
     output logic 			data_write,
     output logic [3:0] 	data_mbe
 
+    // output clockgate
+
 ); 
 
 // master_ctrl word to be used for every sel/ld/control signal. 
@@ -39,6 +41,8 @@ rv32i_control_word ctrl;
 logic [6:0] opcode; 
 logic [2:0] funct3; 
 logic [6:0] funct7; 
+
+logic clockgate_out;
 
 
 // ~~~~~~~~~~~~~~~~~~~~~ ALL THE MODULES FOR THE MAIN PIPELINE ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -203,6 +207,13 @@ logic IF_HD_PC_write;
 logic IF_ID_HD_write;
 
 /****************************************/
+/* Declarations for BHT *****************/
+/****************************************/
+logic bht_read, bht_write;
+logic bht_br_pred, mispredict;;//, bht_wdata;
+logic [1:0] bht_rdata, bht_rdata_ret;
+
+/****************************************/
 /* Declarations for counters ************/
 /****************************************/
 // int total_br, total_jal, total_jalr;
@@ -237,7 +248,9 @@ IF IF(
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
-    .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp2
+    .IF_instr_out_o(IF_instr_out), // needs to come from magic memory for cp1 this is unused in cp2
+
+    .IF_bht_br_pred_i(bht_br_pred)
 );
 
 IF_ID IF_ID(
@@ -252,15 +265,36 @@ IF_ID IF_ID(
     .IF_ID_instr_i(instr_mem_rdata), 
 
     .IF_ID_br_pred_i(IF_br_pred),
+    .IF_ID_bht_rdata_i(bht_rdata),
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
     .IF_ID_instr_o(IF_ID_instr),
 
+    .IF_ID_bht_rdata_o(bht_rdata_ret),
     .IF_ID_br_pred_o(IF_ID_br_pred) 
 ); 
 
+
+bht #(.size(128)) BHT (
+    .clk(clk),
+    .rst(rst),
+
+    .bht_read(IF_HD_PC_write),
+    .bht_write(ID_ctrl_word.opcode == op_br),
+    .pc_address_read(IF_pc_out),
+    .pc_address_write(ID_pc_out),
+
+    .br_pred(bht_br_pred),
+    .bht_rdata(bht_rdata),
+    
+    .mispredict(mispredict), // from decode
+    .bht_rdata_ret(bht_rdata_ret)
+);
+
 ID ID(
+    .ID_BHT_mispredict_o(mispredict),
+
     // inputs
     .clk(clk), 
     .rst(rst), 
@@ -472,6 +506,12 @@ EX_MEM EX_MEM(
     .EX_MEM_halt_en_o(EX_MEM_halt_en)
 ); 
 
+clockgate clockgate (
+    .clk(clk),
+    .MEM_ctrl_word_i(EX_MEM_ctrl_word),
+
+    .clockgate_out(clockgate_out)
+);
 
 MEM MEM(
     // inputs 

@@ -10,6 +10,7 @@ import rv32i_types::*;
     input pcmux::pcmux_sel_t IF_pcmux_sel_i,
     input rv32i_word IF_alu_out_i,
     // input rv32i_word IF_adder_out_o_i, // come from IF/ID pipe reg, in case there is branch predicted, need to give PC
+    input logic IF_bht_br_pred_i,
 
     output rv32i_word IF_pc_out_o,
     output rv32i_word IF_instr_out_o, // undriven, for cp1 comes from magic memory
@@ -27,11 +28,12 @@ logic br_pred_static_NT;
 logic br_pred_static_BTFNT;
 
 assign br_pred_static_NT = 1'b0;
-always_comb begin : setOutput
+always_comb begin : setBranchPredOutput
     IF_br_pred_o = '0;
     IF_br_pred_o.staticNT_pred = br_pred_static_NT;
     IF_br_pred_o.staticBTFNT_pred = op_br == rv32i_opcode'(IF_instr_mem_rdata_i[6:0]) ? IF_instr_mem_rdata_i[31] : 1'b0;
     // IF_br_pred_o.staticBTFNT_pred = IF_instr_mem_rdata_i[31];
+    IF_br_pred_o.dynamicLocalBHT_pred = IF_bht_br_pred_i;
 end
 
 

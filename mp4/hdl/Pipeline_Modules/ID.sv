@@ -54,8 +54,11 @@ import rv32i_types::*;
 
     output ctrl_flow_preds ID_br_pred_o,
     output logic ID_if_id_flush_o,
+    output logic ID_BHT_mispredict_o,
 
     output logic ID_halt_en_o
+
+    
 
     // specific wires for control
     // output logic ID_load_regfile_o;
@@ -197,6 +200,8 @@ always_comb begin : FLUSH_CALC
     // if predict taken, there is mandatory one flush / stall 
     // of one cycle so there is time to compute the target
 
+    ID_BHT_mispredict_o = ~(br_en == ID_br_pred_i.dynamicLocalBHT_pred) && (op_br == ctrl_word_hd.opcode);
+
 
     br_flush = (~(br_en == active_predictor) | (active_predictor & br_en)) & (ctrl_word_hd.opcode == op_br) & br_en;
     // predict wrong -> flush. predict right -> flush because target addr was not ready, loaded wrong instr
@@ -262,7 +267,7 @@ branch_resolver branch_resolver (
 
 always_comb begin : HALT_CHECK
     br_equal = branch_pc == ID_pc_out_i;
-    halt_en = (br_en /*| (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr)*/) & br_equal & ~rst & |ctrl_word_hd.opcode ? 1'b1 : 1'b0;
+    halt_en = (br_en & |ID_pc_out_i/*| (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr)*/) & br_equal & ~rst & |ctrl_word_hd.opcode ? 1'b1 : 1'b0;
     // halt_en = (br_equal & ( (br_en & (ctrl_word_hd.opcode == op_br)) | (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr))) & ~rst & ~ID_if_id_flush_o ? 1'b1 : 1'b0;g
 end
 
@@ -316,10 +321,19 @@ always_ff @(posedge clk or posedge rst) begin : BRANCH_COUNTERS
 
         always_nt_br_mispred <= ~(br_en == ID_br_pred_i.staticNT_pred) & ctrl_word_hd.opcode == op_br ? always_nt_br_mispred + 1 : always_nt_br_mispred;
         btfnt_br_mispred <= ~(br_en == ID_br_pred_i.staticBTFNT_pred) & ctrl_word_hd.opcode == op_br ? btfnt_br_mispred + 1 : btfnt_br_mispred;
+        local_br_mispred <= ~(br_en == ID_br_pred_i.dynamicLocalBHT_pred) & ctrl_word_hd.opcode == op_br ? local_br_mispred + 1 : local_br_mispred;
+        // tournament_br_mispred <= ~(br_en == ID_br_pred_i.dynamicTourney_pred) & ctrl_word_hd.opcode == op_br ? tournament_br_mispred + 1 : tournament_br_mispred;
 
         total_jal_mispredict <= jal_flush ? total_jal_mispredict + 1 : total_jal_mispredict;
         total_jalr_mispredict <= jalr_flush ? total_jalr_mispredict + 1 : total_jalr_mispredict;
     end
 end
+
+// tournament_predictor tournament_predictor (
+//     .always_nt_br_mispred(always_nt_br_mispred),
+//     .btfnt_br_mispred(btfnt_br_mispred),
+//     .local_br_mispred(local_br_mispred),
+//     .tournament_br_pred(ID_br_pred_i.dynamicTourney_pred)
+// );
 
 endmodule : ID

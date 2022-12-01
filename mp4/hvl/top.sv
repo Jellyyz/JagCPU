@@ -180,6 +180,8 @@ final begin
     $display ("total_br_mispredict = ", dut.d0.ID.total_br_mispredict);
     $display ("\tstatic____NT_mispred = ", dut.d0.ID.always_nt_br_mispred);
     $display ("\tstatic_BTFNT_mispred = ", dut.d0.ID.btfnt_br_mispred);
+    $display ("\tdynamic_BHT__mispred = ", dut.d0.ID.local_br_mispred);
+    // $display ("\tdynamicTourney_mispr = ", dut.d0.ID.dynamicTourney_pred);
     $display ("total_jal_instructin = ", dut.d0.ID.total_jal);
     $display ("total_jal_mispredict = ", dut.d0.ID.total_jal_mispredict);
     $display ("total_jalr_instructin = ", dut.d0.ID.total_jalr);
