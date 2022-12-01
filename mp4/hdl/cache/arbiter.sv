@@ -32,7 +32,7 @@ assign i_request = instr_mem_write || instr_mem_read;
 assign d_request = data_mem_write || data_mem_read;
 
 enum int unsigned {
-    idle, instruction_access, data_access
+    idle, instruction_access, data_access, both_access_I, both_access_D
 } state, next_states;
 
 function void set_defaults();
@@ -57,7 +57,7 @@ begin : state_actions
     unique case (state)
         idle: ;
 
-        instruction_access: begin
+        instruction_access, both_access_I: begin
             main_pmem_read = instr_mem_read;
             main_pmem_write = instr_mem_write;
             main_pmem_address = instr_mem_address;
@@ -66,7 +66,7 @@ begin : state_actions
             instr_mem_resp = main_pmem_resp;
         end
 
-        data_access: begin
+        data_access, both_access_D: begin
             main_pmem_read = data_mem_read;
             main_pmem_write = data_mem_write;
             main_pmem_address = data_mem_address;
@@ -74,6 +74,7 @@ begin : state_actions
             data_mem_rdata = main_pmem_rdata;
             data_mem_resp = main_pmem_resp;
         end
+        
     endcase
 end
 
@@ -84,7 +85,8 @@ begin : next_state_logic
 
     unique case (state)
         idle: begin
-            if (d_request) next_states = data_access;
+            if (d_request && i_request) next_states = both_access_I; 
+            else if (d_request) next_states = data_access;
             else if (i_request) next_states = instruction_access;
             else next_states = idle;
         end
@@ -109,6 +111,15 @@ begin : next_state_logic
             if (main_pmem_resp) next_states = idle;
             else next_states = data_access;
         end
+        
+        both_access_I: begin 
+            if (main_pmem_resp) next_states = both_access_D; 
+            else next_states = both_access_I; 
+        end 
+        both_access_D: begin 
+            if (main_pmem_resp) next_states = idle; 
+            else next_states = both_access_D;
+        end 
     endcase
 end
 

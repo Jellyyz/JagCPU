@@ -1,4 +1,5 @@
-module stride_prefetching(
+module stride_prefetching
+import rv32i_types::*;(
     input logic clk, rst, 
     input logic MEM_ctrl_word_i, 
     input logic [31:0] load_mem_address, 
@@ -6,6 +7,10 @@ module stride_prefetching(
     output logic [31:0] stride_diff  
  
 ); 
+// prefetching valid table for i cache miss 
+logic [31:0] address_map [31]; 
+logic [4:0] address_map_counter; 
+logic [31:0] address_map_valid [31]; 
 
 logic load_counter; 
 logic [31:0] prev_instr_address; 
@@ -63,10 +68,7 @@ always_ff @ (posedge clk or posedge rst)begin
 end 
 
 
-// prefetching valid table for i cache miss 
-logic [31:0] address_map [31]; 
-logic [4:0] address_map_counter; 
-logic [31:0] address_map_valid [31]; 
+
 always_ff @ (posedge clk or posedge rst)begin : ADDRESS_MAP 
 
     if(rst)begin 
