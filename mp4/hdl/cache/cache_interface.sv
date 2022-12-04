@@ -36,6 +36,13 @@ logic [255:0]   d_pmem_wdata;
 logic           d_pmem_read;
 logic           d_pmem_write;
 
+logic           d2_pmem_resp;
+logic [255:0]   d2_pmem_rdata;
+logic [31:0]    d2_pmem_address;
+logic [255:0]   d2_pmem_wdata;
+logic           d2_pmem_read;
+logic           d2_pmem_write;
+
 // Instruction Cache Signals
 logic           i_pmem_resp;
 logic [255:0]   i_pmem_rdata;
@@ -65,12 +72,33 @@ cache data_cache
     .mem_resp             (data_mem_resp),          // to cpu
     .mem_rdata_cpu        (data_mem_rdata),         // to cpu
 
-    .pmem_resp            (d_pmem_resp),    // from mem (from arb)
-    .pmem_rdata           (d_pmem_rdata),   // from mem (from arb)
-    .pmem_address         (d_pmem_address), // to mem (to arb)
-    .pmem_wdata           (d_pmem_wdata),   // to mem (to arb)
-    .pmem_read            (d_pmem_read),    // to mem (to arb)
-    .pmem_write           (d_pmem_write)    // to mem (to arb)
+    .pmem_resp            (d2_pmem_resp),    // from mem (from arb)
+    .pmem_rdata           (d2_pmem_rdata),   // from mem (from arb)
+    .pmem_address         (d2_pmem_address), // to mem (to arb)
+    .pmem_wdata           (d2_pmem_wdata),   // to mem (to arb)
+    .pmem_read            (d2_pmem_read),    // to mem (to arb)
+    .pmem_write           (d2_pmem_write)    // to mem (to arb)
+);
+
+l2_cache l2_data_cache
+(
+    .clk(clk),
+    .rst(rst),
+
+    .mem_address(d2_pmem_address),
+    .mem_rdata_l1(d2_pmem_rdata),
+    .mem_wdata_l1(d2_pmem_wdata),
+    .mem_read(d2_pmem_read),
+    .mem_write(d2_pmem_write),
+    //.mem_byte_enable(),
+    .mem_resp(d2_pmem_resp),
+    
+    .pmem_address(d_pmem_address),
+    .pmem_rdata(d_pmem_rdata),
+    .pmem_wdata(d_pmem_wdata),
+    .pmem_read(d_pmem_read),
+    .pmem_write(d_pmem_write),
+    .pmem_resp(d_pmem_resp)
 );
 
 cache instruction_cache
