@@ -137,7 +137,7 @@ always_comb begin : NOP_generator
         // if(ctrl_word_hd.opcode == op_store || ctrl_word_hd.opcode == op_load)begin 
         //     ctrl_word_hd.opcode = '0;
         // end    
-        if( ~(ctrl_word_hd.opcode == op_jal || ctrl_word_hd.opcode == op_jalr || ctrl_word_hd.opcode == op_br))
+        // if( ~(ctrl_word_hd.opcode == op_jal || ctrl_word_hd.opcode == op_jalr || ctrl_word_hd.opcode == op_br))
             ctrl_word_hd.opcode = '0; 
 
         // if (ctrl_word_hd.opcode == op_jal || ctrl_word_hd.opcode == op_jalr || ctrl_word_hd.opcode == op_br) begin
