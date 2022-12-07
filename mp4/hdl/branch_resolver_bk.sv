@@ -12,11 +12,12 @@ import rv32i_types::*; #(
     output logic [width-1:0] addr_o, // new calculated address to set to pc
     output pcmux::pcmux_sel_t pcmux_sel_o
 );
+localparam adder_width = 20;
 logic [width-1:0] trash;
 assign trash = rs2_out_i;
 
-logic [width-1:0] addr;
-logic [width-1:0] addin1, addin2;
+logic [adder_width-1:0] addr;
+logic [adder_width-1:0] addin1, addin2;
 pcmux::pcmux_sel_t pcmux_sel;
 
 always_comb begin : BRANCH_RESOLVE_MUX
@@ -51,15 +52,15 @@ always_comb begin : BRANCH_RESOLVE_MUX
     endcase
 end
 
-adder adder (
-    .a(addin1),
-    .b(addin2),
+adder #(.width(adder_width)) adder (
+    .a(addin1[adder_width-1:0]),
+    .b(addin2[adder_width-1:0]),
 
     .f(addr)
 );
 
 always_comb begin : setOutputs
-    addr_o = addr;
+    addr_o = {{(32-adder_width){1'b0}},addr};
     pcmux_sel_o = pcmux_sel;
 end
     

@@ -95,7 +95,10 @@ begin
                 lh  :  ctrl.regfilemux_sel = regfilemux::lh;
                 lhu : ctrl.regfilemux_sel = regfilemux::lhu;
                 lw  :  ctrl.regfilemux_sel = regfilemux::lw;
-                default : $display("Load type select error @", $time);
+                default:begin 
+                    ;
+                end 
+                // default : $display("Load type select error @", $time);
             endcase
         end
         op_store: begin
@@ -108,7 +111,10 @@ begin
                 sb : ctrl.mem_byte_en = 4'b0001;// << mem_addr_byte_sel[1:0];
                 sh : ctrl.mem_byte_en = 4'b0011;// << mem_addr_byte_sel[1:0];
                 sw : ctrl.mem_byte_en = 4'b1111;// << mem_addr_byte_sel[1:0];
-                default : $display("Store type select error @", $time);
+                default:begin 
+                    ;
+                end 
+                // default : $display("Store type select error @", $time);
             endcase
         end
         op_imm: begin
@@ -179,7 +185,7 @@ begin
             endcase
         end
         default: begin // invalid instruction
-            ctrl = '0;
+            set_defaults();
             // $display("invalid opcode @", $time);
         end
     endcase

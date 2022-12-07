@@ -129,7 +129,10 @@ always_comb begin : ALU_MUX
     unique case (EX_ctrl_word_i.alumux1_sel)
         alumux::rs1_out : alumux1_out = forwardmuxA_out; 
         alumux::pc_out : alumux1_out = EX_pc_out_i; 
-        default: $display("hit alumux1 error @ time=",$time);
+        default:begin 
+            ;
+        end 
+        // default: $display("hit alumux1 error @ time=",$time);
     endcase 
     unique case (EX_ctrl_word_i.alumux2_sel)
         alumux::i_imm : alumux2_out = EX_i_imm_i; 
@@ -138,7 +141,10 @@ always_comb begin : ALU_MUX
         alumux::s_imm : alumux2_out = EX_s_imm_i; 
         alumux::j_imm : alumux2_out = EX_j_imm_i; 
         alumux::rs2_out : alumux2_out = forwardmuxB_out;
-        default: $display("hit alumux2 error @ time=",$time);
+        default:begin 
+            ;
+        end 
+        // default: $display("hit alumux2 error @ time=",$time);
     endcase
 end 
 

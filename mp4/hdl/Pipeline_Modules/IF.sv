@@ -45,7 +45,7 @@ always_comb begin : pc_mux
         pcmux::alu_out  : pcmux_out = IF_alu_out_i; // ADD TERNARY HERE? pcmux_out = if br predict taken ? IF_adder_out_o_i : IF_alu_out_i
         // pcmux::br_pred_add_out  : pcmux_out = IF_adder_out_o_i;
         default:begin 
-            $display("error no pcmux found @ time=",$time); 
+            // $display("error no pcmux found @ time=",$time); 
             $finish; 
         end 
     endcase 

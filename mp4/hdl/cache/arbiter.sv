@@ -74,7 +74,10 @@ begin : state_actions
             data_mem_rdata = main_pmem_rdata;
             data_mem_resp = main_pmem_resp;
         end
-        
+        default:begin 
+            ;
+        end 
+
     endcase
 end
 
@@ -119,6 +122,9 @@ begin : next_state_logic
         both_access_D: begin 
             if (main_pmem_resp) next_states = idle; 
             else next_states = both_access_D;
+        end 
+        default: begin 
+            ; 
         end 
     endcase
 end
