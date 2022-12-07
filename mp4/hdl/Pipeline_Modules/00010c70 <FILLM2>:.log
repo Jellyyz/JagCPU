@@ -1,0 +1,35 @@
+00010c70 <FILLM2>:
+   10c70:	270003ef          	jal	x7,10ee0 <CalAddress>                           # x7 gets bd4 (it1), gets bd4 (it2), gets bd4 (it3)
+   00010ee0 <CalAddress>:
+      10ee0:	00511293          	slli	x5,x2,0x5
+      10ee4:	005082b3          	add	x5,x1,x5
+      10ee8:	00229293          	slli	x5,x5,0x2                               # x5 gets 0 (it1), then 80 (it2), then 100 (it3)
+      10eec:	00038067          	jr	x7                                          # x7 stays bd4 (it1), then x7 stays bd4 (it2), then x7 stays bd4 (it3)
+
+   10c74:	00428333          	add	x6,x5,x4                                        # x6 gets 109c (it1), then 111c (it2), then 119c (it3)
+   10c78:	00332023          	sw	x3,0(x6)
+   10c7c:	ffe18193          	addi	x3,x3,-2 # 1343a <__bss_start+0x7fe>        # x3 gets 4a3d (it1), then 4a3b (it2), then 4a39 (it3)
+   10c80:	1c4003ef          	jal	x7,10e44 <CalNEXT2>                             # x7 gets be4 (it1), then be4 (it2), then gets be4 (it3)
+
+   100a0
+
+   00010e44 <CalNEXT2>:
+      10e44:	ff110293          	addi	x5,x2,-15                               # x5 gets ffff_fff1 (it1), then ffff_fff2 (it2), then ffff_fff3 (it3)
+      10e48:	00500663          	beq	x0,x5,10e54 <XTEST>
+      10e4c:	00110113          	addi	x2,x2,1                                 # x2 gets 1 (it1), then 2 (it2), then 3 (it3)
+      10e50:	02000063          	beqz	x0,10e70 <SKip1>                        
+      00010e70 <SKip1>:
+        10e70:	00038067          	jr	x7                                          # x7 stays be4 (it1), then x7 stays be4 (it2), then x7 stays be4 (it3)
+
+   10c84:	00008293          	mv	x5,x1                                           # x5 gets 0 (it1), then 0 (it2), then 0 (it3)
+   10c88:	fe02d4e3          	bgez	x5,10c70 <FILLM2>
+   10c8c:	00000217          	auipc	x4,0x0
+   10c90:	3b020213          	addi	x4,x4,944 # 1103c <M00>
+   10c94:	00000117          	auipc	x2,0x0
+   10c98:	38c12103          	lw	x2,908(x2) # 11020 <TWOFIVESIX>
+   10c9c:	00410233          	add	x4,x2,x4
+   10ca0:	00410233          	add	x4,x2,x4
+   10ca4:	00000197          	auipc	x3,0x0
+   10ca8:	3881a183          	lw	x3,904(x3) # 1102c <Counter2>
+   10cac:	0000f093          	andi	x1,x1,0
+   10cb0:	00017113             andi	x2,x2,0

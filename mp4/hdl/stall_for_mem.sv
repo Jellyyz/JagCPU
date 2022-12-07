@@ -6,7 +6,7 @@ import rv32i_types::*;
     input logic data_mem_resp_i,
     input logic instr_mem_resp_i,
     input rv32i_control_word EX_MEM_ctrl_word_i, 
-
+    input logic cpu_work, 
 
     output logic stall_IF_ID_ld_o,         
     output logic stall_ID_EX_ld_o, 
@@ -35,8 +35,8 @@ always_ff @(posedge clk or posedge rst)begin
 end 
 always_comb begin : stall_for_mem
     
-    mem_data_access = (EX_MEM_ctrl_word_i.opcode == op_store) | (EX_MEM_ctrl_word_i.opcode == op_load);
-
+    // mem_data_access = (EX_MEM_ctrl_word_i.opcode == op_store) | (EX_MEM_ctrl_word_i.opcode == op_load);
+    mem_data_access = EX_MEM_ctrl_word_i.mem_write | EX_MEM_ctrl_word_i.mem_read;
 
     // if(EX_MEM_ld_flag)begin 
     //     if(instr_mem_resp_i)begin 
@@ -64,7 +64,11 @@ always_comb begin : stall_for_mem
 
     if ((EX_MEM_ld_flag & instr_mem_resp_i) | (instr_mem_resp_i & ~mem_data_access)) begin
         stall_IF_ID_ld_o = 1'b0; 
-    end else begin
+    end 
+    // else if (~EX_MEM_ld_flag & ~instr_mem_resp_i & ~mem_data_access & cpu_work)begin 
+    //     stall_IF_ID_ld_o = 1'b0; 
+    // end 
+    else begin
         stall_IF_ID_ld_o = 1'b1; 
     end
 
@@ -72,6 +76,13 @@ always_comb begin : stall_for_mem
     IF_i_cache_read_stall_o = ~stall_IF_ID_ld_o;
     // if we are stalling our fetch register we should stall pc
     stall_i_cache_pc_o = stall_IF_ID_ld_o;
+
+    // if (stall_IF_ID_ld_o && ~EX_MEM_ld_flag) begin
+    //     stall_MEM_WB_ld_o = 1'b1;
+    //     stall_EX_MEM_ld_o = 1'b1;
+    //     stall_ID_EX_ld_o = 1'b1;
+    // end
+
 
 end 
 

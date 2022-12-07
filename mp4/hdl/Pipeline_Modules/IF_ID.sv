@@ -7,6 +7,7 @@ import rv32i_types::*;
         input rst,
         input logic flush_i,
         input logic load_i,
+        // input logic pcmux_load, 
         input logic [width-1:0] IF_ID_pc_out_i,
         input logic [width-1:0] IF_ID_instr_i,
 
@@ -30,6 +31,10 @@ import rv32i_types::*;
             pc_out <= {width{1'b0}};
             instr <= {width{1'b0}};
             br_pred <= '0;            // this is potentially a huge issue 
+        // end else if (pcmux_load) begin
+        //     pc_out <= IF_ID_pc_out_i;
+        //     instr <= IF_ID_instr_i;
+        //     br_pred <= IF_ID_br_pred_i;
         end else if (load_i) begin
             pc_out <= IF_ID_pc_out_i;
             instr <= IF_ID_instr_i;

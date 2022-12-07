@@ -2,6 +2,7 @@ module branch_resolver
 import rv32i_types::*; #(
     parameter width = 32
 ) (
+    input logic flush_and_stall, 
     input rv32i_opcode opcode_i,
     input logic [width-1:0] i_imm_i, b_imm_i, j_imm_i,
     input logic [width-1:0] rs1_out_i, rs2_out_i,

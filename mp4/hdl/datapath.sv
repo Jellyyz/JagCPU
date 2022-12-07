@@ -72,6 +72,7 @@ logic [6:0] funct7;
 /* Declarations for IF ******************/
 /****************************************/
 rv32i_word IF_pc_out;
+rv32i_word IF_pcmux_out;
 rv32i_word IF_instr_out; 
 ctrl_flow_preds IF_br_pred;
 
@@ -256,17 +257,19 @@ IF IF(
     // input 
     .clk(clk),
     .rst(rst), 
-    .IF_PC_write_i(IF_HD_PC_write & ~stall_i_cache_pc),
+    
+    .IF_PC_write_i(IF_ID_HD_write & ~stall_IF_ID_ld),
     .IF_instr_mem_rdata_i(instr_mem_rdata), 
     // .IF_pcmux_sel_i(MEM_pcmux_sel), // branch resolution in mem
     // .IF_alu_out_i(EX_MEM_alu_out), // branch resolution in mem
     .IF_pcmux_sel_i(ID_pcmux_sel), // branch resolution in decode
     .IF_alu_out_i(ID_branch_pc), // branch resolution in decode
-
     .IF_br_pred_o(IF_br_pred),
+    .IF_pc_load_i((ID_ctrl_word.opcode == op_jal) & (stall_IF_ID_ld)),
 
     // output 
     .IF_pc_out_o(IF_pc_out), 
+    .IF_pcmux_out_o(IF_pcmux_out),
     .IF_instr_out_o(IF_instr_out) // needs to come from magic memory for cp1 this is unused in cp2
 );
 
@@ -277,8 +280,8 @@ IF_ID IF_ID(
     .flush_i(IF_ID_flush), // this flush signal is calcualted in ID stage, looepd back
 
     .load_i(IF_ID_HD_write & ~stall_IF_ID_ld),
-
-    .IF_ID_pc_out_i(IF_pc_out), 
+    // .pcmux_load((ID_ctrl_word.opcode == op_jal) & (stall_IF_ID_ld)),
+    .IF_ID_pc_out_i(IF_pc_out),
     .IF_ID_instr_i(instr_mem_rdata), 
 
     .IF_ID_br_pred_i(IF_br_pred),
@@ -305,7 +308,7 @@ ID ID(
     .ID_HD_controlmux_sel_i(ID_HD_controlmux_sel),
     .ID_forwardD_i(forwardD), 
     .ID_forwardE_i(forwardE), 
-
+    .flush_i(IF_ID_flush), 
     .ID_br_pred_i(IF_ID_br_pred),
 
     // // branch counters (inputs)
@@ -691,6 +694,7 @@ hazard_detector hazard_detector (
     .stall_br1_o(stall_br_haz1),
     .stall_br2_o(stall_br_haz2)
 );
+
 
 stall_for_mem stall_for_mem(
     // Memory interface

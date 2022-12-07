@@ -1,4 +1,3 @@
-
 module data_array (
   input clk,
   input logic [31:0] write_en,

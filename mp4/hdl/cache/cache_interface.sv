@@ -2,7 +2,7 @@
 module cache_interface
 import rv32i_types::*;
 (
-    input   logic clk, rst,
+    input   logic clk, rst, 
     
     input   logic [31:0]    instr_mem_address,
     output  logic [31:0]    instr_mem_rdata,
@@ -55,7 +55,7 @@ logic [255:0]   line_i;
 cache data_cache
 (
     .clk (clk),
-    .rst (rst),
+    // .rst (rst),
     
     .mem_read             (data_mem_read),          // from cpu
     .mem_write            (data_mem_write),         // from cpu
@@ -76,7 +76,7 @@ cache data_cache
 cache instruction_cache
 (
     .clk (clk),
-    .rst (rst),
+    // .rst (rst),
     
     .mem_read             (instr_mem_read),         // from cpu
     .mem_write            (instr_mem_write),        // from cpu

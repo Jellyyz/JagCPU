@@ -1,4 +1,3 @@
-
 module cache_datapath (
   input clk,
 

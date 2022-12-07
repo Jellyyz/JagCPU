@@ -10,13 +10,16 @@ import rv32i_types::*;
     input pcmux::pcmux_sel_t IF_pcmux_sel_i,
     input rv32i_word IF_alu_out_i,
     // input rv32i_word IF_adder_out_o_i, // come from IF/ID pipe reg, in case there is branch predicted, need to give PC
-
     output rv32i_word IF_pc_out_o,
     output rv32i_word IF_instr_out_o, // undriven, for cp1 comes from magic memory
     output rv32i_word IF_adder_out_o,
+    output rv32i_word IF_pcmux_out_o,
 
     // output logic IF_br_pred_o
-    output ctrl_flow_preds IF_br_pred_o
+    output ctrl_flow_preds IF_br_pred_o,
+
+
+    input logic IF_pc_load_i
 ); 
 
 
@@ -54,7 +57,8 @@ pc_register pc_register(
 
     // input of the PC register 
     .clk(clk), .rst(rst), 
-    .load(IF_PC_write_i), 
+    // .load(IF_PC_write_i | IF_pc_load_i), 
+    .load(IF_PC_write_i),
     .in(pcmux_out), 
  
     // output of the PC register
@@ -68,7 +72,7 @@ pc_register pc_register(
 //     .f(addr)
 // );
 
-
+assign IF_pcmux_out_o = pcmux_out;
 
 
 endmodule 

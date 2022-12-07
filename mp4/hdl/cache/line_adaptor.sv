@@ -1,4 +1,3 @@
-
 module line_adapter (
   output logic [255:0] mem_wdata_line,
   input logic [255:0] mem_rdata_line,

@@ -17,7 +17,7 @@ import rv32i_types::*;
     input logic [width-1:0] MEM_WB_alu_out,
     input logic [width-1:0] WB_data_mem_rdata,
     input logic [width-1:0] EX_alu_out, 
-
+    input logic flush_i, 
     input controlmux::controlmux_sel_t ID_HD_controlmux_sel_i, // from hazard detector
 
     input ctrl_flow_preds ID_br_pred_i,
@@ -130,12 +130,19 @@ always_comb begin : NOP_generator
     ID_pc_out_hd = ID_pc_out_i;
 
     // if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & (~one_cycle_nop_insertion_delay | ID_instr_mem_resp_i) & ~stall_ID_EX_ld)) begin
-    if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld)) begin
+    if ((ID_HD_controlmux_sel_i == controlmux::zero) | (stall_IF_ID_ld & ~stall_ID_EX_ld) || ctrl_word_hd.opcode == 0) begin
         // ID_pc_out_hd = '1;
         // $display("pls stuff @", $time);
         // ctrl_word_hd.opcode = rv32i_opcode'();
-        ctrl_word_hd.opcode = op_csr;
+        // if(ctrl_word_hd.opcode == op_store || ctrl_word_hd.opcode == op_load)begin 
+        //     ctrl_word_hd.opcode = '0;
+        // end    
+        if( ~(ctrl_word_hd.opcode == op_jal || ctrl_word_hd.opcode == op_jalr || ctrl_word_hd.opcode == op_br))
+            ctrl_word_hd.opcode = '0; 
 
+        // if (ctrl_word_hd.opcode == op_jal || ctrl_word_hd.opcode == op_jalr || ctrl_word_hd.opcode == op_br) begin
+        //     ctrl_word_hd.opcode = '0;
+        // end
 
         ctrl_word_hd.pcmux_sel = pcmux::pc_plus4;
 
@@ -206,6 +213,7 @@ cmp cmp_id(
 
 
 logic br_flush, jal_flush, jalr_flush, active_predictor;
+
 always_comb begin : FLUSH_CALC
     // br_flush = ~(br_en == ID_br_pred_i) & (ctrl_word_hd.opcode == op_br);
     // jal_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jal);
@@ -224,7 +232,7 @@ always_comb begin : FLUSH_CALC
     // predict wrong -> flush. predict right -> flush because target addr was not ready, loaded wrong instr
     jal_flush = (~active_predictor | (active_predictor == 1'b1)) & (ctrl_word_hd.opcode == op_jal); 
     jalr_flush = (~active_predictor | (active_predictor == 1'b1)) & (ctrl_word_hd.opcode == op_jalr); // 
-    ID_if_id_flush_o = (br_flush | jal_flush | jalr_flush);
+    ID_if_id_flush_o = (br_flush | jal_flush | jalr_flush) & ~stall_IF_ID_ld;
                         
 end
 
@@ -273,6 +281,7 @@ end
 
 branch_resolver branch_resolver (
     .opcode_i(opcode),
+    .flush_and_stall(flush_and_stall), 
     .i_imm_i(i_imm), .b_imm_i(b_imm), .j_imm_i(j_imm),
     .rs1_out_i(br_in1), .rs2_out_i(br_in2),
     .br_en_i(br_en),
@@ -283,7 +292,7 @@ branch_resolver branch_resolver (
 );
 
 always_comb begin : HALT_CHECK
-    br_equal = branch_pc == ID_pc_out_i;
+    br_equal = (branch_pc == ID_pc_out_i);
     halt_en = (br_en & |ID_pc_out_i /*| (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr)*/) & br_equal & ~rst & |ctrl_word_hd.opcode ? 1'b1 : 1'b0;
     // halt_en = (br_equal & ( (br_en & (ctrl_word_hd.opcode == op_br)) | (ctrl_word_hd.opcode == op_jal) | (ctrl_word_hd.opcode == op_jalr))) & ~rst & ~ID_if_id_flush_o ? 1'b1 : 1'b0;g
 end
@@ -292,7 +301,6 @@ always_comb begin : set_output
     ID_ctrl_word_o = ctrl_word_hd;
     ID_instr_o = ID_instr_i;
     ID_pc_out_o = ID_pc_out_hd;
-    // ID_pc_out_o = ID_pc_out_i;
 
     ID_branch_pc_o = branch_pc;
     ID_pcmux_sel_o = pcmux_sel;
