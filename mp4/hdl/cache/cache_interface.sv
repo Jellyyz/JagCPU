@@ -90,7 +90,7 @@ l2_cache l2_data_cache
     .mem_wdata_l1(d2_pmem_wdata),
     .mem_read(d2_pmem_read),
     .mem_write(d2_pmem_write),
-    .mem_byte_enable256({32{1'b0}}),
+    .mem_byte_enable256({32{1'b1}}),
     .mem_resp(d2_pmem_resp),
     
     .pmem_address(d_pmem_address),
