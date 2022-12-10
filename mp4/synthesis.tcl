@@ -64,7 +64,7 @@ set_max_fanout 1 [all_inputs]
 set_fanout_load 8 [all_outputs]
 
 link
-compile
+compile_ultra -no_autoungroup -gate_clock 
 
 current_design mp4
 
