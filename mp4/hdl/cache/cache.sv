@@ -1,6 +1,6 @@
 module cache (
   input clk,
-
+  input rst,
   /* Physical memory signals */
   input logic pmem_resp,
   input logic [255:0] pmem_rdata,

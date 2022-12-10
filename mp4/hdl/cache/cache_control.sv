@@ -1,6 +1,6 @@
 module cache_control (
   input clk,
-
+  input rst,
   /* CPU memory data signals */
   input  logic mem_read,
 	input  logic mem_write,
@@ -102,7 +102,8 @@ end
 
 /* Next State Assignment */
 always_ff @(posedge clk) begin: next_state_assignment
-	 state <= next_state;
+  if (rst) state <= check_hit;
+  else state <= next_state;
 end
 
 endmodule : cache_control
