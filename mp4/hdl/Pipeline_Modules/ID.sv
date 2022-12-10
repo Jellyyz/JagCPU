@@ -55,8 +55,12 @@ import rv32i_types::*;
     output ctrl_flow_preds ID_br_pred_o,
     output logic ID_if_id_flush_o,
     output logic ID_BHT_mispredict_o,
+    output logic ID_BTB_mispredict_o,
+    output logic ID_BTB_wrong_addr_o,
+    // output logic [31:0] ID_BTB_real_target_addr_o,
+    output logic ID_halt_en_o,
 
-    output logic ID_halt_en_o
+    input [31:0] ID_BTB_pred_target_addr_i
 
     
 
@@ -186,7 +190,7 @@ cmp cmp_id(
 );
 
 
-logic br_flush, jal_flush, jalr_flush, active_predictor;
+logic br_flush, btb_br_flush, jal_flush, jalr_flush, active_predictor;
 always_comb begin : FLUSH_CALC
     // br_flush = ~(br_en == ID_br_pred_i) & (ctrl_word_hd.opcode == op_br);
     // jal_flush = ~ID_br_pred_i & (ctrl_word_hd.opcode == op_jal);
@@ -194,7 +198,8 @@ always_comb begin : FLUSH_CALC
     // ID_if_id_flush_o = (br_flush | jal_flush | jalr_flush);
 
 
-    active_predictor = ID_br_pred_i.staticBTFNT_pred; // select which of struct being used
+    // active_predictor = ID_br_pred_i.staticBTFNT_pred; // select which of struct being used
+    active_predictor = ID_br_pred_i.dynamicBTB_pred;
 
     // currently, instr decode + br resolve not until ID stage
     // if predict taken, there is mandatory one flush / stall 
@@ -202,12 +207,16 @@ always_comb begin : FLUSH_CALC
 
     ID_BHT_mispredict_o = ~(br_en == ID_br_pred_i.dynamicLocalBHT_pred) && (op_br == ctrl_word_hd.opcode);
 
+    ID_BTB_mispredict_o = ~(br_en == ID_br_pred_i.dynamicBTB_pred) & (op_br == ctrl_word_hd.opcode);
+    ID_BTB_wrong_addr_o = ~(branch_pc == ID_BTB_pred_target_addr_i) & (op_br == ctrl_word_hd.opcode);
+
 
     br_flush = (~(br_en == active_predictor) | (active_predictor & br_en)) & (ctrl_word_hd.opcode == op_br) & br_en;
+    btb_br_flush = 1'b1 ? (~(br_en == active_predictor) | (active_predictor & br_en)) & (ctrl_word_hd.opcode == op_br) & br_en & ~ID_BTB_mispredict_o & ~ID_BTB_wrong_addr_o : 0; // for btb enabled specifially
     // predict wrong -> flush. predict right -> flush because target addr was not ready, loaded wrong instr
     jal_flush = (~active_predictor | (active_predictor == 1'b1)) & (ctrl_word_hd.opcode == op_jal); 
     jalr_flush = (~active_predictor | (active_predictor == 1'b1)) & (ctrl_word_hd.opcode == op_jalr); // 
-    ID_if_id_flush_o = (br_flush | jal_flush | jalr_flush);
+    ID_if_id_flush_o = (br_flush | btb_br_flush | jal_flush | jalr_flush);
                         
 end
 

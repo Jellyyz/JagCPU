@@ -209,9 +209,17 @@ logic IF_ID_HD_write;
 /****************************************/
 /* Declarations for BHT *****************/
 /****************************************/
-logic bht_read, bht_write;
-logic bht_br_pred, mispredict;;//, bht_wdata;
+// logic bht_read, bht_write;
+logic bht_br_pred, mispredict;//, bht_wdata;
 logic [1:0] bht_rdata, bht_rdata_ret;
+
+/****************************************/
+/* Declarations for BTB *****************/
+/****************************************/
+// logic btb_read, btb_write_bp;
+logic btb_br_pred, btb_mispredict, btb_wrong_pc;
+logic [31:0] btb_pred_target_addr, btb_real_target_addr;
+logic [1:0] btb_rdata, btb_rdata_ret;
 
 /****************************************/
 /* Declarations for counters ************/
@@ -231,7 +239,7 @@ always_comb begin : MEM_PORTS
 
 end 
 
-
+logic BTB_jump_the_gun_and_load_pc;
 
 IF IF(
     // input 
@@ -250,8 +258,14 @@ IF IF(
     .IF_pc_out_o(IF_pc_out), 
     .IF_instr_out_o(IF_instr_out), // needs to come from magic memory for cp1 this is unused in cp2
 
-    .IF_bht_br_pred_i(bht_br_pred)
+    // input
+    .IF_bht_br_pred_i(bht_br_pred),
+    .IF_btb_br_pred_i(btb_br_pred),
+    .IF_btb_pred_target_addr_i(btb_pred_target_addr),
+    .BTB_jump_the_gun_and_load_pc_i(BTB_jump_the_gun_and_load_pc)
 );
+
+rv32i_word btb_pred_target_addr_if_id_out;
 
 IF_ID IF_ID(
     // input 
@@ -266,13 +280,17 @@ IF_ID IF_ID(
 
     .IF_ID_br_pred_i(IF_br_pred),
     .IF_ID_bht_rdata_i(bht_rdata),
+    .IF_ID_btb_rdata_i(btb_rdata),
+    .IF_ID_btb_pred_target_addr_i(btb_pred_target_addr),
 
     // output
     .IF_ID_pc_out_o(IF_ID_pc_out), 
     .IF_ID_instr_o(IF_ID_instr),
 
+    .IF_ID_br_pred_o(IF_ID_br_pred),
     .IF_ID_bht_rdata_o(bht_rdata_ret),
-    .IF_ID_br_pred_o(IF_ID_br_pred) 
+    .IF_ID_btb_rdata_o(btb_rdata_ret),
+    .IF_ID_btb_pred_target_addr_o(btb_pred_target_addr_if_id_out)
 ); 
 
 
@@ -292,8 +310,35 @@ bht #(.size(128)) BHT (
     .bht_rdata_ret(bht_rdata_ret)
 );
 
+btb #(.size(8)) BTB (
+    .clk(clk),
+    .rst(rst),
+    .clockgate(1),
+
+    // .btb_read()
+    .btb_write_bp(ID_ctrl_word.opcode == op_br), // in 
+    .pc_address_read(IF_pc_out),                // in
+    .pc_address_write(ID_pc_out),               // in
+
+    .btb_br_pred(btb_br_pred),                  // out
+    .btb_pred_target_addr(btb_pred_target_addr),// out
+    .btb_pred_rdata(btb_rdata),            // out
+
+    .btb_mispredict(btb_mispredict),
+    .btb_wrong_pc(btb_wrong_pc),
+    .branch_target_address_real(ID_branch_pc), 
+    .btb_rdata_ret(btb_rdata_ret),
+
+    .ID_ctrl(ID_ctrl_word), // in
+    .BTB_jump_the_gun_and_load_pc(BTB_jump_the_gun_and_load_pc) // out
+);
+
 ID ID(
     .ID_BHT_mispredict_o(mispredict),
+    .ID_BTB_mispredict_o(btb_mispredict),
+    .ID_BTB_wrong_addr_o(btb_wrong_pc),
+    .ID_BTB_pred_target_addr_i(btb_pred_target_addr_if_id_out),
+    // .ID_BTB_real_target_addr_o(btb_real_target_addr)
 
     // inputs
     .clk(clk), 

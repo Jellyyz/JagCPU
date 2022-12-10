@@ -25,7 +25,7 @@ localparam width=2;
 localparam idx_offset=2;
 
 logic [width-1:0] _bht_wdata;
-logic [$clog2(size)-1+idx_offset:0+idx_offset] rindex, windex;
+logic [$clog2(size)-1:0] rindex, windex;
 
 always_comb begin : set_pred_output
     // 11 - strongly taken, 10 - weakly taken
@@ -38,8 +38,8 @@ initial begin
     $display("$clog2 size is",$clog2(size));
 end
 
-assign rindex = pc_address_read[$clog2(size)-1:0];
-assign windex = pc_address_write[$clog2(size)-1:0];
+assign rindex = pc_address_read[$clog2(size)-1+idx_offset:0+idx_offset];
+assign windex = pc_address_write[$clog2(size)-1+idx_offset:0+idx_offset];
 
 
 saturate_coutnter saturate_coutnter (

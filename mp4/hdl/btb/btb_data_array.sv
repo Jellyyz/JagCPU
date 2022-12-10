@@ -13,7 +13,7 @@ module btb_data_array
   output logic [width-1:0] dataout
 );
 
-logic [1:0] data [size] = '{default: 10};
+logic [width-1:0] data [size] = '{default: 10};
 
 always_comb begin
   // for (int i = 0; i < 1; i++) begin

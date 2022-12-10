@@ -1,4 +1,3 @@
-
 module IF_ID 
 import rv32i_types::*;
 #(parameter width = 32) 
@@ -12,16 +11,21 @@ import rv32i_types::*;
 
         input ctrl_flow_preds IF_ID_br_pred_i,
         input logic [1:0] IF_ID_bht_rdata_i,
+        input logic [1:0] IF_ID_btb_rdata_i,
+        input logic [width-1:0] IF_ID_btb_pred_target_addr_i,
 
         output logic [width-1:0] IF_ID_pc_out_o,
         output logic [width-1:0] IF_ID_instr_o,
         output ctrl_flow_preds IF_ID_br_pred_o,
-        output logic [1:0] IF_ID_bht_rdata_o
+        output logic [1:0] IF_ID_bht_rdata_o,
+        output logic [1:0] IF_ID_btb_rdata_o,
+        output logic [width-1:0] IF_ID_btb_pred_target_addr_o
     );
 
     logic [width-1:0] pc_out;
     logic [width-1:0] instr;
-    logic [1:0] IF_ID_bht_rdata;
+    logic [width-1:0] btb_pred_target_addr;
+    logic [1:0] IF_ID_bht_rdata, IF_ID_btb_rdata;
 
     ctrl_flow_preds br_pred;
 
@@ -31,21 +35,29 @@ import rv32i_types::*;
             instr <= {width{1'b0}};
             br_pred <= '0;
             IF_ID_bht_rdata <= '0;
+            IF_ID_btb_rdata <= '0;
+            btb_pred_target_addr <= '0;
         end else if (flush_i) begin
             pc_out <= {width{1'b0}};
             instr <= {width{1'b0}};
             br_pred <= '0;            // this is potentially a huge issue 
             IF_ID_bht_rdata <= '0;
+            IF_ID_btb_rdata <= '0;
+            btb_pred_target_addr <= '0;
         end else if (load_i) begin
             pc_out <= IF_ID_pc_out_i;
             instr <= IF_ID_instr_i;
             br_pred <= IF_ID_br_pred_i;
             IF_ID_bht_rdata <= IF_ID_bht_rdata_i;
+            IF_ID_btb_rdata <= IF_ID_btb_rdata_i;
+            btb_pred_target_addr <= IF_ID_btb_pred_target_addr_i;
         end else begin
             pc_out <= pc_out;
             instr <= instr;
             br_pred <= br_pred;
             IF_ID_bht_rdata <= IF_ID_bht_rdata;
+            IF_ID_btb_rdata <= IF_ID_btb_rdata;
+            btb_pred_target_addr <= btb_pred_target_addr;
         end
     end
 
@@ -54,6 +66,8 @@ import rv32i_types::*;
         IF_ID_instr_o = instr;
         IF_ID_br_pred_o = br_pred;
         IF_ID_bht_rdata_o = IF_ID_bht_rdata;
+        IF_ID_btb_rdata_o = IF_ID_btb_rdata;
+        IF_ID_btb_pred_target_addr_o = btb_pred_target_addr;
     end
 
-endmodule : IF_ID 
+endmodule : IF_ID

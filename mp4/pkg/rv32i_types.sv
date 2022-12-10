@@ -95,7 +95,7 @@ typedef struct packed {
     logic staticNT_pred;
     logic staticBTFNT_pred;
     logic dynamicLocalBHT_pred;
-    logic dynamicGlobalBHT_pred;
+    logic dynamicBTB_pred;
     logic dynamicTourney_pred;
     logic jal_pred;
     logic jalr_pred;
@@ -103,4 +103,3 @@ typedef struct packed {
 
 
 endpackage : rv32i_types
-

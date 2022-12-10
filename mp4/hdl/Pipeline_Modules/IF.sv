@@ -1,4 +1,3 @@
-
 module IF
 import rv32i_types::*;
     (
@@ -11,6 +10,10 @@ import rv32i_types::*;
     input rv32i_word IF_alu_out_i,
     // input rv32i_word IF_adder_out_o_i, // come from IF/ID pipe reg, in case there is branch predicted, need to give PC
     input logic IF_bht_br_pred_i,
+    input logic IF_btb_br_pred_i,
+    input logic [31:0] IF_btb_pred_target_addr_i,
+    input logic BTB_jump_the_gun_and_load_pc_i,
+
 
     output rv32i_word IF_pc_out_o,
     output rv32i_word IF_instr_out_o, // undriven, for cp1 comes from magic memory
@@ -21,7 +24,7 @@ import rv32i_types::*;
 ); 
 
 
-rv32i_word pcmux_out;
+rv32i_word pcmux_out, pc_out;
 // pcmux::pcmux_sel_t pcmux_sel;
 // assign pcmux_sel = pcmux_sel_i;
 logic br_pred_static_NT;
@@ -34,6 +37,7 @@ always_comb begin : setBranchPredOutput
     IF_br_pred_o.staticBTFNT_pred = op_br == rv32i_opcode'(IF_instr_mem_rdata_i[6:0]) ? IF_instr_mem_rdata_i[31] : 1'b0;
     // IF_br_pred_o.staticBTFNT_pred = IF_instr_mem_rdata_i[31];
     IF_br_pred_o.dynamicLocalBHT_pred = IF_bht_br_pred_i;
+    IF_br_pred_o.dynamicBTB_pred = IF_btb_br_pred_i;
 end
 
 
@@ -57,11 +61,15 @@ pc_register pc_register(
     // input of the PC register 
     .clk(clk), .rst(rst), 
     .load(IF_PC_write_i), 
-    .in(pcmux_out), 
+    // .in(BTB_jump_the_gun_and_load_pc_i ? IF_btb_pred_target_addr_i : pcmux_out), 
+    .in(pcmux_out),
  
     // output of the PC register
+    // .out(pc_out)
     .out(IF_pc_out_o)
 ); 
+
+// assign IF_pc_out_o = BTB_jump_the_gun_and_load_pc_i ? IF_btb_pred_target_addr_i : pc_out;
 
 // adder adder (
 //     .a(addin1),
@@ -74,4 +82,3 @@ pc_register pc_register(
 
 
 endmodule 
-
