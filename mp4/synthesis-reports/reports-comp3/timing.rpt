@@ -1,0 +1,113 @@
+ 
+****************************************
+Report : timing
+        -path full
+        -delay max
+        -max_paths 1
+Design : mp4
+Version: R-2020.09-SP4
+Date   : Sun Dec 11 23:12:25 2022
+****************************************
+
+Operating Conditions: typical   Library: NangateOpenCellLibrary
+Wire Load Model Mode: top
+
+  Startpoint: d0/ID_EX/ID_EX_ctrl_word_reg[alumux1_sel]
+              (rising edge-triggered flip-flop clocked by my_clk)
+  Endpoint: d0/IF_ID/instr_reg[0]
+            (rising edge-triggered flip-flop clocked by my_clk)
+  Path Group: my_clk
+  Path Type: max
+
+  Des/Clust/Port     Wire Load Model       Library
+  ------------------------------------------------
+  mp4                5K_hvratio_1_1        NangateOpenCellLibrary
+
+  Point                                                   Incr       Path
+  --------------------------------------------------------------------------
+  clock my_clk (rise edge)                                0.00       0.00
+  clock network delay (ideal)                             0.00       0.00
+  d0/ID_EX/ID_EX_ctrl_word_reg[alumux1_sel]/CK (DFF_X1)
+                                                          0.00       0.00 r
+  d0/ID_EX/ID_EX_ctrl_word_reg[alumux1_sel]/Q (DFF_X1)
+                                                          0.22       0.22 r
+  d0/ID_EX/ID_EX_ctrl_word_o[alumux1_sel] (ID_EX)         0.00       0.22 r
+  d0/EX/EX_ctrl_word_i[alumux1_sel] (EX)                  0.00       0.22 r
+  d0/EX/U8/Z (CLKBUF_X1)                                  0.13       0.35 r
+  d0/EX/U86/Z (MUX2_X1)                                   0.10       0.45 f
+  d0/EX/alu/a[0] (alu)                                    0.00       0.45 f
+  d0/EX/alu/U114/CO (FA_X1)                               0.11       0.57 f
+  d0/EX/alu/U199/CO (FA_X1)                               0.09       0.66 f
+  d0/EX/alu/U264/CO (FA_X1)                               0.09       0.75 f
+  d0/EX/alu/U324/CO (FA_X1)                               0.09       0.84 f
+  d0/EX/alu/U351/CO (FA_X1)                               0.09       0.93 f
+  d0/EX/alu/U374/CO (FA_X1)                               0.09       1.02 f
+  d0/EX/alu/U398/CO (FA_X1)                               0.09       1.11 f
+  d0/EX/alu/U682/CO (FA_X1)                               0.09       1.20 f
+  d0/EX/alu/U416/CO (FA_X1)                               0.09       1.29 f
+  d0/EX/alu/U432/CO (FA_X1)                               0.09       1.38 f
+  d0/EX/alu/U447/CO (FA_X1)                               0.09       1.47 f
+  d0/EX/alu/U466/CO (FA_X1)                               0.09       1.56 f
+  d0/EX/alu/U486/CO (FA_X1)                               0.09       1.65 f
+  d0/EX/alu/U501/CO (FA_X1)                               0.09       1.74 f
+  d0/EX/alu/U518/CO (FA_X1)                               0.09       1.84 f
+  d0/EX/alu/U546/CO (FA_X1)                               0.09       1.93 f
+  d0/EX/alu/U699/CO (FA_X1)                               0.09       2.02 f
+  d0/EX/alu/U712/CO (FA_X1)                               0.09       2.11 f
+  d0/EX/alu/U726/CO (FA_X1)                               0.09       2.20 f
+  d0/EX/alu/U739/CO (FA_X1)                               0.09       2.29 f
+  d0/EX/alu/U751/CO (FA_X1)                               0.09       2.38 f
+  d0/EX/alu/U763/CO (FA_X1)                               0.09       2.47 f
+  d0/EX/alu/U780/CO (FA_X1)                               0.09       2.56 f
+  d0/EX/alu/U793/CO (FA_X1)                               0.09       2.65 f
+  d0/EX/alu/U577/CO (FA_X1)                               0.09       2.74 f
+  d0/EX/alu/U597/CO (FA_X1)                               0.09       2.83 f
+  d0/EX/alu/U804/CO (FA_X1)                               0.09       2.92 f
+  d0/EX/alu/U816/CO (FA_X1)                               0.09       3.01 f
+  d0/EX/alu/U618/CO (FA_X1)                               0.09       3.10 f
+  d0/EX/alu/U635/CO (FA_X1)                               0.09       3.19 f
+  d0/EX/alu/U656/CO (FA_X1)                               0.09       3.28 f
+  d0/EX/alu/U659/Z (XOR2_X1)                              0.07       3.35 f
+  d0/EX/alu/U660/ZN (NAND2_X1)                            0.03       3.38 r
+  d0/EX/alu/U679/ZN (NAND4_X1)                            0.05       3.43 f
+  d0/EX/alu/f[31] (alu)                                   0.00       3.43 f
+  d0/EX/EX_alu_out_o[31] (EX)                             0.00       3.43 f
+  d0/ID/EX_alu_out[31] (ID)                               0.00       3.43 f
+  d0/ID/U106/ZN (AOI22_X1)                                0.05       3.49 r
+  d0/ID/U108/ZN (NAND4_X1)                                0.10       3.59 f
+  d0/ID/cmp_id/cmp_mux_out[31] (cmp)                      0.00       3.59 f
+  d0/ID/cmp_id/U122/ZN (INV_X1)                           0.08       3.67 r
+  d0/ID/cmp_id/U6/ZN (NAND2_X1)                           0.04       3.71 f
+  d0/ID/cmp_id/U7/ZN (OAI21_X1)                           0.04       3.75 r
+  d0/ID/cmp_id/U8/ZN (AOI211_X1)                          0.04       3.79 f
+  d0/ID/cmp_id/U108/ZN (INV_X1)                           0.03       3.82 r
+  d0/ID/cmp_id/U109/ZN (AOI221_X1)                        0.03       3.84 f
+  d0/ID/cmp_id/U113/ZN (AOI211_X1)                        0.08       3.93 r
+  d0/ID/cmp_id/U114/ZN (OAI221_X1)                        0.05       3.98 f
+  d0/ID/cmp_id/U128/ZN (AOI221_X1)                        0.09       4.07 r
+  d0/ID/cmp_id/U284/ZN (OAI22_X1)                         0.05       4.12 f
+  d0/ID/cmp_id/br_en (cmp)                                0.00       4.12 f
+  d0/ID/U60/ZN (AOI21_X1)                                 0.05       4.16 r
+  d0/ID/U14/ZN (NOR4_X1)                                  0.03       4.19 f
+  d0/ID/ID_if_id_flush_o (ID)                             0.00       4.19 f
+  d0/IF_ID/flush_i (IF_ID)                                0.00       4.19 f
+  d0/IF_ID/U4/ZN (NOR3_X1)                                0.17       4.36 r
+  d0/IF_ID/U2/Z (BUF_X2)                                  0.16       4.52 r
+  d0/IF_ID/U17/ZN (AND2_X1)                               0.08       4.60 r
+  d0/IF_ID/instr_reg[0]/D (DFF_X1)                        0.01       4.61 r
+  data arrival time                                                  4.61
+
+  clock my_clk (rise edge)                                5.15       5.15
+  clock network delay (ideal)                             0.00       5.15
+  clock uncertainty                                      -0.10       5.05
+  d0/IF_ID/instr_reg[0]/CK (DFF_X1)                       0.00       5.05 r
+  library setup time                                     -0.03       5.02
+  data required time                                                 5.02
+  --------------------------------------------------------------------------
+  data required time                                                 5.02
+  data arrival time                                                 -4.61
+  --------------------------------------------------------------------------
+  slack (MET)                                                        0.41
+
+
+1
