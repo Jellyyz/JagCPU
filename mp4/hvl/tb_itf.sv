@@ -2,7 +2,9 @@
 `define TB_ITF_SV
 
 // Change frequency for accurate timing
-`define FREQUENCY_MHZ 100.0
+`define FREQUENCY_MHZ 194.17
+// create_clock -period 5.251 -name my_clk $clk_name
+// `define FREQUENCY_MHZ 100.0
 `define FREQUENCY (`FREQUENCY_MHZ * 1000000)
 `define PERIOD_NS (1000000000/`FREQUENCY)
 `define PERIOD_CLK (`PERIOD_NS / 2)
