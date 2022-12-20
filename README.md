@@ -6,8 +6,8 @@ JagCPU
 
 ## Authors and acknowledgment
 John Pohovey\
-Gally Huang \
-Arjun Ray\
+Gally Huang\
+Arjun Ray
 
 ## Project status
 Finished 5 stage pipeline RISCV CPU with branch prediction, M-extension, l1 cache split
